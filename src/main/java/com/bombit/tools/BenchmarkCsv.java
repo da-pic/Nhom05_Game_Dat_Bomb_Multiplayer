@@ -22,6 +22,16 @@ public final class BenchmarkCsv {
         }
         Files.writeString(path,out,StandardCharsets.UTF_8,StandardOpenOption.CREATE,StandardOpenOption.APPEND);
     }
+    /** Replace the CSV contents, used by one-shot stress runs that keep only the latest result set. */
+    public static void write(Path path,List<String> columns,List<? extends Map<String,String>> rows)throws IOException{
+        var parent=path.toAbsolutePath().getParent();if(parent!=null)Files.createDirectories(parent);
+        var out=new StringBuilder().append(String.join(",",columns)).append("\r\n");
+        for(var row:rows){
+            for(int i=0;i<columns.size();i++){if(i>0)out.append(',');out.append(escape(row.getOrDefault(columns.get(i),"")));}
+            out.append("\r\n");
+        }
+        Files.writeString(path,out,StandardCharsets.UTF_8,StandardOpenOption.CREATE,StandardOpenOption.TRUNCATE_EXISTING,StandardOpenOption.WRITE);
+    }
     public static String escape(String value){
         return value.indexOf(',')>=0||value.indexOf('"')>=0||value.indexOf('\n')>=0||value.indexOf('\r')>=0
                 ?"\""+value.replace("\"","\"\"")+"\"":value;

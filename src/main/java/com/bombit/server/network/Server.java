@@ -29,13 +29,16 @@ public final class Server implements AutoCloseable {
     public static final int HEARTBEAT_TIMEOUT_SECONDS = 10;
     public static final int RECONNECT_GRACE_SECONDS = 30;
     public static final int MAX_PLAYERS_PER_ROOM = 4;
-    private static final int CLIENT_POOL_SIZE = 32;
+    // Long-lived socket readers occupy one worker per connected client.
+    private static final int CLIENT_POOL_SIZE = Integer.getInteger("bombit.server.clientPoolSize", 256);
+    private static final int CLIENT_QUEUE_CAPACITY = Integer.getInteger("bombit.server.clientQueueCapacity", 256);
+    private static final int MAX_CLIENTS = Integer.getInteger("bombit.server.maxClients", 256);
     private static final int OUTBOUND_QUEUE_CAPACITY = 256;
 
     private final ServerSocket serverSocket;
     private final AtomicReference<Throwable> connectionFailure = new AtomicReference<>();
     private final ExecutorService clientPool = new ThreadPoolExecutor(CLIENT_POOL_SIZE, CLIENT_POOL_SIZE,
-            0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(CLIENT_POOL_SIZE), task -> {
+            0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(CLIENT_QUEUE_CAPACITY), task -> {
                 Thread worker = new Thread(task, "server-client-reader");
                 worker.setUncaughtExceptionHandler((thread, error) -> connectionFailure.compareAndSet(null, error));
                 return worker;
@@ -127,7 +130,7 @@ public final class Server implements AutoCloseable {
             synchronized (lifecycle) {
                 if (!running) { socket.close(); break; }
                 // Includes grace-period sessions: reconnect churn cannot grow retained sessions without bound.
-                if(sessionManager.snapshot().size()>=256){socket.close();continue;}
+                if(sessionManager.snapshot().size()>=MAX_CLIENTS){socket.close();continue;}
                 socket.setTcpNoDelay(true);
                 Session session = new Session("pending-" + socket.getRemoteSocketAddress(), socket);
                 sessionManager.register(session);
