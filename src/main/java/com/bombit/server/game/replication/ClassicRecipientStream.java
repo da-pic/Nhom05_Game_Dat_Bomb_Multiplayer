@@ -6,7 +6,6 @@ import com.bombit.server.game.core.GameState;
 import com.bombit.server.game.movement.*;
 import java.util.*;
 
-/** M0 Classic: baseline riêng recipient, commit chỉ sau writer enqueue thành công. */
 public final class ClassicRecipientStream implements RecipientStream {
     private MatchStartMetadata metadata;
     private WorldFrame baseline;
@@ -36,7 +35,6 @@ public final class ClassicRecipientStream implements RecipientStream {
             var newKeys=new HashSet<String>();var entities=new ArrayList<EntityData>();
             for(var e:current.getEntityChanges()){newKeys.add(e.key());if(!e.equals(oldEntities.get(e.key())))entities.add(e);}
             var removedEntities=oldEntities.keySet().stream().filter(key->!newKeys.contains(key)).sorted().toList();
-            // M0 gửi nguyên record mọi detail Classic (tối đa 4); chưa tối ưu từng private field.
             update=GameStateUpdate.delta(current.getTick(),previous.getTick(),current.getMapWidth(),current.getMapHeight(),current.getTileSize(),current.getMatchState(),true,tiles,current.getPlayers(),removed)
                     .withEntities(entities,removedEntities).withBombFrame(current.getBombFrame()).withMatchFrame(current.getMatchFrame());
         }
