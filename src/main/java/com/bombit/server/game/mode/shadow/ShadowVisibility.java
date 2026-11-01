@@ -6,7 +6,6 @@ import com.bombit.server.game.movement.GameStateUpdate;
 import java.util.*;
 import java.util.function.BiFunction;
 
-/** Manhattan + supercover tâm ô: chỉ một ô opaque ở cạnh góc cũng chặn đường nhìn chéo. */
 public final class ShadowVisibility {
     private ShadowVisibility() { }
     public static Set<TilePosition> cells(GameMap map,Collection<TilePosition> players,Collection<TilePosition> scans){
@@ -31,7 +30,7 @@ public final class ShadowVisibility {
                 if(Math.abs(x-source.x())+Math.abs(y-source.y())<=radius&&clear(source,x,y,scan,tiles))result.add(new TilePosition(x,y));
     }
     private static boolean opaque(int x,int y,int targetX,int targetY,boolean scan,BiFunction<Integer,Integer,TileType> tiles){
-        if(x==targetX&&y==targetY)return false; // Nhìn thấy bề mặt ô đích, không nhìn xuyên ô này.
+        if(x==targetX&&y==targetY)return false; 
         var tile=tiles.apply(x,y);return tile==TileType.HARD_WALL||tile==TileType.OUT_OF_BOUNDS||!scan&&tile==TileType.BREAKABLE_BLOCK;
     }
     private static boolean clear(TilePosition from,int targetX,int targetY,boolean scan,BiFunction<Integer,Integer,TileType> tiles){
