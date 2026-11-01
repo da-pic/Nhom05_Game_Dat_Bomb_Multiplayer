@@ -40,12 +40,10 @@ public final class ConnectionManager implements AutoCloseable {
         SessionWriter previous = writers.get(session.getPlayerId());
         if (previous != null) {
             if (previous.owns(socket)) throw new IllegalStateException("Writer already exists");
-            // Writer cũ bắt giữ socket cũ: gỡ đúng instance trước khi dựng writer mới.
-            // Callback cleanup đến muộn chỉ release theo socket, không xoá writer thay thế.
+          
             if (writers.remove(session.getPlayerId(), previous)) previous.close();
         }
         SessionWriter writer = new SessionWriter(session, capacity, () -> {
-            // Never invoke lobby/session callbacks while a producer holds a room/lifecycle lock.
             try { cleanup.execute(()->{
                 try { failureHandler.accept(session,socket); }
                 catch(RuntimeException e){failure.compareAndSet(null,e);}
