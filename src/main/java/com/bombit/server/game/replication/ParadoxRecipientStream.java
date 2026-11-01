@@ -2,7 +2,6 @@ package com.bombit.server.game.replication;
 
 import com.bombit.common.dto.*;
 
-/** Baseline bị hủy khi đổi timeline. Delegate chỉ tính diff; không dùng simulationTick làm baseTick. */
 public final class ParadoxRecipientStream implements RecipientStream {
     private final ClassicRecipientStream delegate;
     private ClassicSnapshotV6 candidate;
