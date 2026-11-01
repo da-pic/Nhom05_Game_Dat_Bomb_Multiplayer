@@ -7,7 +7,6 @@ import com.bombit.common.dto.TeamId;
 import java.util.HashSet;
 import java.util.List;
 
-/** Chốt ánh xạ session/player/slot/đội tại start; không giữ Session hoặc đánh lại ID khi ai đó offline. */
 public record ShadowRoster(List<MatchStartMetadata.Member> players) {
     public ShadowRoster {
         players = List.copyOf(players);
@@ -28,7 +27,6 @@ public record ShadowRoster(List<MatchStartMetadata.Member> players) {
         return slot % 2 == 1 ? TeamId.A : TeamId.B;
     }
 
-    /** Lobby chỉ cung cấp preview; copy thành danh sách bất biến trước khi mở input của trận. */
     public static ShadowRoster fromLobby(List<RoomStateView.Member> members) {
         return new ShadowRoster(members.stream().map(p -> new MatchStartMetadata.Member(
                 p.sessionId(), p.slot(), p.slot(), p.username(), p.team())).toList());
