@@ -8,13 +8,11 @@ import com.bombit.server.game.runtime.*;
 import java.util.*;
 import java.util.function.*;
 
-/** Điều phối Paradox trên game thread; không tạo scheduler hoặc sửa session/token. */
 public final class ParadoxGameplayExtension implements GameplayExtension {
     public enum Outcome { ACCEPTED, NOT_RUNNING, UNKNOWN_PLAYER, NOT_ELIGIBLE, ALREADY_USED,
         REWIND_BUSY, COOLDOWN, NOT_ENOUGH_HISTORY, STALE_TIMELINE, STALE_REQUEST, REQUEST_CONFLICT }
     public record RewindResult(int playerId, long requestId, long requestedEpoch, Outcome outcome,
             long serverTick, long simulationTick, long timelineEpoch) { }
-    /** Ảnh bất biến cho runtime/consumer, không trả world hoặc history mutable. */
     public record Status(long serverTick, long simulationTick, long timelineEpoch, int historySize,
             Set<Integer> availableCharges, long cooldownRemainingMillis, List<RewindResult> results) {
         public Status { availableCharges=Set.copyOf(availableCharges);results=List.copyOf(results); }
@@ -81,7 +79,6 @@ public final class ParadoxGameplayExtension implements GameplayExtension {
             report(previous.requestedEpoch()==command.timelineEpoch()?previous:result(command,Outcome.REQUEST_CONFLICT));return;
         }
         if(request<=rewindHighWater.getOrDefault(id,0L)) {report(result(command,Outcome.STALE_REQUEST));return;}
-        // Counter tiến cả với request bị từ chối; retry không được biến thành thao tác mới.
         rewindHighWater.put(id,request);
         Outcome outcome;
         if(finished||state.getMatchState()!=GameState.MatchState.RUNNING
@@ -94,7 +91,6 @@ public final class ParadoxGameplayExtension implements GameplayExtension {
             outcome=Outcome.valueOf(answer.name());
             if(outcome==Outcome.ACCEPTED) {
                 restored=true;hasRewound=true;lastRewindNanos=nanos.getAsLong();
-                // Không tiếp tục intent giữ phím từ nhánh cũ, kể cả input kiểu legacy.
                 for(var p:state.getPlayers())p.setMoving(false);
             }
         }
@@ -112,7 +108,7 @@ public final class ParadoxGameplayExtension implements GameplayExtension {
     }
     private void plant(PlantBombCommand command) {
         long request=command.requestId();int id=command.getPlayerId();
-        if(request<=0)return; // Paradox không chấp nhận thao tác không có khóa idempotency.
+        if(request<=0)return; 
         if(!players.containsValue(id)) {
             state.recordPlantResult(new PlantRequestResult(id,request,command.bombType(),false,"PLAYER_NOT_FOUND",null));return;
         }
