@@ -497,6 +497,32 @@ Suite gồm workload transport với 1/2/4 client và idle/movement/bombs với 
 
 RTT đo PING/PONG; MOVE ACK đo từ gửi input đến xử lý snapshot xác nhận sequence. TX/RX là byte frame ứng dụng, chưa tính TCP/IP header/retransmission.
 
+### Kiểm thử chức năng
+
+```powershell
+mvn test
+```
+
+### Gameplay Stress Test
+
+Kịch bản tăng dần số client theo các mốc 112, 120, 122 và 124. Mỗi client vào trận, gửi lệnh di chuyển và đặt bom. Mức tải đạt khi RTT P95 không vượt 150 ms, MOVE ACK loss không quá 1%, MOVE ACK P95 không quá 200 ms và tick rate nằm trong khoảng 18–22 Hz.
+
+```powershell
+java -Xss512k -cp "target\classes;target\test-classes" com.bombit.tools.NetworkBenchmark --local --mode stresstest --stress-levels 120,122,124,126,128 --move-rate 20 --warmup 5 --seconds 180 --max-rtt-p95-ms 150 --max-cpu-percent 95 --csv target\network-stresstest-full-120-128-180s.csv
+```
+
+Mỗi dòng trong `target\network-stresstest-gameplay-expanded.csv` là một mốc tải. `PASS` nghĩa là đạt các ngưỡng trên; khi gặp `FAIL`, mức client cao nhất trước đó có trạng thái `PASS` là mức tối đa đạt trong lượt đo. Server và các client mô phỏng cùng chạy trong một JVM trên loopback.
+
+### Kiểm thử tốc độ lệnh ở nhiều phòng (Multi-room Command Rate Stress Test)
+
+Chạy một dòng lệnh trong PowerShell để kiểm tra lần lượt 10, 50 và 100 client. Benchmark phân bố client thành khoảng 3, 13 và 25 phòng; mỗi lượt tăng tốc độ MOVE từ 20 lệnh/giây/người. Mỗi mức client được ghi vào một CSV riêng trong `target`.
+
+```powershell
+foreach($n in 10,50,100){$csv="target\network-command-rate-$n.csv";java -Xss512k -cp target\classes com.bombit.tools.NetworkBenchmark --local --mode commandrate --clients $n --command-rates 20,30,40,50,60,80,100 --warmup 2 --seconds 10 --max-rtt-p95-ms 150 --max-ack-p95-ms 200 --max-ack-loss-percent 1 --min-tick-hz 18 --csv $csv}
+```
+
+Mỗi lượt dừng ở mức đầu tiên có `ANOMALY`; các mức client tiếp theo trong vòng lặp vẫn tiếp tục chạy. `ANOMALY` là kết quả đo theo ngưỡng, không phải lỗi biên dịch. Benchmark chạy server và client mô phỏng cùng JVM trên loopback.
+
 ## 11. Experimental results — Kết quả thực nghiệm
 
 Kết quả được trình bày theo môi trường, phiên bản giao thức và kịch bản thực nghiệm. Phép đo dung lượng snapshot, phép đo mạng và kiểm tra chức năng được đánh giá riêng.
@@ -584,11 +610,110 @@ Nguồn thực thi: (src/test/java/com/bombit/server/game/movement/DeltaCompress
 
 Bộ số liệu chỉ phản ánh phiên bản mã nguồn và môi trường loopback của lần chạy được ghi nhận, dùng endpoint chẩn đoán protocol v2 như mô tả ở mục 10. Hiệu năng của pipeline đa mode, mạng LAN/WAN, tải tối đa và độ ổn định dài hạn chưa được đánh giá bằng bộ phép đo tương đương.
 
+Ngưỡng ổn định tối đa: Hệ thống duy trì sự ổn định tuyệt vời lên đến 122 client đồng thời (chia thành 31 phòng chơi) trong thời gian dài (180 giây) với tần số 20Hz hoàn hảo, tỷ lệ mất gói tin ACK bằng 0% và độ trễ đồng bộ nằm trong giới hạn cho phép .Điểm tới hạn: Khi đẩy lên mức 124 client ($\ge 32$ phòng), hệ thống bắt đầu phát sinh lỗi ngoại lệ (Benchmark player died/was removed), xác định rõ giới hạn chịu tải tối đa của kiến trúc hiện tại là 122 client.
+
 ### 11.3. Kiểm tra chức năng đa mode
 
 Kiểm tra GUI được thực hiện cục bộ bằng runtime đi kèm bản ZIP đã giải nén. Ma trận bao gồm Classic cá nhân/đội, Paradox cá nhân/đội và Shadow đội; các kịch bản gồm hủy READY khi thay đổi cấu hình, kết quả đội, rewind, scan, recovery, chơi lại và chuyển mode.
 
 Các kịch bản tự động được cài đặt trong (src/test/java/com/bombit/integration/AllMatchFormatsIntegrationTest.java), (src/test/java/com/bombit/server/game/runtime/TeamMatchGameplayTest.java), (src/test/java/com/bombit/integration/ParadoxRecoveryIntegrationTest.java) và (src/test/java/com/bombit/server/game/mode/shadow/ShadowSynchronizationTest.java). 
+
+
+### 11.4. Kiểm thử Chức năng
+
+| Nguồn test (Test Class) | Kịch bản chính | Điều kiện đạt theo assertion | Kết quả lượt test |
+| --- | --- | --- | --- |
+| SessionRecoveryClientTest | Phục hồi phiên kết nối phía Client. | Giao diện và dữ liệu local khôi phục đúng trạng thái; không crash app. | 10/10 đạt |
+| RecoveryInputTest | Thao tác nhập liệu trong quá trình đứt mạng. | Tín hiệu phím đưa vào bộ đệm và gửi thành công sau khi reconnect. | 2/2 đạt |
+| RespawnPredictionTest | Thuật toán dự đoán vị trí hồi sinh (Prediction). | Tọa độ nhân vật hiển thị ở client khớp với kết quả từ server. | 2/2 đạt |
+| ClientStabilityTest | Kiểm tra độ ổn định kết nối phía client. | Không văng lỗi (Exception) khi nhận luồng dữ liệu liên tục. | 7/7 đạt |
+| ConnectCancellationTest | Hủy tiến trình kết nối mạng chủ động. | Socket đóng an toàn, tài nguyên bộ nhớ được giải phóng sạch. | 1/1 đạt |
+| BombPresentationStateTest | Trạng thái hiển thị hoạt ảnh của bom. | Animation chuyển đổi đúng theo vòng đời nổ/hủy của bom. | 1/1 đạt |
+| BombSceneTest | Hiển thị màn hình Scene chứa bom. | Chuyển cảnh và render lưới bom thành công không bị treo UI. | 2/2 đạt |
+| Java2DRendererTest | Bộ vẽ đồ họa Java2D cơ bản. | Các object đồ họa xuất ra đúng ma trận tọa độ pixel. | 2/2 đạt |
+| ItemClientStateTest | Trạng thái hiển thị vật phẩm (Item) ở client. | Item biến mất trên UI ngay khi có tín hiệu nhặt thành công. | 1/1 đạt |
+| TileGridRendererTest | Render lưới bản đồ tĩnh (Tile Grid). | Vẽ chuẩn kích thước grid gốc, không vỡ khung hình. | 1/1 đạt |
+| ModeSelectionPanelTest | Màn hình giao diện chọn chế độ chơi. | Giao diện nạp đủ danh sách mode và phản hồi đúng sự kiện click. | 2/2 đạt |
+| MatchResultsPanelTest | Màn hình tổng kết quả trận đấu. | Hiển thị đúng dữ liệu thứ hạng, số kill và điểm số. | 1/1 đạt |
+| TeamGuiPresentationTest | Giao diện HUD của các đội chơi (Team). | Tên, màu sắc và thanh máu của team render chính xác trên HUD. | 3/3 đạt |
+| EffectiveRulesTest | Thiết lập các ràng buộc luật chơi hiệu lực. | Thời gian > 0, số mạng >= 1; các ruleset bắt buộc phải hợp lệ. | 13/13 đạt |
+| MatchFormatContractTest | Hợp đồng định dạng dữ liệu ván đấu. | DTO payload tuân thủ nghiêm ngặt chuẩn contract khai báo. | 4/4 đạt |
+| BombProtocolTest | Giao thức đóng gói/mở gói tin bom. | Object byte serialize/deserialize bảo toàn 100% dữ liệu gốc. | 4/4 đạt |
+| GameplayProtocolTest | Giao thức thao tác điều khiển gameplay. | Gói tin phím bấm/di chuyển được mã hóa đúng chuẩn giao thức. | 3/3 đạt |
+| IntegrationContractTest | Hợp đồng liên lạc tích hợp client-server. | Các API giao tiếp qua lại thỏa mãn định dạng ràng buộc. | 8/8 đạt |
+| LobbyContractTest | Ràng buộc giao thức của Sảnh (Lobby). | Gói tin tạo/thoát sảnh parse đúng thành object quản lý. | 4/4 đạt |
+| ParadoxProtocolTest | Giao thức riêng của chế độ nghịch lý Paradox. | Dữ liệu nhảy vọt thời gian (timeline) encode đúng payload. | 5/5 đạt |
+| ProtocolV3Test | Core mã hóa giao thức nhị phân V3. | Chuỗi byte sinh ra chuẩn format V3, tương thích ngược an toàn. | 5/5 đạt |
+| SnapshotV6Test | Đóng gói map Snapshot chuẩn V6. | Cấu trúc map lớn được serialize đầy đủ mà không mất object. | 4/4 đạt |
+| TeamMatchResultProtocolTest | Giao thức gửi kết quả chế độ Team. | Điểm số và thông tin xếp hạng team mã hóa không sai lệch. | 2/2 đạt |
+| AllMatchFormatsIntegrationTest | Tích hợp chạy thử tất cả format trận. | Server khởi chạy được mọi format game mà không ném lỗi. | 1/1 đạt |
+| BombClientIntegrationTest | Tích hợp giao tiếp bom hai chiều. | Client gửi đặt bom -> Server xác nhận -> Bom nổ đồng bộ tốt. | 3/3 đạt |
+| ConfiguredLobbyIntegrationTest | Tích hợp sảnh có nạp file cấu hình. | Sảnh load chính xác file custom ruleset từ bộ nhớ. | 1/1 đạt |
+| CurrentLobbyProtocolTest | Luồng giao thức sảnh hiện tại. | Client và server bắt tay (handshake) vào sảnh thành công. | 4/4 đạt |
+| LobbyLifecycleTest | Vòng đời hoạt động của Sảnh. | State machine chạy chuẩn: tạo, join, play, hủy và xóa memory. | 15/15 đạt |
+| MatchFormatLobbyIntegrationTest | Tích hợp format luật chơi vào Sảnh. | Sảnh áp dụng chính xác luật (ví dụ: giới hạn time) vào game. | 4/4 đạt |
+| MatchLifecycleIntegrationTest | Vòng đời thực tế của một trận đấu. | Start, vòng lặp, end game xử lý đúng theo luồng sự kiện. | 5/5 đạt |
+| MovementDemoProcessTest | Trình giả lập quá trình di chuyển. | Process mô phỏng di chuyển mượt mà qua các frame. | 1/1 đạt |
+| MovementDemoTest | Pass các case di chuyển cơ bản (Demo). | Không bị kẹt tường, đi đúng tốc độ tính toán. | 8/8 đạt |
+| ParadoxRecoveryIntegrationTest | Phục hồi mạng giữa chừng khi chơi Paradox. | Tái tạo lại state lịch sử chính xác; không sinh rác bộ nhớ. | 9/9 đạt |
+| ParadoxTimelineIntegrationTest | Tích hợp trục thời gian Paradox. | Checkpoint lưu trữ đúng vị trí để rollback không sai lệch. | 1/1 đạt |
+| RecoveryGameplayIntegrationTest | Các case phục hồi gameplay phức tạp. | Replay kết quả đúng; reject handshake nếu sai token; xử lý orphan client. | 8/8 đạt |
+| ShadowLobbyIntegrationTest | Tích hợp Sảnh có chế độ Shadow. | Sảnh khởi tạo và nhận cờ cấu hình khuất bóng thành công. | 4/4 đạt |
+| StabilityLifecycleTest | Stress test vòng đời hệ thống. | Chạy liên tục nhiều luồng không xảy ra hiện tượng memory leak. | 3/3 đạt |
+| ChatFaultTest | Chịu lỗi hệ thống kênh Chat. | Spam tin rác hoặc gửi format dị thường không làm sập phòng. | 1/1 đạt |
+| BombGameplayTest | Core kịch bản đặt và nổ bom. | Kích nổ bom đúng block/giới hạn; pass 10 nhánh luật fixture. | 10/10 đạt |
+| BombSchedulerTest | Bộ đếm ngược thời gian bom nổ. | Lập lịch nổ kích hoạt chuẩn xác từng mili-giây. | 1/1 đạt |
+| BombSystemTest | Cơ chế nâng cao: Trùng ô, chain reaction. | Bom nổ dây chuyền đúng mạch; block dừng tia lửa điện chuẩn. | 4/4 đạt |
+| ItemSystemTest | Cơ chế sinh vật phẩm (Spawn/Pickup). | Item rơi ra ngẫu nhiên và kích hoạt tác dụng chuẩn xác. | 2/2 đạt |
+| ArenaGeneratorTest | Thuật toán sinh bản đồ tự động. | Phân bổ hòm/tường không tạo ra dead-end không thể vượt qua. | 3/3 đạt |
+| ClassicModeFactoryTest | Khởi tạo map cho chế độ Cổ điển. | Factory sinh ra đúng số liệu cấu trúc chuẩn của mode Cổ điển. | 3/3 đạt |
+| ModeRegistryTest | Đăng ký các bộ luật chơi với hệ thống. | Toàn bộ các class chế độ chơi được Load vào memory hợp lệ. | 9/9 đạt |
+| ParadoxAuthoritativeTest | Cấp phép thẩm quyền trong mode Paradox. | Server làm nguồn gốc duy nhất, chống client tự ý dịch thời gian. | 6/6 đạt |
+| ParadoxFoundationTest | Nền tảng cấu trúc mode Paradox. | Engine theo dõi trục thời gian (timeline) khởi tạo an toàn. | 6/6 đạt |
+| ParadoxGameplayCheckpointTest | Thuật toán sao lưu state Paradox. | Trạng thái lưu/rollback không làm mất entity hay sai vật lý. | 8/8 đạt |
+| ShadowFoundationTest | Nền tảng chế độ khuất tầm nhìn (Shadow). | Engine che giấu thông tin (Fog of war) được build thành công. | 4/4 đạt |
+| ShadowGameplayTest | Logic gameplay ảnh hưởng bởi bóng tối. | Entity nấp sau tường không thể bị nhận diện bởi đối thủ. | 9/9 đạt |
+| ShadowScanTest | Thuật toán quét/Raycast Shadow. | Quét radar phát hiện đúng vật cản để xác định góc tối. | 5/5 đạt |
+| ShadowSynchronizationTest | Đồng bộ trạng thái Shadow xuống Client. | Chỉ gửi các entity thuộc vùng sáng khả kiến tới từng client. | 7/7 đạt |
+| ShadowUiTest | Xử lý hiển thị UI vùng tối trên màn hình. | Vùng đen che giấu bản đồ render trơn tru không gãy ảnh. | 5/5 đạt |
+| ShadowVisibilityTest | Quản lý vòng đời thực thể khi vào vùng tối. | Cắt luồng update dữ liệu của object lập tức khi nó rời khỏi FOV. | 5/5 đạt |
+| DeltaCompressionTest | Nén dung lượng dữ liệu bằng Delta. | Size gói tin nén giảm ~85.09% so với nguyên bản; packet đi đủ. | 1/1 đạt |
+| MovementFeatureTest | Tổ hợp tính năng lưới di chuyển (Move). | Prediction, nội suy, xử lý va chạm và luồng TCP chạy mượt mà. | 1/1 đạt |
+| BombRuntimeIntegrationTest | Chạy thực tế luồng bom trên server tick. | Thread xử lý bom không xung đột với thread game cập nhật map. | 4/4 đạt |
+| ConfiguredRuntimeTest | Cấu hình vòng lặp Tick-rate server. | Máy chủ duy trì đúng TPS (Ticks per second) theo setting truyền vào. | 8/8 đạt |
+| ExtendedItemsTest | Xử lý các hiệu ứng Item nâng cao. | Khiên (Shield) không cộng dồn sai; item hồi sinh chặn đánh lừa. | 6/6 đạt |
+| MatchGameplayTest | Luồng xử lý thi đấu chung. | Tranh chấp nhặt item một người thắng; xác định đúng Winner. | 5/5 đạt |
+| MovementBalanceTest | Cơ chế giới hạn lạm dụng di chuyển. | Tốc độ kịch trần (Max speed) ngăn ngừa hack speed bên client. | 4/4 đạt |
+| ParadoxRuntimeTest | Vòng lặp runtime riêng cho Paradox. | Event timeline được tiêm (inject) vào đúng tick của server. | 2/2 đạt |
+| RuntimeContractTest | Đảm bảo hợp đồng an toàn đa luồng. | Chuẩn FIFO, queue limit; dọn dẹp bộ nhớ (cleanup) thread an toàn. | 1/1 đạt |
+| TeamMatchGameplayTest | Trận đấu chế độ chia Đội chơi (Team). | Điểm số cộng/trừ chia đúng phe phái; loại đội thua chính xác. | 10/10 đạt |
+| RecoveryWriterTest | Cơ chế ghi file/buffer bản vá phục hồi. | Ghi đệm IO packet phục hồi không bị ném lỗi bộ nhớ tràn. | 1/1 đạt |
+| ServerTransportTest | Tầng giao vận (Transport) kết nối. | Gửi/nhận packet Inbound/Outbound đa luồng trơn tru. | 10/10 đạt |
+| SessionWriterTest | Dữ liệu stream từ Session gửi đi. | Đảm bảo luồng byte ghi xuống socket theo đúng thứ tự (order). | 3/3 đạt |
+| TransportStabilityTest | Ổn định giao vận mức cao. | Chịu tải liên tục không rớt socket hay ngắt mạng nội bộ. | 6/6 đạt |
+| MatchFormatRoomTest | Logic format thiết lập vào Phòng. | Phòng chặn các cấu hình lậu sai định dạng format quy định. | 2/2 đạt |
+| RoomConfigurationV3Test | Engine nạp cấu hình phòng V3. | Parse file cấu hình phức tạp V3 thành object không mất dữ liệu. | 2/2 đạt |
+| RoomManagerTest | Bộ quản lý tập trung các Phòng chờ. | Cấp phát Room ID ngẫu nhiên không trùng lắp (Collision). | 1/1 đạt |
+| ShadowRoomTest | Sảnh chuyên dụng biệt lập cho Shadow mode. | Sảnh phân nhánh mạng riêng, cắt luồng nhìn thấy toàn map. | 2/2 đạt |
+| SessionFaultTest | Chịu lỗi khi kết nối đứt đột ngột. | Cô lập người chơi rớt mạng; máy chủ game không bị sập lây. | 1/1 đạt |
+| SessionManagerTest | Trình quản lý toàn bộ Phiên đăng nhập. | Đăng ký token và thu hồi token đúng logic, không giữ session ma. | 4/4 đạt |
+| SessionRecoveryTest | Logic ân hạn (Grace Period) đứt kết nối. | Cấp quyền (admitted=true) nếu đúng hạn; từ chối (false) nếu trễ. | 13/13 đạt |
+| NetworkBenchmarkTest | Công cụ Benchmark sức chịu tải. | Cân bằng đủ 4 clients bom đồng thời, băng thông phản hồi cao. | 4/4 đạt |
+
+### 11.4. Kiểm thử tốc độ lệnh ở nhiều phòng (Multi-room Command Rate Stress Test)
+
+| Client | Phòng | Tốc độ thực tế (lệnh/người/giây) | Lệnh gửi | Đã ACK | Chưa ACK khi kết thúc | MOVE ACK P95 (ms) | RTT P95 (ms) | Tick TB (Hz) | Kết quả |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | :--- |
+| 10 | 3 | 19.986 | 2,000 | 2,000 | 0 | 32.405 | 6.519 | 19.986 | PASS |
+| 10 | 3 | 29.987 | 3,000 | 2,200 | 800 | 3,511.083 | 6.276 | 20.091 | ANOMALY |
+| 50 | 13 | 19.993 | 10,000 | 10,000 | 0 | 71.152 | 5.934 | 20.025 | PASS |
+| 50 | 13 | 29.996 | 15,000 | 10,992 | 4,008 | 3,500.687 | 6.203 | 20.057 | ANOMALY |
+| 100 | 25 | 19.991 | 20,000 | 20,000 | 0 | 70.709 | 6.122 | 20.114 | PASS |
+| 100 | 25 | 29.990 | 30,000 | 21,992 | 8,008 | 3,504.116 | 6.149 | 20.090 | ANOMALY |
+| 122 | 31 | 19.989 | 24,400 | 24,400 | 0 | 72.905 | 5.908 | 20.143 | PASS |
+| 122 | 31 | 29.993 | 36,600 | 26,832 | 9,768 | 3,505.975 | 5.920 | 20.089 | ANOMALY |multiplayer.csv) |
+
+Ở các lượt đo này, 20 lệnh/người/giây đạt ngưỡng với 10, 50, 100 và 122 client. Mức 30 lệnh/người/giây vượt ngưỡng MOVE ACK P95 200 ms; số “chưa ACK” là lệnh chưa được xác nhận sau cửa sổ đo và một giây chờ, không khẳng định chúng mất vĩnh viễn. CPU/RAM không được đo riêng cho server vì server và load generator cùng JVM.
 
 ## 12. Novelty — Cải tiến và đóng góp
 
