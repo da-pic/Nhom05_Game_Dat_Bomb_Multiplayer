@@ -9,7 +9,6 @@ import javax.swing.SwingUtilities;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-/** Component/EDT thật, không coi ảnh offscreen là kiểm thử thao tác GUI của người dùng. */
 class ModeSelectionPanelTest {
     @Test void paradoxSelectionUsesItsOwnDescriptionAndConfiguration()throws Exception{
         SwingUtilities.invokeAndWait(()->{
