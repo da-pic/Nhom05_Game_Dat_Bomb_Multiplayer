@@ -12,10 +12,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.util.Objects;
 
-/**
- * Lớp phủ Swing trong suốt dùng để vẽ các đối tượng trò chơi của TV3 lên bản đồ.
- * Các callback mạng cập nhật trạng thái hiển thị; EDT của Swing thực hiện việc vẽ.
- */
+
 public final class BombItemEffectsPanel extends JPanel {
     private static final int DEFAULT_FRAME_DELAY_MILLIS = 16;
 
