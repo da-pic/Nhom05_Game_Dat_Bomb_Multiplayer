@@ -7,7 +7,6 @@ import com.bombit.server.game.movement.EntityData;
 import java.awt.*;
 import java.awt.geom.Arc2D;
 
-/** Fog trình bày view đã lọc: bom địch ngoài tầm nhìn đã bị server loại; vụ nổ vẫn công khai. */
 public final class ShadowOverlayRenderer {
     private final com.bombit.client.ui.game.bomb.BombRenderer bombs=new com.bombit.client.ui.game.bomb.BombRenderer();
     public void fog(Graphics2D g,ShadowReplica replica,int width,int height,int size){
@@ -26,8 +25,7 @@ public final class ShadowOverlayRenderer {
             g.setColor(color);String name=switch(station.id()){case 1->"Bắc";case 2->"Giữa";default->"Nam";};g.drawString(name,x+1,y-3);
         }
         for(var entity:controller.world().getEntities().values()){
-            // Chỉ vẽ bom được server cấp trong view; không suy diễn vị trí từ thông báo hoặc vụ nổ.
-            // Bom đồng đội có thể nằm ngoài vùng nhìn; viền sáng giúp nhận ra trên mọi theme.
+      
             if(entity.kind()==EntityData.Kind.BOMB){
                 int x=entity.tileX()*size,y=entity.tileY()*size;
                 g.setColor(new Color(255,191,68,65));g.fillOval(x+2,y+2,size-4,size-4);
