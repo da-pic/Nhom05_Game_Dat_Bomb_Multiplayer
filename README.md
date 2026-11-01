@@ -44,7 +44,7 @@ Luật mặc định:
 
 Kiến trúc **client/server authoritative**: client không tự quyết định vị trí, damage, item hoặc kết quả. Cách tách input, mô phỏng và hiển thị dựa trên nguyên tắc game loop, client prediction và interpolation.
 
-~~~mermaid
+```mermaid
 flowchart LR
     subgraph C[Client Swing]
         UI[Lobby / Game GUI]
@@ -70,7 +70,7 @@ flowchart LR
     end
     CN -->|TCP request| NET
     SW -->|TCP response / snapshot| CN
-~~~
+```
 
 ### Thành phần và concurrency
 
@@ -82,7 +82,7 @@ flowchart LR
 | `server/game/mode`, `checkpoint`                         | Registry/factory cho mode, Shadow, lịch sử checkpoint và Paradox rewind.                                       |
 | `server/game/replication`                                | Đọc frame bất biến, lọc góc nhìn, tạo full/delta và giữ baseline riêng cho từng người nhận.                    |
 | `common/dto`, `common/protocol`                          | Contract dữ liệu, framing, encode/decode và validation.                                                        |
-| `client/app`, `network`, `game/movement`, `ui`           | Kết nối, lifecycle, replica, prediction/reconciliation/interpolation và GUI.                                   | 
+| `client/app`, `network`, `game/movement`, `ui`           | Kết nối, lifecycle, replica, prediction/reconciliation/interpolation và GUI.                                   |
 | `metrics`, `tools`                                       | Đo RTT, lưu lượng ứng dụng và runner benchmark.                                                                |
 
 Reader/handler chuyển thao tác thành command và đưa vào hàng đợi giới hạn 4096 phần tử của runtime. Thao tác enqueue không chặn vô hạn; command bị từ chối khi hàng đợi đầy và được ghi nhận qua bộ đếm. Game loop xử lý command theo thứ tự, cập nhật di chuyển và gameplay, sau đó công bố ảnh trạng thái bất biến. Các thread mạng tiếp nhận ảnh trạng thái qua hàng đợi riêng để gửi tới client. Giao diện Swing được cập nhật trên Event Dispatch Thread (EDT). Mô hình một luồng ghi trạng thái kết hợp hàng đợi thread-safe giúp kiểm soát truy cập đồng thời.
@@ -98,7 +98,7 @@ Reader/handler chuyển thao tác thành command và đưa vào hàng đợi gi�
 
 ### Cấu trúc source
 
-~~~text
+```text
 BombItMultiplayer-Structure/
 │
 ├── README.md
@@ -122,7 +122,7 @@ BombItMultiplayer-Structure/
 │
 ├── scripts/                        # Build, run, test và đóng gói
 └── report/                         # Báo cáo và tài liệu thực nghiệm
-~~~
+```
 
 ## 3. Technology stack — Công nghệ
 
@@ -161,7 +161,7 @@ Các lệnh trong tài liệu được thực hiện bằng **PowerShell**, tạ
 2. Giải nén **toàn bộ** ZIP. Không chạy launcher trực tiếp trong trình xem ZIP; không tách JAR khỏi runtime/scripts.
 3. Kiểm tra thư mục có cấu trúc:
 
-   ~~~text
+   ```text
    bomb-it-multiplayer/
        CHOI_GAME.cmd
        MAY_CHU.cmd
@@ -169,46 +169,41 @@ Các lệnh trong tài liệu được thực hiện bằng **PowerShell**, tạ
        BUILD_INFO.txt
        runtime/
        scripts/
-   ~~~
+   ```
 
 4. Chạy server/client theo mục 8–9. ZIP mặc định kèm runtime; ZIP tạo với tùy chọn NoRuntime yêu cầu máy nhận có Java 25+.
 
 ### 5.2. Biên dịch từ mã nguồn
 
-~~~powershell
+Trước khi chạy các lệnh dưới đây, thực hiện **Bước 1 và Bước 2 tại mục 10** trong cùng cửa sổ PowerShell để tải và cấu hình JDK/Maven. Nếu đã clone dự án, mở terminal tại thư mục chứa `pom.xml` và chỉ chạy lệnh build, không clone lại. Lệnh clone yêu cầu máy đã cài Git.
+
+```powershell
 git clone https://github.com/da-pic/BTL_LTM.git
 cd BTL_LTM
 git branch --show-current
 java -version
 javac -version
 cmd /c scripts\build-demo.cmd
-~~~
+```
 
-Server và client sử dụng cùng phiên bản phát hành hoặc cùng branch/tag mã nguồn. Trường hợp JDK chưa được cấu hình, thiết lập JAVA_HOME tại terminal:
-
-~~~powershell
-$env:JAVA_HOME = 'C:\Java\jdk-25'
-cmd /c scripts\build-demo.cmd
-~~~
-
-JAVA_HOME trỏ tới thư mục cài đặt JDK; giá trị trong ví dụ cần được điều chỉnh theo môi trường cài đặt.
+Server và client sử dụng cùng phiên bản phát hành hoặc cùng branch/tag mã nguồn. Các biến môi trường ở mục 10 chỉ áp dụng trong cửa sổ PowerShell hiện tại; khi mở terminal mới, chạy lại Bước 2 trước khi build.
 
 Quá trình biên dịch tạo **target/bomb-it-multiplayer.jar**, **target/demo-classes/** và **target/BUILD_INFO.txt**, không yêu cầu Maven. Source được biên dịch lại sau mỗi lần thay đổi. Script classpath ưu tiên demo-classes trong thư mục source và sử dụng JAR ở gốc đối với bản phát hành.
 
 Tạo ZIP mới từ source:
 
-~~~powershell
+```powershell
 cmd /c scripts\package.cmd
-~~~
+```
 
 Đầu ra gồm **target/release/bomb-it-multiplayer.zip** và **bomb-it-multiplayer.zip.sha256** trong cùng thư mục. Script biên dịch ứng dụng và tạo runtime đi kèm. ZIP chứa các thành phần chạy ứng dụng; bộ mã nguồn và kiểm thử được phân phối qua repository.
 
 Kiểm tra SHA-256 với checksum đi kèm:
 
-~~~powershell
+```powershell
 Get-FileHash .\target\release\bomb-it-multiplayer.zip -Algorithm SHA256
 Get-Content .\target\release\bomb-it-multiplayer.zip.sha256
-~~~
+```
 
 ## 6. Configuration — Cấu hình
 
@@ -247,9 +242,9 @@ Bản đồ mặc định có kích thước 17×15 ô, mỗi ô 32 pixel. Chu k
 
 Ví dụ cấu hình thời lượng trận 120 giây khi chạy từ source. Java system property được đặt trước tên class:
 
-~~~powershell
+```powershell
 & "$env:JAVA_HOME\bin\java.exe" '-Dbombit.match.durationMillis=120000' -cp target/demo-classes com.bombit.server.app.ServerApplication 8888
-~~~
+```
 
 Với ZIP có runtime, dùng runtime/bin/java.exe và classpath bomb-it-multiplayer.jar. Các giá trị phải thỏa validation, ví dụ chỉ số đầu không vượt trần; cấu hình sai có thể bị từ chối khi khởi tạo.
 
@@ -262,29 +257,29 @@ Dừng/crash server làm mất các trạng thái này. Session Recovery chỉ p
 
 Tại thư mục source đã biên dịch hoặc thư mục bản phát hành đã giải nén, thực hiện:
 
-~~~powershell
+```powershell
 .\MAY_CHU.cmd
-~~~
+```
 
 Đổi cổng khi cần:
 
-~~~powershell
+```powershell
 .\MAY_CHU.cmd 8889
-~~~
+```
 
 Lệnh tương đương:
 
-~~~powershell
+```powershell
 cmd /c scripts\run-server.cmd 8888
-~~~
+```
 
 Server hiển thị cổng lắng nghe và các địa chỉ IPv4 của máy chủ. Terminal server được duy trì trong suốt trận đấu; **Ctrl+C** dừng server. Các client kết nối đến cùng một máy chủ qua địa chỉ LAN/Radmin phù hợp.
 
 Kiểm tra runtime mà không mở listener:
 
-~~~powershell
+```powershell
 .\MAY_CHU.cmd --check-runtime
-~~~
+```
 
 ## 9. Run client — Chạy game
 
@@ -292,23 +287,23 @@ Kiểm tra runtime mà không mở listener:
 
 Mở terminal thứ hai:
 
-~~~powershell
+```powershell
 .\CHOI_GAME.cmd 127.0.0.1 8888 Player1
-~~~
+```
 
 Mở thêm client:
 
-~~~powershell
+```powershell
 .\CHOI_GAME.cmd 127.0.0.1 8888 Player2
 .\CHOI_GAME.cmd 127.0.0.1 8888 Player3
 .\CHOI_GAME.cmd 127.0.0.1 8888 Player4
-~~~
+```
 
 Launcher không đối số mở màn hình nhập host, cổng và tên người chơi. Launcher sử dụng javaw; script sau chạy client với console để hiển thị thông báo lỗi:
 
-~~~powershell
+```powershell
 cmd /c scripts\run-client.cmd 127.0.0.1 8888 Player1
-~~~
+```
 
 ### Khác máy qua LAN/Radmin
 
@@ -316,10 +311,10 @@ cmd /c scripts\run-client.cmd 127.0.0.1 8888 Player1
 2. Các máy dùng cùng LAN hoặc tham gia cùng mạng Radmin; dùng cùng phiên bản game.
 3. Mỗi máy kiểm tra kết nối, thay địa chỉ ví dụ bằng IPv4 server thực tế:
 
-   ~~~powershell
+   ```powershell
    Test-NetConnection -ComputerName 26.10.20.30 -Port 8888
    .\CHOI_GAME.cmd 26.10.20.30 8888 Player2
-   ~~~
+   ```
 
 4. Nếu TcpTestSucceeded=False, kiểm tra listener, đúng IP/cổng và firewall TCP inbound trên server. Cho phép ứng dụng/cổng trên profile mạng đang dùng; không cần tắt toàn bộ firewall.
 
@@ -341,7 +336,7 @@ cmd /c scripts\run-client.cmd 127.0.0.1 8888 Player1
 Item được nhặt tự động khi nhân vật đi vào vùng hợp lệ. Sau recovery hoặc rewind, người chơi nhả và nhấn lại phím để tiếp tục điều khiển. Kịch bản kiểm tra mất mạng được thực hiện bằng cách giữ ứng dụng client và server hoạt động, ngắt đường truyền của client rồi khôi phục trong thời gian grace. Thao tác chủ động rời phòng được xử lý theo lifecycle riêng.
 
 ### Lỗi thường gặp
- 
+
 | Hiện tượng                          | Cách xử lý                                                                       |
 | ----------------------------------- | -------------------------------------------------------------------------------- |
 | Báo chưa build/không tìm thấy class | Source: chạy build-demo.cmd. ZIP: giải nén đủ thư mục.                           |
@@ -357,31 +352,108 @@ Item được nhặt tự động khi nhân vật đi vào vùng hợp lệ. Sau
 
 ### Bộ kiểm thử đầy đủ từ source
 
-~~~powershell
-mvn -version
+Hướng dẫn cài tự động dưới đây dành cho **Windows 10/11 64-bit Intel/AMD (x64), PowerShell 5.1 trở lên**, cần Internet. Các script `.cmd` không chạy trực tiếp trên Linux/macOS. Máy Windows ARM cần JDK phù hợp với kiến trúc máy; không dùng khối tải x64 dưới đây.
+
+Sao chép **toàn bộ từng khối lệnh**, gồm cả `$env:...`, dấu ngoặc và dấu nháy. Không sao chép ký hiệu đầu dòng terminal như `PS D:\...>`. Chỉ nhập một đường dẫn trong dấu nháy sẽ in đường dẫn ra màn hình, không cấu hình môi trường.
+
+#### Bước 1: Tải JDK và Maven (chỉ cần làm một lần)
+
+Mở PowerShell thông thường, dán toàn bộ khối sau rồi nhấn Enter. Lệnh tải Temurin JDK 25 và Maven 3.9.12 vào thư mục `bombit-tools` trong `%LOCALAPPDATA%` của người dùng hiện tại, không yêu cầu tự sửa đường dẫn và không thay đổi cấu hình Java của hệ thống. Nếu máy đã cài Java/Maven ở nơi khác, hướng dẫn này vẫn dùng bản riêng cho dự án.
+
+```powershell
+& {
+    $ErrorActionPreference = 'Stop'
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    $toolsDir = Join-Path $env:LOCALAPPDATA 'bombit-tools'
+    $jdkDir = Join-Path $toolsDir 'jdk-25'
+    $mavenDir = Join-Path $toolsDir 'apache-maven-3.9.12'
+    New-Item -ItemType Directory -Path $toolsDir -Force | Out-Null
+
+    $jdk = Get-ChildItem -LiteralPath $jdkDir -Directory -ErrorAction SilentlyContinue |
+        Where-Object { Test-Path (Join-Path $_.FullName 'bin\javac.exe') } |
+        Select-Object -First 1
+    if (-not $jdk) {
+        Write-Host 'Dang tai JDK 25, vui long cho...'
+        $jdkZip = Join-Path $toolsDir 'jdk-25.zip'
+        Invoke-WebRequest -UseBasicParsing -Uri 'https://api.adoptium.net/v3/binary/latest/25/ga/windows/x64/jdk/hotspot/normal/eclipse' -OutFile $jdkZip
+        Expand-Archive -LiteralPath $jdkZip -DestinationPath $jdkDir -Force
+    }
+
+    if (-not (Test-Path (Join-Path $mavenDir 'bin\mvn.cmd'))) {
+        Write-Host 'Dang tai Maven 3.9.12, vui long cho...'
+        $mavenZip = Join-Path $toolsDir 'apache-maven-3.9.12-bin.zip'
+        Invoke-WebRequest -UseBasicParsing -Uri 'https://archive.apache.org/dist/maven/maven-3/3.9.12/binaries/apache-maven-3.9.12-bin.zip' -OutFile $mavenZip
+        Expand-Archive -LiteralPath $mavenZip -DestinationPath $toolsDir -Force
+    }
+    Write-Host 'Da tai va giai nen. Tiep tuc Buoc 2.'
+}
+```
+
+Nếu có lỗi màu đỏ hoặc tải bị ngắt, kiểm tra kết nối Internet rồi chạy lại cả khối Bước 1. Các công cụ đã giải nén đầy đủ sẽ được bỏ qua. Nguồn tải: [Eclipse Adoptium](https://api.adoptium.net/q/swagger-ui/) và [Apache Maven](https://archive.apache.org/dist/maven/maven-3/3.9.12/binaries/).
+
+#### Bước 2: Cấu hình terminal và kiểm tra phiên bản
+
+Chạy toàn bộ khối dưới đây sau Bước 1. **Mỗi lần mở PowerShell/terminal IDE mới, chạy lại khối Bước 2**; không cần tải lại Bước 1. Khối này tự tìm đường dẫn vừa cài và thay giá trị `BOMBIT_MVN` cũ trong terminal hiện tại.
+
+```powershell
+& {
+    $ErrorActionPreference = 'Stop'
+    $toolsDir = Join-Path $env:LOCALAPPDATA 'bombit-tools'
+    $jdkDir = Join-Path $toolsDir 'jdk-25'
+    if (-not (Test-Path -LiteralPath $jdkDir -PathType Container)) {
+        throw 'Chua tai JDK. Hay chay toan bo khoi lenh Buoc 1, cho hoan tat roi chay lai Buoc 2.'
+    }
+    $jdk = Get-ChildItem -LiteralPath $jdkDir -Directory |
+        Where-Object { Test-Path (Join-Path $_.FullName 'bin\javac.exe') } |
+        Select-Object -First 1
+    $env:BOMBIT_MVN = Join-Path $toolsDir 'apache-maven-3.9.12\bin\mvn.cmd'
+    if (-not $jdk -or -not (Test-Path $env:BOMBIT_MVN)) {
+        throw 'Chua co du JDK/Maven. Hay chay lai Buoc 1.'
+    }
+    $env:JAVA_HOME = $jdk.FullName
+    $mavenBin = Split-Path -Parent $env:BOMBIT_MVN
+    $env:Path = "$env:JAVA_HOME\bin;$mavenBin;$env:Path"
+    java -version
+    javac -version
+    & $env:BOMBIT_MVN -version
+}
+```
+
+Java và javac phải hiển thị phiên bản **25 trở lên**. Thông tin Java trong kết quả `mvn -version` cũng phải đáp ứng yêu cầu này. Nếu xuất hiện thông báo “not recognized”, kiểm tra lại việc cài đặt và cấu hình `PATH` của công cụ tương ứng.
+
+#### Bước 3: Chạy toàn bộ kiểm thử
+
+Mở PowerShell tại thư mục dự án chứa `pom.xml`, sau đó chạy:
+
+```powershell
 cmd /c scripts\test.cmd
-~~~
+```
 
-Script chạy tuần tự **Maven/JUnit → check-tv2.cmd → NetworkTest**. Bộ kiểm thử thành công khi toàn bộ các bước trả exit code 0. Các bài kiểm tra hết hạn phiên sử dụng grace thực 30 giây, vì vậy thời gian chạy toàn bộ suite có thể kéo dài vài phút.
+Trong VS Code, mở thư mục dự án rồi chọn **Terminal → New Terminal**, chọn PowerShell và chạy Bước 2 trong chính terminal đó trước khi chạy lệnh test. Nếu báo không tìm thấy `scripts\test.cmd`, terminal đang ở sai thư mục; chuyển về thư mục chứa `pom.xml` của bản clone.
 
-Trường hợp Maven chưa được thêm vào PATH, cấu hình đường dẫn mvn.cmd bằng biến môi trường:
+Script chạy tuần tự **Maven/JUnit → check-tv2.cmd → NetworkTest**. Các bài kiểm tra hết hạn phiên sử dụng grace thực 30 giây, vì vậy thời gian chạy toàn bộ suite có thể kéo dài vài phút.
 
-~~~powershell
-$env:BOMBIT_MVN = 'C:\Tools\apache-maven-3.9.12\bin\mvn.cmd'
-cmd /c scripts\test.cmd
-~~~
+Ngay sau khi script kết thúc, kiểm tra mã thoát:
 
-Giá trị BOMBIT_MVN được điều chỉnh theo thư mục cài đặt Maven. Chế độ offline được sử dụng khi cache đã chứa đầy đủ plugin và dependency:
+```powershell
+$LASTEXITCODE
+```
 
-~~~powershell
+Giá trị `0` nghĩa là toàn bộ các bước thành công. Nếu khác `0`, xem thông báo lỗi phía trên.
+
+#### Chạy khi không có Internet
+
+Lần chạy đầu cần kết nối Internet để Maven tải plugin và thư viện chưa có trong cache. Chỉ sử dụng chế độ offline khi cache đã chứa đầy đủ các thành phần cần thiết:
+
+```powershell
 cmd /c scripts\test.cmd -o
-~~~
-
-Các dependency chưa có trong cache phải được tải trong lần chạy có kết nối Internet.
+```
 
 ### Kiểm tra theo phạm vi
 
-~~~powershell
+Chạy Bước 2 trong terminal hiện tại rồi chạy các lệnh dưới đây tại thư mục chứa `pom.xml`. `check-tv2.cmd` yêu cầu JDK 25 trở lên và không cần Maven; Bước 2 đã thêm Maven vào `PATH` để chạy các lệnh `mvn`.
+
+```powershell
 # Queue, FIFO, multithreading, snapshot, prediction/collision và đối chứng delta; không cần Maven.
 cmd /c scripts\check-tv2.cmd
 
@@ -390,8 +462,7 @@ mvn '-Dtest=AllMatchFormatsIntegrationTest,ParadoxRecoveryIntegrationTest,TeamMa
 
 # Replica Shadow, checkpoint và rewind authoritative.
 mvn '-Dtest=ShadowSynchronizationTest,ParadoxGameplayCheckpointTest,ParadoxAuthoritativeTest' test
-~~~
-
+```
 
 | Phạm vi GUI/tích hợp | Nội dung kiểm tra                                                                                  |
 | -------------------- | -------------------------------------------------------------------------------------------------- |
@@ -404,11 +475,25 @@ mvn '-Dtest=ShadowSynchronizationTest,ParadoxGameplayCheckpointTest,ParadoxAutho
 
 ### Benchmark mạng chẩn đoán
 
-~~~powershell
-cmd /c scripts\run-benchmark.cmd --local --mode suite --seconds 5 --warmup 1 --label local-v2-diagnostic --csv target\network-results.csv
-~~~
+Mở PowerShell tại thư mục dự án chứa `pom.xml` và chạy Bước 2 ở trên để cấu hình JDK trong terminal hiện tại.
 
-Công cụ được chạy sau khi biên dịch source. Suite gồm workload transport với 1/2/4 client và idle/movement/bombs với 2/4 client. Tham số --mode xác định workload benchmark. Runner local sử dụng endpoint legacyDiagnostic theo **protocol v2**, tách biệt với lobby public v3/snapshot v6. Kết quả benchmark được đánh giá trong phạm vi endpoint này.
+**1. Build game trước khi chạy benchmark:**
+
+```powershell
+cmd /c scripts\build-demo.cmd
+```
+
+Chờ build hoàn tất thành công rồi mới chạy lệnh tiếp theo. Nếu build báo lỗi, xử lý lỗi trước khi tiếp tục. Cần build lại sau khi thay đổi mã nguồn.
+
+**2. Chạy benchmark:**
+
+```powershell
+cmd /c scripts\run-benchmark.cmd --local --mode suite --seconds 5 --warmup 1 --label local-v2-diagnostic --csv target\network-results.csv
+```
+
+Kết quả được lưu tại `target/network-results.csv`. Nếu xuất hiện thông báo “Build first with scripts\build-demo.cmd”, quay lại bước build ở trên.
+
+Suite gồm workload transport với 1/2/4 client và idle/movement/bombs với 2/4 client. Tham số --mode xác định workload benchmark. Runner local sử dụng endpoint legacyDiagnostic theo **protocol v2**, tách biệt với lobby public v3/snapshot v6. Kết quả benchmark được đánh giá trong phạm vi endpoint này.
 
 RTT đo PING/PONG; MOVE ACK đo từ gửi input đến xử lý snapshot xác nhận sequence. TX/RX là byte frame ứng dụng, chưa tính TCP/IP header/retransmission.
 
@@ -418,36 +503,92 @@ Kết quả được trình bày theo môi trường, phiên bản giao thức v
 
 ### 11.1. Đối chứng full–delta
 
-| Chỉ số                     | Gửi full mỗi tick    | Delta kèm full định kỳ |
-| -------------------------- | -------------------- | ---------------------- |
-| Tick mô phỏng              |                      |                        |
-| Tổng byte frame ứng dụng   |                      |                        | 
-| Số packet snapshot         |                      |                        |
-| Giảm tổng byte so với full | -                    |                        |
+#### Cách chạy thực nghiệm
+
+1. Mở PowerShell tại thư mục dự án chứa `pom.xml`. Nếu đang dùng terminal mới, chạy lại **Bước 2 ở mục 10** để cấu hình JDK. Thực nghiệm yêu cầu JDK 25 trở lên, không cần Maven và không cần mở server/client.
+2. Chạy lệnh sau. Script tự biên dịch source, chạy các kiểm tra và thực nghiệm full–delta:
+
+   ```powershell
+   cmd /c scripts\check-tv2.cmd
+   ```
+
+3. Ngay sau khi lệnh kết thúc, kiểm tra mã thoát:
+
+   ```powershell
+   $LASTEXITCODE
+   ```
+
+   Chỉ sử dụng kết quả khi mã thoát là `0` và có dòng `PASS` của thực nghiệm. Nếu script báo lỗi, xử lý lỗi trước; không dùng file kết quả có thể còn lại từ lần chạy trước.
+
+4. Mở file `target/delta-compression-results.csv` trong VS Code hoặc xem các dòng cuối bằng lệnh:
+
+   ```powershell
+   Get-Content target\delta-compression-results.csv -Tail 5
+   ```
+
+File chứa số byte từng tick với các cột `tick,full_frame_bytes,delta_frame_bytes`. Dòng cuối tổng hợp kết quả có dạng sau (dấu `...` đại diện cho số liệu thực tế, không phải lệnh để chạy):
+
+```text
+PASS: full=... bytes, delta=... bytes, saved=...%, packets=.../200
+```
+
+Điền các ô trống dưới đây bằng số liệu của lần chạy thành công:
+
+| Chỉ số                     | Gửi full mỗi tick    | Delta kèm full định kỳ       |
+| -------------------------- | -------------------- | ---------------------------- |
+| Tick mô phỏng              | 200                  | 200                          |
+| Tổng byte frame ứng dụng   | 110076               | 16411                        |
+| Số packet snapshot         | 200                  | 83                           |
+| Giảm tổng byte so với full | -                    | 85.09%                       |
 
 Nguồn thực thi: (src/test/java/com/bombit/server/game/movement/DeltaCompressionCheck.java). Cùng world 17×15, một player di chuyển 80 tick đầu, có thêm/xóa entity; full tại tick 1/100/200. Đo sau SnapshotPacketCodec và PacketEncoder, gồm framing/JSON/Base64, chưa tính TCP/IP. Replica được đối chiếu với ảnh full trong kịch bản.
 
-
 ### 11.2. Thực nghiệm TCP loopback
 
-Run ID task10-loopback-20261022, revision f9bdab1-dirty. Windows 11 amd64, Java 25.0.1, 16 logical processors; bản đo lịch sử dùng bytecode target 17. Server/client cùng JVM, TCP loopback, warmup 1 giây, cửa sổ đo khoảng 5 giây, một lượt chạy.
+#### Cách chạy thực nghiệm
+
+1. Mở PowerShell tại thư mục chứa `pom.xml` và chạy **Bước 2 ở mục 10** để cấu hình JDK trong terminal hiện tại.
+2. Build game và chờ hoàn tất thành công trước khi tiếp tục:
+
+   ```powershell
+   cmd /c scripts\build-demo.cmd
+   ```
+
+3. Chạy suite benchmark. Lệnh tự mở server và các client thử nghiệm trên cùng máy qua `127.0.0.1`, không cần mở GUI hoặc server riêng:
+
+   ```powershell
+   cmd /c scripts\run-benchmark.cmd --local --mode suite --seconds 5 --warmup 1 --label local-v2-diagnostic --csv target\network-results.csv
+   ```
+
+   Suite chạy nhiều kịch bản liên tiếp; mỗi kịch bản có 1 giây warmup và khoảng 5 giây đo, nên tổng thời gian dài hơn 6 giây. Ngay sau khi lệnh kết thúc, chạy `$LASTEXITCODE`; chỉ dùng kết quả khi mã thoát là `0`.
+
+4. Đọc kết quả trong `target/network-results.csv`. Mỗi dòng là số liệu của **một client trong một kịch bản**. File được ghi nối tiếp qua các lần chạy, vì vậy chỉ chọn các dòng có cùng `run_id` của lần thực nghiệm cần báo cáo. Có thể lấy lần chạy cuối bằng khối lệnh:
+
+   ```powershell
+   $rows = @(Import-Csv target\network-results.csv)
+   $lastRunId = $rows[-1].run_id
+   $currentRun = @($rows | Where-Object { $_.run_id -eq $lastRunId })
+   $currentRun | Select-Object scenario, client_index, status, cleanup_ok, error | Format-Table -AutoSize
+   ```
+
+   Kiểm tra các dòng của lần chạy có `status=PASS`, `cleanup_ok=true` và không có lỗi trong cột `error`. Nếu lần chạy cuối thất bại hoặc thiếu kịch bản, xử lý lỗi và chạy lại trước khi điền bảng.
+
 
 | Workload         | Client | Tổng TX ứng dụng (B/s) | Tổng RX ứng dụng (B/s) | RTT p95 lớn nhất/client (ms) | MOVE ACK p95 lớn nhất/client (ms) |
 | ---------------- | ------ | ---------------------- | ---------------------- | ---------------------------- | --------------------------------- |
-| Transport        | 4      |                        |                        |                              |                                   |
-| Idle gameplay    | 4      |                        |                        |                              |                                   | 
-| Movement         | 2      |                        |                        |                              |                                   |
-| Movement         | 4      |                        |                        |                              |                                   |
-| Bombs + movement | 4      |                        |                        |                              |                                   |
+| Transport        | 4      | 377.264                | 377.264                | 2.691                        | N/A                               |
+| Idle gameplay    | 4      | 379.996                | 2335.180               | 2.333                        | N/A                               |
+| Movement         | 2      | 4232.162               | 15766.134              | 2.530                        | 47.385                            |
+| Movement         | 4      | 8449.698               | 47688.324              | 2.532                        | 46.744                            |
+| Bombs + movement | 4      | 7209.507               | 43374.344              | 16.069                       | 77.691                            |
 
-
-Bộ số liệu phản ánh phiên bản baseline và môi trường loopback được mô tả ở trên. Hiệu năng của pipeline đa mode, mạng LAN/WAN, tải tối đa và độ ổn định dài hạn chưa được đánh giá bằng bộ phép đo tương đương.
+Bộ số liệu chỉ phản ánh phiên bản mã nguồn và môi trường loopback của lần chạy được ghi nhận, dùng endpoint chẩn đoán protocol v2 như mô tả ở mục 10. Hiệu năng của pipeline đa mode, mạng LAN/WAN, tải tối đa và độ ổn định dài hạn chưa được đánh giá bằng bộ phép đo tương đương.
 
 ### 11.3. Kiểm tra chức năng đa mode
 
 Kiểm tra GUI được thực hiện cục bộ bằng runtime đi kèm bản ZIP đã giải nén. Ma trận bao gồm Classic cá nhân/đội, Paradox cá nhân/đội và Shadow đội; các kịch bản gồm hủy READY khi thay đổi cấu hình, kết quả đội, rewind, scan, recovery, chơi lại và chuyển mode.
 
-Các kịch bản tự động được cài đặt trong (src/test/java/com/bombit/integration/AllMatchFormatsIntegrationTest.java), (src/test/java/com/bombit/server/game/runtime/TeamMatchGameplayTest.java), (src/test/java/com/bombit/integration/ParadoxRecoveryIntegrationTest.java) và (src/test/java/com/bombit/server/game/mode/shadow/ShadowSynchronizationTest.java). Quy trình tại mục 10 cho phép tái chạy các kịch bản và xuất báo cáo theo phiên bản mã nguồn được kiểm tra.
+Các kịch bản tự động được cài đặt trong (src/test/java/com/bombit/integration/AllMatchFormatsIntegrationTest.java), (src/test/java/com/bombit/server/game/runtime/TeamMatchGameplayTest.java), (src/test/java/com/bombit/integration/ParadoxRecoveryIntegrationTest.java) và (src/test/java/com/bombit/server/game/mode/shadow/ShadowSynchronizationTest.java). 
 
 ## 12. Novelty — Cải tiến và đóng góp
 
@@ -468,7 +609,6 @@ Các đóng góp kỹ thuật thể hiện việc quản lý trạng thái autho
 - Các phép đo hiện mới thực hiện trên môi trường loopback với thời gian ngắn, chưa phản ánh đầy đủ độ trễ biến động, sự cố mạng hoặc trải nghiệm thực tế trên giao diện Swing. Hệ thống cũng chưa được đánh giá toàn diện về CPU, RAM, khả năng vận hành dài hạn và hiệu quả khôi phục phiên chơi.
 
 - Nhìn chung, kết quả cho thấy tính khả thi của việc xây dựng trò chơi multiplayer bằng Java và TCP, đồng thời tạo cơ sở để tiếp tục kiểm thử và hoàn thiện hệ thống trong tương lai.
-
 
 ## 14. References — Tài liệu tham khảo
 
