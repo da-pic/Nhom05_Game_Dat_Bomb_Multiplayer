@@ -19,7 +19,6 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 import static com.bombit.common.protocol.JsonV3.*;
 
-/** Lobby v3 tuần tự hóa room/stream; simulation vẫn chỉ do GameLoop sở hữu. */
 final class CurrentLobbyGameServer implements AutoCloseable,GameEventSink {
     private final Server server;
     private final RoomManager rooms;
@@ -149,7 +148,6 @@ final class CurrentLobbyGameServer implements AutoCloseable,GameEventSink {
         try{while(match.active&&match.game.isRunning()){
             var frame=match.game.pollWorldFrame(200,TimeUnit.MILLISECONDS);if(frame==null)continue;
             synchronized(this){if(!match.active)break;
-                // Frame đã dequeue trước một rewind có thể còn đang chờ monitor: không gửi nhánh cũ.
                 if(frame.paradox()!=null&&frame.paradox().timelineEpoch()!=match.game.timelineEpoch())continue;
                 for(var result:frame.plantResults()){var member=match.roster.stream().filter(s->match.context.playerId(s.getPlayerId()).orElse(-1)==result.playerId()).findFirst().orElseThrow();var cache=match.requests.get(member.getPlayerId());var entry=cache==null?null:cache.get(result.requestId());
                     if(entry!=null){entry.result=plantResult(result.requestId(),result.bombType(),result.accepted(),result.errorCode(),result.bombId(),frame.snapshot().getTick());prune(cache);}}
@@ -158,13 +156,11 @@ final class CurrentLobbyGameServer implements AutoCloseable,GameEventSink {
                         var old=stream.metadata();var c=old.stream();stream.close();
                         stream=streamFor(old.withStream(new StreamContext(c.recipientPlayerId(),Math.addExact(c.viewEpoch(),1),frame.paradox().timelineEpoch(),c.authorityEpoch())));
                         match.streams.put(id,stream);match.waitingSince.put(id,System.nanoTime());
-                        // Request đặt bom chưa hoàn thành ở nhánh cũ phải có kết quả chấm dứt.
                         var requests=match.requests.get(id);if(requests!=null)for(var entry:requests.entrySet())if(entry.getValue().result==null)
                             entry.getValue().result=plantResult(entry.getKey(),entry.getValue().type,false,"STALE_TIMELINE",null,null);
                         if(!send(s,MetadataV3Codec.started(stream.metadata()))){stream.close();continue;}
                     }
                     Long waiting=match.waitingSince.get(id);if(waiting!=null&&System.nanoTime()-waiting>4_000_000_000L){server.getSessionManager().handleUnexpectedDisconnect(id,s.getSocket());continue;}var recoveryBarrier=match.recoveryBarriers.get(id);
-                    // Chỉ full sau khi game thread đã xử lý reconnect: không gửi view từ input backlog cũ.
                     if(recoveryBarrier!=null&&frame.recoveryAcks().getOrDefault(stream.metadata().stream().recipientPlayerId(),0L)<recoveryBarrier)continue;
                     var update=stream.build(frame);if(update==null)continue;
                     var captured=s.getOutboundSender();var socket=s.getSocket();var encoded=MatchEnvelopeV3Codec.update(match.context.matchId(),stream.metadata().stream(),SnapshotV6Codec.encode(update,frame.epochOrigin(),match.context));
@@ -188,7 +184,6 @@ final class CurrentLobbyGameServer implements AutoCloseable,GameEventSink {
     private boolean sendScoped(Match match,Session s,Packet inner){var stream=match.streams.get(s.getPlayerId());return stream!=null&&send(s,MatchEnvelopeV3Codec.update(match.context.matchId(),stream.metadata().stream(),inner));}
     private void finish(Room room,MatchResult result){
         if(room==null)return;var match=matches.remove(room.getRoomId());if(match==null)return;match.active=false;games.stopGame(room.getRoomId());
-        // Kết quả thuộc timeline cuối, kể cả recipient đã offline từ timeline trước.
         for(var s:match.roster){
             var old=match.streams.get(s.getPlayerId());var metadata=old.metadata();var context=metadata.stream();
             if(context.timelineEpoch()!=match.game.timelineEpoch()){
@@ -230,8 +225,7 @@ final class CurrentLobbyGameServer implements AutoCloseable,GameEventSink {
         rooms.leaveRoom(s);if(room!=null&&rooms.find(room)==null&&match!=null){match.active=false;matches.remove(room);games.stopGame(room);}publishLists();}
     public synchronized void onPlayerReconnected(Session s){
         var ended=completed.get(s.getPlayerId());if(seamless&&ended!=null){s.setState(s.getRoomId()==null?SessionState.IN_LOBBY:SessionState.IN_ROOM);var old=ended.metadata();var ctx=old.stream();var meta=old.withStream(new StreamContext(ctx.recipientPlayerId(),Math.addExact(ctx.viewEpoch(),1),ctx.timelineEpoch(),ctx.authorityEpoch()));
-            // Enqueue không chứng minh client đã nhận GAME_OVER: giữ cache cho lần rớt kế tiếp.
-            // Cache được xóa khi hết grace, rời/đổi phòng hoặc bắt đầu trận mới.
+          
             completed.put(s.getPlayerId(),new Completed(meta,ended.result()));
             if(!send(s,MetadataV3Codec.started(meta))||!send(s,MatchEnvelopeV3Codec.update(meta.identity().matchId(),meta.stream(),ended.result())))throw new IllegalStateException("Result recovery unavailable");var room=s.getRoomId()==null?null:rooms.find(s.getRoomId());if(room!=null)rooms.publishRoomState(room);send(s,list());return;}
         var match=s.getRoomId()==null?null:matches.get(s.getRoomId());if(!seamless||match==null||!match.active)throw new SessionRecoveryRejectedException("No match to recover");int id=match.context.playerId(s.getPlayerId()).orElseThrow();
