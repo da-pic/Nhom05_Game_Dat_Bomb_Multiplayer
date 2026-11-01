@@ -4,7 +4,6 @@ import com.bombit.server.game.item.*;
 import com.bombit.server.game.model.TilePosition;
 import java.util.Optional;
 
-/** Chính sách drop riêng Paradox; Classic/Shadow vẫn giữ policy đã cấu hình. */
 public final class ParadoxItemSpawnPolicy implements CheckpointItemSpawnPolicy {
     private final ParadoxRandom random;
     private final double chance;
