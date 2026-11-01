@@ -9,11 +9,7 @@ import java.util.Objects;
 import java.util.UUID;
 import static com.bombit.server.game.mode.ModeConfigurationException.Code.*;
 
-/**
- * Định nghĩa server bất biến: metadata và khả năng resolve cấu hình đã được kiểm tra.
- * NV05 gắn factory Classic; mỗi lần tạo runtime vẫn dùng GameLoop chung của manager.
- * Mode chưa triển khai không có template luật khả dụng và không có công tắc bật từ client.
- */
+
 public final class ModeDefinition {
     private final ModeDescriptor descriptor;
     private final MatchPreset preset;
@@ -37,7 +33,6 @@ public final class ModeDefinition {
         var definition = new ModeDefinition(new ModeDescriptor(GameMode.CLASSIC, "classic-v1", true, null,
                 2, 4, 0, "CLASSIC_V1", ModeCapabilities.NONE),
                 MatchPreset.CLASSIC_SERVER_DEFAULT, new EffectiveRules.Classic(rules), runtimeFactory);
-        // Fail-fast nếu bootstrap đưa hình học INTERNAL vào preset PUBLIC.
         definition.resolve("classic-v1", MatchPreset.CLASSIC_SERVER_DEFAULT);
         return definition;
     }
@@ -54,7 +49,6 @@ public final class ModeDefinition {
         return new ModeDefinition(new ModeDescriptor(GameMode.SHADOW_RELAY,"shadow-relay-v1",true,null,4,4,2,"SHADOW_RELAY_V1",
                 new ModeCapabilities(true,true,true,false,false,false)),MatchPreset.SHADOW_RELAY_V1,EffectiveRules.ShadowRelay.v1(),factory);
     }
-    /** Chỉ bootstrap thử nghiệm cấp factory ở bước protocol; mặc định chưa bật Paradox cho lobby. */
     static ModeDefinition paradox(EffectiveRules.Common common,ModeRuntimeFactory factory){
         if(factory.gameMode()!=GameMode.PARADOX)throw new ModeConfigurationException(INVALID_CONFIGURATION);
         return new ModeDefinition(new ModeDescriptor(GameMode.PARADOX,"paradox-v1",true,null,2,4,0,"PARADOX_V1",
@@ -65,7 +59,6 @@ public final class ModeDefinition {
     public java.util.function.LongSupplier nanoClock(){requireAvailable();return runtimeFactory.nanoClock();}
     public java.util.function.LongSupplier epochClock(){requireAvailable();return runtimeFactory.epochClock();}
 
-    /** Đường PUBLIC kiểm lại toàn bộ rule; INTERNAL chỉ cho fixture Classic được cấp tường minh. */
     private void validateFactoryConfiguration(MatchConfiguration configuration) {
         requireAvailable();
         Objects.requireNonNull(configuration, "configuration");
@@ -95,7 +88,6 @@ public final class ModeDefinition {
         return resolve(descriptor.rulesVersion(), preset);
     }
 
-    /** Server tự cấp configurationId; request không được chọn ID hoặc effectiveRules. */
     MatchConfiguration resolve(String rulesVersion, MatchPreset requestedPreset) {
         requireAvailable();
         if (!Objects.equals(descriptor.rulesVersion(), rulesVersion)) {
@@ -110,10 +102,7 @@ public final class ModeDefinition {
         }
     }
 
-    /**
-     * Kiểm lại tại biên start: một DTO hợp lệ về số học vẫn có thể là cấu hình bị giả mạo.
-     * So luật với snapshot registry, không tin presetId/rulesVersion do client tự khai.
-     */
+
     void validatePublic(MatchConfiguration configuration) {
         requireAvailable();
         if (configuration.profile() != MatchProfile.PUBLIC || configuration.gameMode() != descriptor.gameMode()
