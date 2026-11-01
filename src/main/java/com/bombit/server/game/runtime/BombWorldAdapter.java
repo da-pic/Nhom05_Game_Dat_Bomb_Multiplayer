@@ -10,7 +10,6 @@ import com.bombit.server.game.movement.EntityData;
 import java.util.*;
 import java.util.function.LongSupplier;
 
-/** Mutable bomb storage and projection into GameState, owned exclusively by one game thread. */
 public final class BombWorldAdapter implements BombWorld {
     private final GameState state;
     private final Map<String,Integer> players;
@@ -90,7 +89,6 @@ public final class BombWorldAdapter implements BombWorld {
         checkThread();for(Bomb b:List.copyOf(bombs.values())) {b.cancel();removeBomb(b.id());}
     }
 
-    /** Tuổi bom dùng nano clock, không lưu deadline tuyệt đối để restore không nổ sớm. */
     public record SavedBomb(int id, String ownerId, TilePosition position, long fuseMillis,
             int range, long ageNanos, boolean queued) {
         public SavedBomb {
