@@ -2,7 +2,6 @@ package com.bombit.common.protocol;
 
 import java.util.*;
 
-/** Bounded JSON for lobby DTOs: objects/arrays/strings/int64/boolean/null, no floating point. */
 public final class LobbyJson {
     private final String text;
     private int pos;
