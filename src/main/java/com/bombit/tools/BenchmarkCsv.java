@@ -5,7 +5,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.*;
 
-/** UTF-8 RFC-4180-style rows. One process owns each file; distributed runners use separate files. */
 public final class BenchmarkCsv {
     private BenchmarkCsv(){}
     public static void append(Path path,List<String> columns,List<? extends Map<String,String>> rows)throws IOException{
