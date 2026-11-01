@@ -4,10 +4,7 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.UUID;
 
-/** Protocol-2 match header around a canonical JSON object. Inner codecs remain unchanged.
- * This validates the header, type and frame size, not arbitrary inner JSON syntax.
- * Call the message-specific codec after unwrap, before acting on the payload.
- */
+
 public final class MatchEnvelopeCodec {
     private static final String PREFIX = "{\"matchId\":\"";
 
@@ -31,11 +28,11 @@ public final class MatchEnvelopeCodec {
         }
         String tail = json.substring(1);
         Packet scoped = new Packet(inner.getType(), PREFIX + matchId + "\"" + (tail.equals("}") ? "}" : "," + tail));
-        PacketEncoder.encode(scoped); // Apply the existing byte limit, including the new header.
+        PacketEncoder.encode(scoped); 
         return scoped;
     }
 
-    /** Reject an old match before handing its body to a gameplay decoder/replica. */
+  
     public static Packet unwrap(Packet scoped, UUID expectedMatch) throws IOException {
         Objects.requireNonNull(expectedMatch, "expectedMatch");
         requireScoped(scoped);
