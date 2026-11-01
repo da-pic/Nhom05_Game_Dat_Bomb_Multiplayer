@@ -8,7 +8,6 @@ import com.bombit.server.game.movement.GameStateUpdate;
 import com.bombit.server.game.movement.EntityData;
 import java.util.*;
 
-/** Worker chỉ đọc WorldFrame bất biến; lọc cả vị trí, stats, ACK, cooldown và actor trong notice. */
 public final class ShadowViewProjector {
     private ShadowViewProjector() { }
     public static ShadowRecipientView project(WorldFrame frame,ShadowRoster roster,int recipient){
@@ -23,12 +22,10 @@ public final class ShadowViewProjector {
         var cells=ShadowVisibility.cells(full,sources,scanSources);
         var details=full.getPlayers().stream().filter(p->roster.teamOf(p.getId())==team||cells.contains(
                 TilePosition.containing(p.getX()+p.getWidth()/2,p.getY()+p.getHeight()/2,full.getTileSize())))
-                // ACK chỉ ở self block bên ngoài; kể cả đồng đội thấy nhau cũng không được nhận sequence của nhau.
                 .map(p->new GameStateUpdate.PlayerData(p.getId(),p.getX(),p.getY(),p.getWidth(),p.getHeight(),p.getSpeed(),p.direction(),p.isMoving(),p.isAlive(),0)).toList();
         var allowed=new HashSet<Integer>();for(var p:details)allowed.add(p.getId());
         var stats=full.getMatchFrame().players().stream().filter(s->allowed.contains(s.playerId())).toList();
-        // Whitelist: bỏ pickup/death gắn actor, tránh lộ vị trí/chỉ số của đối thủ ngoài view qua event.
-        // Luật mới: bom sát thương địch ẩn theo ô đặt; chỉ vụ nổ là công khai. Scan/item giữ chính sách cũ.
+
         var entities=full.getEntityChanges().stream().filter(e->e.kind()!=EntityData.Kind.BOMB
                 ||ownBomb(roster,e.ownerId(),team)||cells.contains(new TilePosition(e.tileX(),e.tileY()))).toList();
         var notices=full.getGameNotices().stream().filter(n->n.event() instanceof BombExplodedEvent||n.event() instanceof ItemSpawnedEvent
