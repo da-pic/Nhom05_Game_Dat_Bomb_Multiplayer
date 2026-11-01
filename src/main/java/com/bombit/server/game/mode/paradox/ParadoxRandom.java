@@ -3,7 +3,6 @@ package com.bombit.server.game.mode.paradox;
 import com.bombit.server.game.checkpoint.CheckpointParticipant;
 import java.util.Objects;
 
-/** RNG SplitMix64 riêng cho mô phỏng: restore cả trạng thái để không đổi drop sau rewind. */
 public final class ParadoxRandom implements CheckpointParticipant<Long> {
     private long state;
 
@@ -16,7 +15,6 @@ public final class ParadoxRandom implements CheckpointParticipant<Long> {
         return value ^ (value >>> 31);
     }
 
-    /** Rejection sampling tránh thiên lệch modulo, kể cả bound không phải lũy thừa hai. */
     public int nextInt(int bound) {
         if (bound <= 0) throw new IllegalArgumentException("Positive bound required");
         long bits, result;
