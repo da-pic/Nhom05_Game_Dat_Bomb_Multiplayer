@@ -116,7 +116,6 @@ public final class RoomManager {
         return Optional.of(next);
     }
 
-    /** Protocol-2 READY sets a value; repeated requests must never toggle it back. */
     public Optional<SessionState> setReady(Session player, boolean ready) {
         String roomId = player.getRoomId();
         Room room = roomId == null ? null : rooms.get(roomId);
