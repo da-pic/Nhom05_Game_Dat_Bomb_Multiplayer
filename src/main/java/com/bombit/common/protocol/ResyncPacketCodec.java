@@ -3,7 +3,6 @@ package com.bombit.common.protocol;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-/** Canonical request body; wrap with MatchEnvelopeCodec before sending on protocol 2. */
 public final class ResyncPacketCodec {
     public enum Reason { COLD_START, BASELINE_MISMATCH, RECONNECT }
     public record Request(long lastAppliedTick, Reason reason) {
