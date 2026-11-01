@@ -9,7 +9,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/** Luật sinh và nhặt vật phẩm phía server. Được gọi từ Game Loop. */
 public final class ItemSystem {
     private final AtomicInteger nextItemId;
     private final ItemSpawnPolicy spawnPolicy;
