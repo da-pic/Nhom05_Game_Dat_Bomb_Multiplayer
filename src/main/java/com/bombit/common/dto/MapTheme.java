@@ -1,6 +1,5 @@
 package com.bombit.common.dto;
 
-/** Concrete visual theme selected once by the authoritative server for a match. */
 public enum MapTheme {
     CLASSIC("CỔ ĐIỂN"),
     FOREST("RỪNG XANH"),
