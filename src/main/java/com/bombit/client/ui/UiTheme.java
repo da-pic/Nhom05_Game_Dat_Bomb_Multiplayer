@@ -4,7 +4,6 @@ import javax.swing.*;
 import javax.swing.border.*;
 import java.awt.*;
 
-/** Shared arcade theme for the Swing client. */
 public final class UiTheme {
     public static final Color BACKGROUND = new Color(0x0F,0x17,0x2A);
     public static final Color SURFACE = new Color(30,41,59,220);
