@@ -17,7 +17,6 @@ import java.awt.RenderingHints;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-/** Bản xem trước Swing độc lập cho phần hiển thị bom, vụ nổ và vật phẩm của TV3. */
 public final class BombItemEffectsDemo {
     private static final int COLUMNS = 13;
     private static final int ROWS = 9;
