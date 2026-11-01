@@ -7,7 +7,6 @@ import com.bombit.server.game.model.TileType;
 import com.bombit.server.game.movement.EntityData;
 import java.util.*;
 
-/** Game-thread-owned items, projected into the same entity map as bombs. */
 public final class ItemWorldAdapter implements ItemWorld {
     private final GameState state;
     private final Map<String,Integer> players;
@@ -43,7 +42,6 @@ public final class ItemWorldAdapter implements ItemWorld {
     }
     public void clear(){check();for(int id:List.copyOf(items.keySet()))removeItem(id);}
 
-    /** Chỉ lưu item đang tồn tại; không giữ Item mutable trong lịch sử. */
     public record SavedItem(int id, ItemType type, TilePosition position) {
         public SavedItem {
             if (id <= 0) throw new IllegalArgumentException("Invalid item ID");
@@ -62,7 +60,6 @@ public final class ItemWorldAdapter implements ItemWorld {
                 throw new IllegalArgumentException("Invalid item checkpoint");
         }
     }
-    /** Coordinator khôi phục map trước, sau đó mới dựng lại index cell và entity projection. */
     public void restoreCheckpoint(List<SavedItem> saved) {
         validateRestore(saved);
         for (var item : saved) if (state.getMap().tileAt(item.position().x(), item.position().y()) != TileType.EMPTY)
