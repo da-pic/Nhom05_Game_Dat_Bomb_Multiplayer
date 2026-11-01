@@ -5,13 +5,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-/** Small flat-object codec for CONNECT/PING/DISCONNECT. Rejects duplicate/unknown fields. */
 public final class SessionPacketCodec {
     private static final Pattern TOKEN = Pattern.compile(
             "\\s*(\"(?:[^\"\\\\\\x00-\\x1f]|\\\\(?:[\"\\\\/bfnrt]|u[0-9a-fA-F]{4}))*\"|-?(?:0|[1-9][0-9]*)|true|false|null)\\s*");
     public record Connect(String playerName, int protocolVersion) { }
     public record Acknowledgement(String playerId, String reconnectToken) { }
-    /** Seamless Session Recovery: first frame on a new socket that resumes a soft-dropped session. */
     public record Reconnect(String playerId, String reconnectToken) { }
     private SessionPacketCodec() { }
 
@@ -48,7 +46,6 @@ public final class SessionPacketCodec {
         if (!(fields.get("playerId") instanceof String id) || !(fields.get("reconnectToken") instanceof String token)) {
             throw new IllegalArgumentException("Invalid RECONNECT fields");
         }
-        // UUID parsing rejects oversized or malformed identifiers before any session lookup.
         return new Reconnect(java.util.UUID.fromString(id).toString(), java.util.UUID.fromString(token).toString());
     }
 
