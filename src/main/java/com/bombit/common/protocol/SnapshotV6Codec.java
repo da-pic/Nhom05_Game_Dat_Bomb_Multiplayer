@@ -10,7 +10,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import static com.bombit.common.protocol.JsonV3.*;
 
-/** Binary v6 Classic/Shadow: cùng header, phần mode có kiểu riêng; không fallback sang v5. */
 public final class SnapshotV6Codec {
     private SnapshotV6Codec() { }
     private static int entityCode(EntityData.Kind kind){return switch(kind){case BOMB->0;case ITEM->1;case SCAN_PENDING->2;case SCAN_BEACON->3;};}
@@ -65,7 +64,6 @@ public final class SnapshotV6Codec {
         return packet(u.isFullState()?PacketType.FULL_STATE_SYNC:PacketType.GAME_SNAPSHOT,body("snapshotVersion",6,"data",Base64.getEncoder().encodeToString(bytes.toByteArray())));
     }
 
-    /** Entry point Classic giữ API cũ; entry point Shadow vẫn kiểm mode metadata trước decode. */
     public static ClassicSnapshotV6 decode(Packet packet,MatchStartMetadata metadata)throws IOException{
         if(metadata.configuration().gameMode()!=GameMode.CLASSIC)throw new IOException("Not Classic metadata");
         return (ClassicSnapshotV6)decodeRecipient(packet,metadata);
@@ -106,7 +104,6 @@ public final class SnapshotV6Codec {
                 players.add(new GameStateUpdate.PlayerData(id,x,y,pw,ph,speed,dir,moving,lives>0,0));stats.add(new MatchFrame.Stats(id,quota,range,lives,shield,respawns));}
             var removed=new ArrayList<Integer>();count=in.readUnsignedByte();if(count>4)throw new IOException("Removal count");var removedIds=new HashSet<Integer>();
             for(int i=0;i<count;i++){int id=id(in);if(!roster.containsKey(id)||seen.contains(id)||!removedIds.add(id))throw new IOException("Invalid removal");removed.add(id);}
-            // M0 truyền đủ detail còn hiện hữu của Classic mỗi update; không giả stats unknown.
             var expected=roster.values().stream().filter(p->p.lifeState()!=2).map(ClassicSnapshotV6.PublicPlayer::playerId).collect(java.util.stream.Collectors.toSet());
             if(!shadow&&!seen.equals(expected))throw new IOException("Incomplete Classic details");
             var entities=new ArrayList<EntityData>();var entityKeys=new HashSet<String>();
