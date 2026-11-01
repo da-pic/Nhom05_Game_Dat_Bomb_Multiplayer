@@ -11,7 +11,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
 
-/** Network gameplay window. Created and updated only on the Swing EDT. */
 public final class MovementGameWindow extends JFrame {
     private final MovementClientController movement;
     private final com.bombit.client.ui.game.item.ItemRenderer itemRenderer=new com.bombit.client.ui.game.item.ItemRenderer();
@@ -87,7 +86,6 @@ public final class MovementGameWindow extends JFrame {
     private boolean isParadox(){return movement.metadata()!=null&&movement.metadata().configuration().gameMode()==com.bombit.common.dto.GameMode.PARADOX;}
 
     public void disposeGame(){render.stop();if(input!=null)input.close();if(bombInput!=null)bombInput.close();movement.close();dispose();}
-    /** EDT: chỉ đổi nhãn khi phục hồi, giữ nguyên world và controller đang chơi. */
     public void setRecoveryStatus(String message){recoveryStatus=message;status.setText(message!=null?message:"Đã đồng bộ — tiếp tục trận đấu.");status.setForeground(UiTheme.ACCENT);}
     public void showError(String message){if(input!=null)input.close();render.stop();status.setText(message);status.setForeground(UiTheme.DANGER);}
 
