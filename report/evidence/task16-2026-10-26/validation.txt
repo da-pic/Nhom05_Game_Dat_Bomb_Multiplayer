@@ -1,8 +1,0 @@
-﻿Required sections 15.1-15.3, 16.1-16.4 and chapter 17 present; 4 tables numbered consistently with matching columns.
-10 distinct limitation IDs L01-L10; future proposals have owners and verification conditions, not PASS or delivery promises.
-Local links checked in chapters/index/evidence; 6 directly linked sources/evidence hashed.
-Conclusion counts checked against prior evidence: 133 JUnit, 84 repeated test executions, 45 network runs, 18000 D1 equality checks.
-D0 bytes/reduction and loopback median-mean RTT/ACK ranges verified from summary CSV/JSON.
-Resume, GUI/LAN/soak, profiling and historical smoke root cause remain correctly limited; no new feature/result claimed.
-No tests/build/benchmark, production/test/scripts/POM changes, raw evidence modification or DOCX export in task16.
-Errors: 0

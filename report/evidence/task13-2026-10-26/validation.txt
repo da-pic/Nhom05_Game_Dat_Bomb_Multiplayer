@@ -1,8 +1,0 @@
-﻿Analysis script completed exit 0: raw byte sums, packet counts, per-tick equality flags and trace v5/envelope/length checked.
-35 scenario-runs: 5 D0 and 30 D1; 5 repetitions per configuration; identical byte/count totals per configuration.
-D1 normalized replica equality assertions: 18000 passed; D0 original fixture assertions passed in all 5 processes.
-Chapter 12: 9 sequential tables; 12.5.1-12.5.5 present; two PNG/SVG/PDF figures exported and visually inspected.
-Local links checked in chapter 11/12, report index and task13 evidence. Table columns consistent.
-Maven artifact hash comparison with task12: 297 class files, 0 mismatches. Tracked production/test/scripts/POM unchanged.
-No TCP/LAN, latency, CPU or new JUnit suite measurement in task13; scripted event trace explicitly described.
-Errors: 0

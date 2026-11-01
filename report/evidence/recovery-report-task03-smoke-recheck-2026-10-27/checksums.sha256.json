@@ -1,8 +1,0 @@
-{
-  "attempt-summary.json": "734b09bde9b28e68476e0459f8121aaad6a4ecdf6f0030d5287ca0288a13e834",
-  "m1-client-a-process.log": "fd9c1b297b8db8d0b3b15e221fb1d211a2a54a9738917373700dcc87e44808a5",
-  "m1-client-b-process.log": "fd9c1b297b8db8d0b3b15e221fb1d211a2a54a9738917373700dcc87e44808a5",
-  "m1-server-process.log": "92b4abf3bb1eec593c38cbda3abbe3f822f7c96f7bc4870b591c1d260c57079c",
-  "report-recovery-task03-smoke-recheck.log": "01554f6178aff08ed0ed4da6ef657d6a4ba7bb2fdbe68a0a7a58a84653433392",
-  "TEST-com.bombit.integration.MovementDemoProcessTest.xml": "2d919d2196a33dead8198d11afb5103e7a1a34eaa18154405bafee30e1345dbb"
-}
