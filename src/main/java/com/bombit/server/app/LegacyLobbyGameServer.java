@@ -23,7 +23,6 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 
-/** Serializes room transitions; each match has its own runtime and snapshot consumer. */
 final class LegacyLobbyGameServer implements AutoCloseable, GameEventSink {
     private final Server server;
     private final RoomManager rooms;
@@ -40,7 +39,6 @@ final class LegacyLobbyGameServer implements AutoCloseable, GameEventSink {
         final MatchContext context;
         final List<Session> roster;
         final Set<String> initialized = ConcurrentHashMap.newKeySet();
-        // Giữ thứ tự metadata -> full mới -> delta riêng cho player đang phục hồi.
         final Set<String> suspended = ConcurrentHashMap.newKeySet();
         final Map<String,Long> recoveryFullAfter = new ConcurrentHashMap<>();
         final Map<String, Long> windows = new HashMap<>(), resyncs = new HashMap<>();
@@ -58,14 +56,12 @@ final class LegacyLobbyGameServer implements AutoCloseable, GameEventSink {
         this(port,new BombRules(Long.getLong("bombit.bomb.fuseMillis",3000L),
                 Integer.getInteger("bombit.bomb.range",1),Integer.getInteger("bombit.bomb.quota",1)));
     }
-    /** Demo balance is configurable; each room still receives a fresh extension/world. */
     public LegacyLobbyGameServer(int port,BombRules rules) throws IOException {
         this(port,rules,MatchRules.demo());
     }
     public LegacyLobbyGameServer(int port,BombRules rules,MatchRules matchRules) throws IOException {
         this(port,classicBootstrap(rules,matchRules));
     }
-    /** Chụp movement một lần để spawn và cấu hình factory không lệch nếu property đổi sau bootstrap. */
     private record ClassicBootstrap(GameRuntimeManager games,PlayerMovementRules movement) { }
     private static ClassicBootstrap classicBootstrap(BombRules bombs,MatchRules match){
         var movement=PlayerMovementRules.defaults();
@@ -224,7 +220,7 @@ final class LegacyLobbyGameServer implements AutoCloseable, GameEventSink {
         roster.forEach(s -> s.setState(SessionState.PLAYING));
         Packet started=DemoPacketCodec.started(match.context,names);
         for(Session s:roster) { if(!match.active) break; send(s,started); }
-        if(!match.active) return; // A failed writer may synchronously remove the roster.
+        if(!match.active) return; 
         Thread worker=new Thread(() -> pump(match),"Lobby-Snapshot-"+game.matchId());
         workers.add(worker); worker.start(); rooms.publishRoomState(room); publishLists();
     }
@@ -249,13 +245,12 @@ final class LegacyLobbyGameServer implements AutoCloseable, GameEventSink {
                     String id=s.getPlayerId();
                     if(!match.active || match.suspended.contains(id)) continue;
                     Long after=match.recoveryFullAfter.get(id);
-                    // Bỏ delta/full cũ còn nằm trong queue; chỉ mở input sau full vượt barrier.
+                  
                     if(after!=null && (!update.isFullState() || update.getTick()<=after)) continue;
                     if(send(s,p) && update.isFullState()) {
                         match.initialized.add(id); match.recoveryFullAfter.remove(id);
                     }
                 }
-                // Publish notices after their authoritative snapshot, using the same per-session writer queue.
                 for(var notice:update.getGameNotices()) {
                     Packet scoped=MatchEnvelopeCodec.wrap(match.context.matchId(),GameplayPacketCodec.notice(update.getTick(),notice,match.context));
                     for(Session s:match.roster) if(match.active && !match.suspended.contains(s.getPlayerId())
@@ -321,7 +316,6 @@ final class LegacyLobbyGameServer implements AutoCloseable, GameEventSink {
     public boolean isSeamlessRecovery() { return seamlessRecovery; }
 
     @Override public synchronized void onPlayerDisconnected(Session s) {
-        // Callback mất nối có thể chờ khóa lobby trong khi session đã đổi trạng thái.
         if(s.getState()!=SessionState.DISCONNECTED) return;
         String roomId = s.getRoomId();
         Match match = roomId == null ? null : matches.get(roomId);
@@ -330,8 +324,7 @@ final class LegacyLobbyGameServer implements AutoCloseable, GameEventSink {
             match.initialized.remove(s.getPlayerId());
             int playerNum = match.context.playerId(s.getPlayerId()).orElse(-1);
             if (playerNum <= 0 || !match.game.submit(new PlayerDisconnectedCommand(playerNum, false))) {
-                // Queue hữu hạn: không giả vờ freeze thành công khi command bị từ chối.
-                // Dừng lượt theo ABORTED thay vì tiếp tục với player vẫn di chuyển.
+               
                 Room room=rooms.find(roomId);
                 if(room!=null) {endMatch(room);publishLists();}
             }
@@ -347,8 +340,7 @@ final class LegacyLobbyGameServer implements AutoCloseable, GameEventSink {
         if (match != null && match.active) {
             int playerNum = match.context.playerId(s.getPlayerId()).orElse(-1);
             if (playerNum <= 0 || !match.game.submit(new PlayerDisconnectedCommand(playerNum, true))) {
-                // Hết grace chỉ loại người vắng mặt, nhưng queue đầy không được bỏ qua
-                // command lifecycle: ABORT là fallback để tránh world/roster lệch nhau.
+                
                 Room room = rooms.find(roomId);
                 if (room != null) endMatch(room);
             }
