@@ -13,7 +13,6 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.Map;
 
-/** Arcade result hero and server-authoritative ranking table. */
 public final class MatchResultsPanel extends JPanel {
     private final JLabel trophy=new JLabel("★",SwingConstants.CENTER);
     private final JLabel headline=new JLabel("KẾT QUẢ TRẬN ĐẤU");
@@ -51,7 +50,6 @@ public final class MatchResultsPanel extends JPanel {
             rows.addRow(new Object[]{"#"+rank.rank(),player,outcome});
         }
     }
-    /** Kết quả đội không dựng hạng cá nhân hoặc vị trí cuối của đối thủ ẩn. */
     public void showTeamResult(ShadowFrame.Result result,java.util.List<MatchStartMetadata.Member> players,int localId){
         rows.setColumnIdentifiers(new Object[]{"ĐỘI","NGƯỜI CHƠI","KẾT QUẢ"});styleTable();rows.setRowCount(0);
         TeamId own=players.stream().filter(p->p.playerId()==localId).map(MatchStartMetadata.Member::team).findFirst().orElse(null);
@@ -65,7 +63,6 @@ public final class MatchResultsPanel extends JPanel {
             rows.addRow(new Object[]{p.team().name(),p.username()+(p.playerId()==localId?" (Bạn)":""),aborted?"HỦY":draw?"HÒA":p.team()==result.winningTeam()?"THẮNG":"THUA"}));
     }
     public void clear(){rows.setRowCount(0);trophy.setText("•");trophy.setBackground(new Color(14,165,233));headline.setText("TRẬN ĐẤU ĐANG DIỄN RA");summary.setText("Đang chờ kết quả từ máy chủ.");}
-    /** Classic/Paradox không có điểm trạm; chỉ hiển thị quyết định đội authoritative. */
     public void showTeamResult(TeamMatchResult result,java.util.List<MatchStartMetadata.Member> players,int localId){
         rows.setColumnIdentifiers(new Object[]{"ĐỘI","NGƯỜI CHƠI","KẾT QUẢ"});styleTable();rows.setRowCount(0);
         TeamId own=players.stream().filter(p->p.playerId()==localId).map(MatchStartMetadata.Member::team).findFirst().orElse(null);
