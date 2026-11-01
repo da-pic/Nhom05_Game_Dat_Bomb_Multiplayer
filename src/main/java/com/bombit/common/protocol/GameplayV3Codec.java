@@ -4,7 +4,6 @@ import com.bombit.common.dto.*;
 import java.util.*;
 import static com.bombit.common.protocol.JsonV3.*;
 
-/** Tagged result Classic; không dùng winnerPlayerId để giả kết quả đội. */
 public final class GameplayV3Codec {
     private GameplayV3Codec() { }
     public static Map<String,Object> teamResultBody(TeamMatchResult result,GameMode mode){
