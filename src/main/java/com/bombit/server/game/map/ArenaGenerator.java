@@ -7,7 +7,6 @@ import com.bombit.server.game.model.TileType;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
-/** Decides where hard walls and breakable obstacles are placed for each match. */
 public final class ArenaGenerator {
     public static final int WIDTH=17,HEIGHT=15,TILE_SIZE=32;
     public static final List<TilePosition> SPAWNS=List.of(
@@ -15,10 +14,8 @@ public final class ArenaGenerator {
     private static final Set<TilePosition> SAFE_CELLS=safeCells();
     private ArenaGenerator(){ }
 
-    /** Generates a different connected arena for every match. */
     public static GameMap create(){return create(ThreadLocalRandom.current().nextLong());}
 
-    /** Generates a reproducible arena for tests and previews. */
     public static GameMap create(long seed){
         SplittableRandom random=new SplittableRandom(seed);
         for(int attempt=0;attempt<300;attempt++){
