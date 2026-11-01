@@ -3,7 +3,6 @@ package com.bombit.common.dto;
 import com.bombit.server.game.movement.GameStateUpdate;
 import java.util.List;
 
-/** Recipient update Classic đã chiếu; không phải checkpoint hoặc world mutable. */
 public record ClassicSnapshotV6(GameStateUpdate update,long simulationTick,long matchTimeMillis,
                                  List<PublicPlayer> publicPlayers,long lastProcessedInput,boolean inputEnabled) implements RecipientSnapshotV6 {
     public record PublicPlayer(int playerId,int lifeState,int connectionState){
