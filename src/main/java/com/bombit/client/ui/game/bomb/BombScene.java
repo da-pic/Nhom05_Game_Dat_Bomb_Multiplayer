@@ -8,7 +8,6 @@ import com.bombit.server.game.movement.EntityData;
 import java.awt.Graphics2D;
 import java.util.*;
 
-/** UI-owned presentation. Only applied snapshots change visuals; notices never replay world effects. */
 public final class BombScene {
     private final BombPresentationState state=new BombPresentationState();
     private final BombRenderer bombs=new BombRenderer();
@@ -29,7 +28,6 @@ public final class BombScene {
                 .map(e->new ExplosionView(e.bombId(),e.cells(),localMillis+(e.startedAtMillis()-serverNow),
                         localMillis+(e.visibleUntilMillis()-serverNow))).toList());
     }
-    /** Events can arrive before/after snapshots. They are informational and cannot mutate the scene/world. */
     public void notice(BombPacketCodec.Notice notice) {
         if(notice.tick()!=tick) return;
         String key=Long.toString(notice.eventId());
@@ -43,7 +41,6 @@ public final class BombScene {
         for(var b:state.bombs()) bombs.render(g,b,tileSize,0,0,now);
         renderExplosions(g,tileSize,nanos);
     }
-    /** Shadow vẽ bom trực tiếp từ entity công khai; hiệu ứng nổ vẫn dùng cùng timeline presentation. */
     public void renderExplosions(Graphics2D g,int tileSize,long nanos) {
         long now=anchorMillis+(nanos-anchorNanos)/1_000_000L;
         state.removeExpiredExplosions(now);
@@ -52,6 +49,5 @@ public final class BombScene {
     public BombPresentationState state() { return state; }
     public boolean enabled() { return enabled; }
     public long noticeCount() { return noticeCount; }
-    /** Bỏ mọi presentation của nhánh cũ trước khi chờ full timeline mới. */
     public void clear(){state.replaceBombs(List.of());state.replaceExplosions(List.of());notices.clear();noticeCount=0;tick=-1;enabled=false;}
 }
