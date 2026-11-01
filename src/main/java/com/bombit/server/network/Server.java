@@ -29,7 +29,7 @@ public final class Server implements AutoCloseable {
     public static final int HEARTBEAT_TIMEOUT_SECONDS = 10;
     public static final int RECONNECT_GRACE_SECONDS = 30;
     public static final int MAX_PLAYERS_PER_ROOM = 4;
-    private static final int CLIENT_POOL_SIZE = 32;
+    private static final int CLIENT_POOL_SIZE = 145;
     private static final int OUTBOUND_QUEUE_CAPACITY = 256;
 
     private final ServerSocket serverSocket;
@@ -62,11 +62,9 @@ public final class Server implements AutoCloseable {
         this(port,IntegrationContract.HEARTBEAT_TIMEOUT_MILLIS,TimeUnit.SECONDS.toMillis(HEARTBEAT_TIMEOUT_SECONDS),2000,5000,currentProtocol);
     }
 
-    /** Shorter frame deadline is useful for deterministic transport tests. */
     public Server(int port, int frameTimeoutMillis) throws IOException {
         this(port,frameTimeoutMillis,TimeUnit.SECONDS.toMillis(HEARTBEAT_TIMEOUT_SECONDS),2000,5000);
     }
-    /** Injectable time bounds keep fault tests short without changing application defaults. */
     public Server(int port,int frameTimeoutMillis,long heartbeatMillis,long sweepMillis,long writeMillis)throws IOException{
         this(port,frameTimeoutMillis,heartbeatMillis,sweepMillis,writeMillis,false);
     }
@@ -96,7 +94,6 @@ public final class Server implements AutoCloseable {
         this.sessionManager = new SessionManager(gameEventSink, RECONNECT_GRACE_SECONDS);
         connectionManager.setFailureHandler((session, socket) -> {
             if (session.getSocket() == socket) {
-                // Kiểm tra ownership lần nữa trong SessionManager; if bên ngoài có thể đã cũ.
                 if (session.getState() == SessionState.CONNECTED) sessionManager.hardDrop(session.getPlayerId(), socket);
                 else sessionManager.handleUnexpectedDisconnect(session.getPlayerId(), socket);
             }
@@ -126,7 +123,6 @@ public final class Server implements AutoCloseable {
             }
             synchronized (lifecycle) {
                 if (!running) { socket.close(); break; }
-                // Includes grace-period sessions: reconnect churn cannot grow retained sessions without bound.
                 if(sessionManager.snapshot().size()>=256){socket.close();continue;}
                 socket.setTcpNoDelay(true);
                 Session session = new Session("pending-" + socket.getRemoteSocketAddress(), socket);
@@ -164,12 +160,10 @@ public final class Server implements AutoCloseable {
             try { serverSocket.close(); } catch (IOException ignored) { }
         }
         heartbeatManager.close();
-        // Close sockets before awaiting readers blocked in decode/readFully.
         sessionManager.close();
         connectionManager.close();
         clientPool.shutdown();
         try {
-            // Socket close wakes decode. Let lifecycle callbacks finish before interrupting readers.
             if (!clientPool.awaitTermination(2, TimeUnit.SECONDS)) {
                 clientPool.shutdownNow();
                 clientPool.awaitTermination(2, TimeUnit.SECONDS);
