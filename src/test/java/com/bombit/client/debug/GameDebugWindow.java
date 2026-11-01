@@ -19,12 +19,7 @@ import java.awt.event.WindowEvent;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/**
- * Giao diện Swing kiểm tra movement và full/delta trong cùng tiến trình.
- * GameLoop chạy nền; Swing Timer đọc queue không chặn và áp dụng update trên EDT.
- * Dữ liệu đi qua codec để kiểm tra encode/decode nhưng chưa truyền TCP.
- * Phím điều khiển Player 1; panel chỉ render bản sao client, không đọc Player mutable của server.
- */
+
 public class GameDebugWindow extends JFrame {
 
     private final GameLoop gameLoop;
@@ -34,7 +29,6 @@ public class GameDebugWindow extends JFrame {
     private Direction activeDirection;
     private boolean moving;
 
-    // Mục đích: Khởi tạo GameDebugWindow và kiểm tra dữ liệu đầu vào; xem chú thích của lớp để biết đơn vị và trách nhiệm.
     public GameDebugWindow(GameLoop gameLoop) {
         super("Bomb It - Local Debug UI");
 
@@ -57,7 +51,6 @@ public class GameDebugWindow extends JFrame {
 
         add(footer, BorderLayout.SOUTH);
 
-        // Doc update tu GameLoop ma khong block giao dien.
         pollTimer = new Timer(16, e -> {
             GameStateUpdate update;
 
@@ -87,7 +80,6 @@ public class GameDebugWindow extends JFrame {
         setLocationRelativeTo(null);
     }
 
-    // Mục đích: Đăng ký các hướng bằng Swing key bindings, tách thao tác bàn phím khỏi logic movement server.
     private void setupControls() {
         bindDirection("UP", Direction.UP);
         bindDirection("DOWN", Direction.DOWN);
@@ -95,7 +87,6 @@ public class GameDebugWindow extends JFrame {
         bindDirection("RIGHT", Direction.RIGHT);
     }
 
-    // Mục đích: Ánh xạ sự kiện nhấn và nhả riêng cho một phím; WHEN_IN_FOCUSED_WINDOW nhận phím khi cửa sổ có focus.
     private void bindDirection(
             String keyName,
             Direction direction) {
@@ -131,10 +122,8 @@ public class GameDebugWindow extends JFrame {
         });
     }
 
-    // Mục đích: Bỏ sự kiện lặp của cùng hướng và chỉ đổi trạng thái input local khi queue nhận command thành công.
     private void startMoving(Direction direction) {
 
-        // Bo qua su kien lap khi phim van dang duoc nhan.
         if (moving && activeDirection == direction) {
             return;
         }
@@ -153,10 +142,8 @@ public class GameDebugWindow extends JFrame {
         }
     }
 
-    // Mục đích: Bỏ sự kiện nhả phím hướng cũ sau khi đổi hướng. Nếu queue từ chối STOP, bản demo chỉ báo lỗi; tích hợp thật cần cơ chế xử lý tiếp.
     private void stopMoving(Direction direction) {
 
-        // Neu da chuyen huong, bo qua su kien nha phim cu.
         if (!moving || activeDirection != direction) {
             return;
         }
@@ -173,28 +160,23 @@ public class GameDebugWindow extends JFrame {
         }
     }
 
-    // Mục đích: Dừng timer trước, dừng/join loop rồi đóng cửa sổ để không còn callback đọc queue sau khi thoát.
     private void shutdown() {
         pollTimer.stop();
         gameLoop.stop();
         dispose();
     }
 
-    // Mục đích: Khởi tạo demo Swing trên EDT; tạo GameState trước khi start loop. Đây là điểm chạy local để quan sát input và đồng bộ.
     public static void main(String[] args) {
 
         SwingUtilities.invokeLater(() -> {
 
-            // Tao ban do va tuong co dinh.
             GameMap map = createTestMap();
 
             GameState state = new GameState(map);
 
-            // Player 1 nam ben trai de kiem tra di chuyen.
             Player p1 = new Player(
                     1, 64, 64, 24, 24, 150);
 
-            // Player 2 nam ben phai de kiem tra dong bo.
             Player p2 = new Player(
                     2, 256, 128, 24, 24, 150);
 
@@ -217,12 +199,10 @@ public class GameDebugWindow extends JFrame {
         });
     }
 
-    // Mục đích: Tạo map cố định có tường biên, tường giữa và block để thử va chạm bằng bàn phím.
     private static GameMap createTestMap() {
 
         GameMap map = new GameMap(17, 15, 32);
 
-        // Tuong bao quanh ban do.
         for (int x = 0; x < map.getWidthInTiles(); x++) {
             map.setTile(x, 0, TileType.HARD_WALL);
 
@@ -241,13 +221,11 @@ public class GameDebugWindow extends JFrame {
                     TileType.HARD_WALL);
         }
 
-        // Mot block co the pha.
         map.setTile(4, 2, TileType.BREAKABLE_BLOCK);
         map.setTile(5, 3, TileType.BREAKABLE_BLOCK);
         map.setTile(9, 1, TileType.BREAKABLE_BLOCK);
         map.setTile(13, 5, TileType.BREAKABLE_BLOCK);
 
-        // Tuong cung o giua ban do.
         for (int y = 2; y <= 5; y++) {
             map.setTile(6, y, TileType.HARD_WALL);
         }
@@ -255,7 +233,6 @@ public class GameDebugWindow extends JFrame {
         return map;
     }
 
-    // Trang thai hien thi doc lap, chi duoc cap nhat tren EDT.
     private static class DebugPanel extends JPanel {
 
         private final com.bombit.client.game.movement.ClientWorldState replica =
@@ -297,7 +274,6 @@ public class GameDebugWindow extends JFrame {
         }
 
         void applyUpdate(GameStateUpdate update) {
-            // Dùng chung codec và replica như client mạng sau này; ở đây chưa qua TCP.
             try {
                 update = com.bombit.server.game.movement.SnapshotPacketCodec.decode(
                         com.bombit.server.game.movement.SnapshotPacketCodec.encode(update));
@@ -326,7 +302,6 @@ public class GameDebugWindow extends JFrame {
         }
 
         @Override
-        // Mục đích: Vẽ từ bản sao client trên EDT; tạo Graphics2D riêng và dispose sau dùng để không rò tài nguyên hoặc làm đổi Graphics gốc.
         protected void paintComponent(Graphics graphics) {
 
             super.paintComponent(graphics);
@@ -371,7 +346,6 @@ public class GameDebugWindow extends JFrame {
                 int boardX = 20;
                 int boardY = 100;
 
-                // Ve ban do.
                 for (int y = 0; y < mapHeight; y++) {
                     for (int x = 0; x < mapWidth; x++) {
 
@@ -400,7 +374,6 @@ public class GameDebugWindow extends JFrame {
                     }
                 }
 
-                // Ve cac Player tu trang thai Client da ap dung.
                 for (GameStateUpdate.PlayerData player
                         : players.values()) {
 
@@ -432,7 +405,6 @@ public class GameDebugWindow extends JFrame {
                             px, py - 3);
                 }
 
-                // Hien thi vi tri hien tai cua tung Player.
                 int statusY =
                         boardY + mapHeight * tileSize + 22;
 
