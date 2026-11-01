@@ -9,10 +9,7 @@ import java.awt.event.*;
 import java.util.*;
 import java.util.function.Consumer;
 
-/** Bind phím và lấy mẫu 20 Hz trên EDT. Giữ thứ tự phím để nhả hướng mới quay về hướng cũ.
- * sender phải enqueue nhanh sang worker mạng; không gọi socket.send gây block trên EDT.
- * Sau mất focus xóa phím đang giữ; mẫu kế tiếp gửi moving=false.
- */
+
 public final class InputController implements AutoCloseable {
     private final LinkedHashSet<Direction> pressed = new LinkedHashSet<>();
     private final PredictionController prediction;
@@ -65,17 +62,15 @@ public final class InputController implements AutoCloseable {
         }
     }
     public void start() { timer.start(); }
-    /** Gửi cả mẫu đứng yên để ACK luôn gắn với số bước mô phỏng xác định. */
+
     public void sample() {
         refreshGeneration();
-        // Không giữ phím cũ xuyên qua khoảng recovery rồi phát lại khi mở input.
         if (!canSample.getAsBoolean()) {pressed.clear();return;}
         for (var direction : pressed) lastDirection=direction;
         sender.accept(prediction.predict(lastDirection,!pressed.isEmpty()));
     }
     private void refreshGeneration() {
         long next=generation.getAsLong();
-        // Recovery có thể xong giữa hai mẫu 50 ms; vẫn phải bỏ phím từ connection trước.
         if(next!=seenGeneration){pressed.clear();seenGeneration=next;}
     }
     @Override public void close() {
