@@ -9,7 +9,7 @@ import java.awt.event.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 
-/** M1 launcher: host port name [--headless [seconds]]. Network connect never runs on EDT. */
+
 public final class ClientApplication {
     private ClientApplication() { }
     public static void main(String[] args) throws Exception {
@@ -46,7 +46,6 @@ public final class ClientApplication {
                 if (gameWindow.get() != null) gameWindow.get().showError(error.getMessage());
                 else label.setText("Kết nối thất bại: " + error.getMessage());
             });
-            // Server M1 không hỗ trợ lobby recovery; giữ lỗi ngắt kết nối theo profile demo.
             client.setAutoReconnect(false);
             owner.set(client);
             waiting.addWindowListener(new WindowAdapter() {
@@ -60,7 +59,6 @@ public final class ClientApplication {
             connector.setDaemon(true); connector.start();
         });
     }
-    /** Same connection/controller path as Swing, useful for separate-process smoke checks. */
     private static void headless(String host, int port, String name, int seconds) throws Exception {
         if (seconds < 1 || seconds > 60) throw new IllegalArgumentException("Smoke duration must be 1..60 seconds");
         var ui = Executors.newSingleThreadExecutor();
