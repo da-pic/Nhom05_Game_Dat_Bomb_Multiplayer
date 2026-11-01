@@ -8,7 +8,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Consumer;
 
-/** Dispatcher dạng bảng tra cứu, an toàn khi nhiều ClientHandler cùng route message. */
 public final class MessageRouter {
     private final ConcurrentMap<Short, MessageHandler> handlers = new ConcurrentHashMap<>();
     private final Consumer<String> unknownTypeListener;
@@ -18,7 +17,6 @@ public final class MessageRouter {
         this.unknownTypeListener = Objects.requireNonNull(unknownTypeListener, "unknownTypeListener");
     }
 
-    /** Đăng ký/thay thế handler của một loại packet. */
     public void registerHandler(short packetType, MessageHandler handler) {
         handlers.put(packetType, Objects.requireNonNull(handler, "handler"));
     }
@@ -26,7 +24,6 @@ public final class MessageRouter {
     public boolean unregisterHandler(short packetType) { return handlers.remove(packetType) != null; }
     public boolean hasHandler(short packetType) { return handlers.containsKey(packetType); }
 
-    /** Trả true khi đã chuyển được packet tới handler. */
     public boolean route(String clientId, Packet packet) {
         Objects.requireNonNull(packet, "packet");
         MessageHandler handler = handlers.get(packet.getType());
