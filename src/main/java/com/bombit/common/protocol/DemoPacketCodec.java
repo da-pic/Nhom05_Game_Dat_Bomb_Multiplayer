@@ -5,7 +5,6 @@ import com.bombit.common.dto.MapTheme;
 import java.util.*;
 import java.util.regex.Pattern;
 
-/** Canonical GAME_STARTED for the fixed-room M1 profile. No lobby JSON parser duplication. */
 public final class DemoPacketCodec {
     private static final String UUID_TEXT = "([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})";
     private static final Pattern START = Pattern.compile("\\{\"roomId\":\"" + UUID_TEXT
