@@ -2,7 +2,6 @@ package com.bombit.common.dto;
 
 import java.util.*;
 
-/** Ảnh lobby v3 immutable; không thay DTO legacy hoặc chứa token/session mutable. */
 public record RoomStateView(String roomId,String roomName,String hostId,String state,int maxPlayers,
                             MapSelection mapSelection,long configurationRevision,MatchConfiguration configuration,List<Member> players) {
     public record Member(String sessionId,String username,String state,int slot,TeamId team,Long readyRevision) {
