@@ -9,10 +9,7 @@ import com.bombit.server.game.runtime.*;
 import java.util.*;
 import java.util.function.*;
 
-/**
- * Game thread: bom/damage/drop/pickup/hồi sinh → loại đội → capture/điểm đồng thời → timeout.
- * Tái sử dụng gameplay nền, không chạy luật LAST_ALIVE của Classic cho trận hai đội.
- */
+
 public final class ShadowGameplayExtension implements GameplayExtension {
     private final GameState state;
     private final ShadowRoster roster;
@@ -48,7 +45,6 @@ public final class ShadowGameplayExtension implements GameplayExtension {
                 event -> { }, placement -> { }, System::nanoTime, System::currentTimeMillis);
     }
 
-    /** Clock/drop policy tiêm để kiểm fuse, timeout và nhặt item không cần chờ thời gian thật. */
     public ShadowGameplayExtension(GameState state, ShadowRoster roster, EffectiveRules.ShadowRelay rules,
                                    ItemSpawnPolicy drops, GameEventSink events, Consumer<BombCommandResult> placements,
                                    LongSupplier nanos, LongSupplier epoch) {
@@ -97,7 +93,6 @@ public final class ShadowGameplayExtension implements GameplayExtension {
         gameplay.processCommand(command);
     }
 
-    /** NORMAL/SCAN dùng chung high-water/cache, giữ qua disconnect; replay không reset cooldown/quota. */
     private void processPlant(PlantBombCommand command){
         int player=command.getPlayerId();long id=command.requestId();
         if(player<1||player>4){reject(command,"PLAYER_NOT_FOUND");return;}
@@ -122,7 +117,6 @@ public final class ShadowGameplayExtension implements GameplayExtension {
             finish(!aliveA && !aliveB ? ShadowFrame.Reason.BOTH_TEAMS_ELIMINATED : ShadowFrame.Reason.TEAM_ELIMINATED,
                     !aliveA && !aliveB ? null : aliveA ? TeamId.A : TeamId.B);
         } else {
-            // Cộng điểm của tất cả trạm trước khi xét thắng, tránh thiên lệch thứ tự duyệt trạm.
             for (var objective : objectives) updateObjective(objective);
             if (scoreA >= rules.targetScore() || scoreB >= rules.targetScore()) finish(ShadowFrame.Reason.TARGET_SCORE, leadingTeam());
             else if (elapsedMillis() >= rules.common().durationMillis()) finish(ShadowFrame.Reason.TIMEOUT, leadingTeam());
@@ -157,7 +151,6 @@ public final class ShadowGameplayExtension implements GameplayExtension {
             }
         } else { objective.capture = 0;objective.challenger = null; }
         boolean enemyPresent = objective.owner == TeamId.A ? b : a;
-        // Trạm có chủ vẫn sinh điểm khi trống; tranh chấp chỉ tạm giữ phần lẻ điểm.
         if (!captured && objective.owner != null && !enemyPresent && ++objective.score == rules.scorePeriodTicks()) {
             if (objective.owner == TeamId.A) scoreA++; else scoreB++;
             objective.score = 0;
@@ -177,7 +170,6 @@ public final class ShadowGameplayExtension implements GameplayExtension {
         state.setShadowScans(scans.snapshot());
     }
 
-    /** Hủy hành chính không giả làm thắng/thua do đội bị loại; chỉ gọi trên game thread. */
     public void abort() {
         check();if (result == null) { finish(ShadowFrame.Reason.ABORTED, null);publish(Math.max(0, rules.common().durationMillis() - elapsedMillis())); }
     }
