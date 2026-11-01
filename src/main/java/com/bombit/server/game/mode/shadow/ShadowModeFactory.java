@@ -8,7 +8,6 @@ import com.bombit.server.game.item.RandomItemSpawnPolicy;
 import java.util.*;
 import java.util.function.LongSupplier;
 
-/** Factory dùng GameLoop chung; preset Shadow không kế thừa property cân bằng của Classic. */
 public final class ShadowModeFactory implements ModeRuntimeFactory {
     private final LongSupplier nanos,epoch;
     public ShadowModeFactory(){this(System::nanoTime,System::currentTimeMillis);}
@@ -23,7 +22,6 @@ public final class ShadowModeFactory implements ModeRuntimeFactory {
     @Override public GameMap createMap(String room,MatchConfiguration config){rules(config);return ShadowArena.create();}
     @Override public GameplayExtension createGameplay(String room,MatchConfiguration config,GameState state,Map<String,Integer> players){
         var rules=rules(config);
-        // Tên hiển thị thuộc metadata lobby; gameplay chỉ cần session/player/đội ổn định.
         var roster=new ShadowRoster(players.entrySet().stream().sorted(Map.Entry.comparingByValue()).map(p->
                 new MatchStartMetadata.Member(p.getKey(),p.getValue(),p.getValue(),"P"+p.getValue(),ShadowRoster.teamForSlot(p.getValue()))).toList());
         return new ShadowGameplayExtension(state,roster,rules,new RandomItemSpawnPolicy(rules.common().itemDropProbability(),new Random()),e->{},r->{},nanos,epoch);
