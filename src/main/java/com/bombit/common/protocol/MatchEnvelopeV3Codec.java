@@ -4,7 +4,6 @@ import com.bombit.common.dto.StreamContext;
 import java.util.UUID;
 import static com.bombit.common.protocol.JsonV3.*;
 
-/** Header v3 có body riêng; không dùng decoder v2 như fallback khi v3 lỗi. */
 public final class MatchEnvelopeV3Codec {
     private MatchEnvelopeV3Codec() { }
     public static Packet command(UUID match,Packet inner){return command(match,0,inner);}
