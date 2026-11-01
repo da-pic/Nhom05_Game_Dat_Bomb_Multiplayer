@@ -20,7 +20,7 @@ class RecoveryInputTest {
             try(var input=new InputController(panel,null,prediction,sent::add,e->{throw e;},()->true,generation::get)) {
                 panel.getActionMap().get("tv2-RIGHT-true").actionPerformed(null);input.sample();
                 assertTrue(sent.getFirst().moving());
-                generation.incrementAndGet(); // Recovery đã xong trước lần sample tiếp theo.
+                generation.incrementAndGet(); 
                 input.sample();assertFalse(sent.getLast().moving());
             }
         });
