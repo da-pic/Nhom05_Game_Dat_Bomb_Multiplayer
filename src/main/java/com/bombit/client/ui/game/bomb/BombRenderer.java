@@ -12,7 +12,6 @@ import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.RoundRectangle2D;
 
-/** Chỉ dùng Java 2D để vẽ bom, dây cháy chậm chuyển động và thời gian đếm ngược. */
 public final class BombRenderer {
     private static final Color BODY_EDGE = new Color(12, 16, 24);
     private static final Color FUSE_DARK = new Color(94, 58, 30);
