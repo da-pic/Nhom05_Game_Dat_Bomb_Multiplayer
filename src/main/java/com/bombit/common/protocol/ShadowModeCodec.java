@@ -5,7 +5,6 @@ import com.bombit.server.game.model.TilePosition;
 import java.util.*;
 import static com.bombit.common.protocol.JsonV3.*;
 
-/** Blob mode/result của binary v6. ID trạm wire 0..2, model server 1..3. */
 public final class ShadowModeCodec {
     private ShadowModeCodec() { }
     public static Map<String,Object> mode(ShadowSnapshotV6 update){
