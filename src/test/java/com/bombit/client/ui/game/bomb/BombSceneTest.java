@@ -38,7 +38,6 @@ class BombSceneTest {
             assertTrue(client.bombs().state().bombs().isEmpty());assertTrue(client.world().getPlayers().get(1).isAlive(),"Events cannot damage players");
             client.acceptPacket(MatchEnvelopeCodec.wrap(match,SnapshotPacketCodec.encode(planted)));
             assertEquals(2,client.world().getTick());assertTrue(client.bombs().state().bombs().isEmpty());
-            // A gap keeps the old visual scene until a full state establishes a baseline.
             var gap=GameStateUpdate.delta(5,4,3,3,32,GameState.MatchState.RUNNING,false,List.of(),List.of(),List.of());
             client.acceptPacket(MatchEnvelopeCodec.wrap(match,SnapshotPacketCodec.encode(gap)));
             assertTrue(client.world().needsFullState());assertEquals(1,client.bombs().state().explosions().size());
