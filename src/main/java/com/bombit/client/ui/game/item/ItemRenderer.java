@@ -12,7 +12,6 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.RoundRectangle2D;
 
-/** Vẽ các vật phẩm BOMB_UP, FIRE_UP và SPEED_UP bằng các hình Java 2D. */
 public final class ItemRenderer {
     public void render(
             Graphics2D graphics,
