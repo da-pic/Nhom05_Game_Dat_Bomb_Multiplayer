@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentMap;
 public final class LatencyMonitor {
     private final int maxSamples;
     private final List<Double> samplesMs = new ArrayList<>();
+
     private final ConcurrentMap<Integer, Long> pendingPings = new ConcurrentHashMap<>();
 
     public LatencyMonitor() { this(10_000); }
@@ -16,6 +17,7 @@ public final class LatencyMonitor {
         if (maxSamples < 1) throw new IllegalArgumentException("maxSamples phải lớn hơn 0");
         this.maxSamples = maxSamples;
     }
+
 
     public long startPing(int pingId) {
         long sentAt = System.nanoTime();
@@ -30,14 +32,16 @@ public final class LatencyMonitor {
         return true;
     }
 
+
     public void recordSample(long sendTimestampNano) {
         recordElapsedNanos(System.nanoTime() - sendTimestampNano);
     }
 
+
     public synchronized void recordSampleNanos(long rttNanos) {
         if (rttNanos < 0) throw new IllegalArgumentException("RTT không thể âm");
         samplesMs.add(rttNanos / 1_000_000.0);
-        if (samplesMs.size() > maxSamples) samplesMs.remove(0); .
+        if (samplesMs.size() > maxSamples) samplesMs.remove(0); 
     }
 
     private void recordElapsedNanos(long elapsedNanos) { recordSampleNanos(Math.max(0, elapsedNanos)); }
