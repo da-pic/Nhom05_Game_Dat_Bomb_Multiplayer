@@ -4,7 +4,6 @@ import com.bombit.server.game.model.TilePosition;
 
 import java.util.Objects;
 
-/** Thực thể vật phẩm do server nắm quyền quyết định. */
 public final class Item {
     private final int id;
     private final ItemType type;
