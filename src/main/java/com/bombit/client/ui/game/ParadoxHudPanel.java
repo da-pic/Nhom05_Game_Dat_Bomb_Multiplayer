@@ -5,7 +5,6 @@ import com.bombit.client.ui.UiTheme;
 import javax.swing.*;
 import java.awt.*;
 
-/** HUD chỉ đọc state authoritative; không tự trừ lượt hoặc mở input khi nhấn R. */
 public final class ParadoxHudPanel extends JPanel {
     public static final String RULES="<html><b>PARADOX — Đấu cá nhân 2–4 người</b><br>"
             +"Mũi tên: di chuyển · SPACE: đặt bom · R: rewind · F1: hướng dẫn.<br>"
