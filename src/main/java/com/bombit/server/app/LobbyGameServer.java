@@ -9,7 +9,6 @@ import com.bombit.server.session.Session;
 import java.io.IOException;
 import java.util.Optional;
 
-/** Composition root: lobby chuẩn v3; closure legacy chỉ giữ endpoint chẩn đoán v2. */
 public final class LobbyGameServer implements AutoCloseable,GameEventSink {
     private final CurrentLobbyGameServer current;
     private final LegacyLobbyGameServer legacy;
@@ -25,7 +24,6 @@ public final class LobbyGameServer implements AutoCloseable,GameEventSink {
         else {legacy=new LegacyLobbyGameServer(port,games,movement);current=null;}
     }
     public boolean isCurrentProtocol(){return current!=null;}
-    /** Endpoint benchmark v2 được gọi đích danh; không phải fallback của listener public v3. */
     public static LobbyGameServer legacyDiagnostic(int port,BombRules bombs,MatchRules rules)throws IOException{
         var games=new GameRuntimeManager(id->com.bombit.server.game.map.ArenaGenerator.create(),(room,state,ids)->new MatchGameplayExtension(state,ids,bombs,rules,
                 new com.bombit.server.game.item.RandomItemSpawnPolicy(rules.dropChance(),new java.util.Random()),e->{},r->{}));
