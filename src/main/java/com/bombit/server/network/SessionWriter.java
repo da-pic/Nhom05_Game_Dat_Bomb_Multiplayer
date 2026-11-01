@@ -10,7 +10,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
-/** One bounded writer for one captured socket, never a replacement connection. */
 public final class SessionWriter implements OutboundSender, AutoCloseable {
     private record Frame(byte[] bytes, boolean last) { }
     private final Session session;
@@ -80,7 +79,6 @@ public final class SessionWriter implements OutboundSender, AutoCloseable {
         worker.interrupt();
         if (failed.compareAndSet(false, true)) onFailure.run();
     }
-    /** Bounded drain for a final ERROR/DISCONNECT response; close() still guarantees unblock. */
     public void finishAndAwait() {
         boolean full=false;
         synchronized(lifecycle){if(running&&accepting){accepting=false;full=!queue.offer(new Frame(new byte[0],true));}}
@@ -92,7 +90,6 @@ public final class SessionWriter implements OutboundSender, AutoCloseable {
     public boolean isRunning() { return running; }
     public int pendingFrames(){return queue.size();}
     public long pendingBytes(){return Math.max(0,pendingBytes.get());}
-    /** Called by the owning ConnectionManager watchdog; closing the captured socket unblocks write(). */
     public void expireWrite(long now,long timeoutNanos){long since=writingSince;if(running&&since!=0&&now-since>=timeoutNanos)fail();}
     private void awaitStopped(long millis) {
         if (Thread.currentThread() == worker) return;
