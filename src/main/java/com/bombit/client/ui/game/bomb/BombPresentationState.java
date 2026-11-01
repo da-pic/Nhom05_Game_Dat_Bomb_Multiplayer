@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-/** Trạng thái client không phụ thuộc khung giao diện, dành cho bộ kết xuất sau này sử dụng. */
 public final class BombPresentationState {
     private final Map<Integer, BombView> bombs = new ConcurrentHashMap<>();
     private final Map<Integer, ExplosionView> explosions = new ConcurrentHashMap<>();
