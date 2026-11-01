@@ -3,7 +3,6 @@ package com.bombit.common.dto;
 import com.bombit.server.game.model.TilePosition;
 import java.util.*;
 
-/** Authoritative visual effects, not persistent damage. One immutable frame per published tick. */
 public record BombFrame(long serverTimeMillis, List<Explosion> explosions) {
     public static final long ANIMATION_MILLIS = 600;
     public BombFrame {
