@@ -9,10 +9,7 @@ import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.function.*;
 
-/** Contract manager mới: mapFactory phải tạo map mới mỗi lần, extensionFactory tạo extension riêng từng room.
- * Callback factory chỉ giữ world cho implementation TV3; không chia sẻ GameState sang network.
- * synchronized tuần tự hóa vòng đời start/stop/close, còn submit dùng queue thread-safe của runtime.
- */
+
 public final class GameRuntimeManager implements AutoCloseable {
     private final Map<String,GameRuntime> games=new HashMap<>();
     private final Function<String,GameMap> maps;
@@ -26,7 +23,6 @@ public final class GameRuntimeManager implements AutoCloseable {
     private boolean closed;
     private boolean framePipeline;
     public Optional<ModeRegistry> modeRegistry(){return Optional.ofNullable(registry);}
-    /** Chỉ composition root v3 gọi trước trận đầu; không đổi pipeline của runtime đang chạy. */
     public synchronized void enableWorldFrames(){if(registry==null||!games.isEmpty()||closed)throw new IllegalStateException("Cannot switch pipeline");framePipeline=true;}
     public GameRuntimeManager(){this(id->defaultMap(),(id,state)->GameplayExtension.none());}
     public GameRuntimeManager(Function<String,GameMap> maps,BiFunction<String,GameState,GameplayExtension> extensions){
@@ -40,10 +36,7 @@ public final class GameRuntimeManager implements AutoCloseable {
         this.maps=Objects.requireNonNull(maps);this.extensions=Objects.requireNonNull(extensions);
         this.registry=null;
     }
-    /**
-     * Đường mới có cấu hình/definition; constructor factory cũ vẫn giữ semantics legacy.
-     * Chưa đổi pipeline snapshot wire v2: consumer v3/WorldFrame được ghép ở NV06/NV08.
-     */
+  
     public GameRuntimeManager(ModeRegistry registry){
         this.registry=Objects.requireNonNull(registry);this.maps=null;this.extensions=null;
     }
@@ -51,10 +44,7 @@ public final class GameRuntimeManager implements AutoCloseable {
         if(registry!=null)return startGame(roomId,players,registry.resolvePublic(GameMode.CLASSIC));
         return start(roomId,players,null);
     }
-    /**
-     * Cấu hình không được bỏ qua: manager legacy không biết rule trong closure phải từ chối.
-     * PUBLIC qua registry; INTERNAL chỉ là đường fixture Classic do server cấp tường minh.
-     */
+
     public synchronized GameRuntime startGame(String roomId,Collection<PlayerSpawn> players,MatchConfiguration configuration){
         if(registry==null)throw new ModeConfigurationException(ModeConfigurationException.Code.MODE_NOT_SUPPORTED);
         Objects.requireNonNull(configuration,"configuration");
@@ -93,7 +83,6 @@ public final class GameRuntimeManager implements AutoCloseable {
                 mode==null?System::nanoTime:mode.nanoClock(),mode==null?System::currentTimeMillis:mode.epochClock());
         runtime.start();games.put(roomId,runtime);return runtime;
     }
-    /** Không để caller khai báo stats khác metadata; vị trí thật còn được collision kiểm tra. */
     private static void validateConfiguredSpawns(List<PlayerSpawn> spawns,EffectiveRules.Common rules){
         if(rules.tickTargetMillis()!=rules.inputStepMillis())
             throw new IllegalArgumentException("This movement runtime requires matching tick/input steps");
@@ -105,7 +94,6 @@ public final class GameRuntimeManager implements AutoCloseable {
                 throw new IllegalArgumentException("Spawn stats differ from match configuration");
         }
     }
-    /** So reference identity, không gọi equals của extension; weak refs không giữ cả world sau stop. */
     private void reserveExtension(GameplayExtension extension){
         for(var iterator=usedExtensions.iterator();iterator.hasNext();){
             var previous=iterator.next().get();
