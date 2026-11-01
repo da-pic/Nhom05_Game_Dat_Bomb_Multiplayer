@@ -1,6 +1,5 @@
 package com.bombit.common.dto;
 
-/** Room preference. RANDOM is resolved to a concrete MapTheme when a match starts. */
 public enum MapSelection {
     RANDOM("NGẪU NHIÊN"),
     CLASSIC("CỔ ĐIỂN"),
