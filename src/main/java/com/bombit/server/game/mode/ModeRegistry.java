@@ -10,23 +10,17 @@ import java.util.Set;
 import java.util.UUID;
 import static com.bombit.server.game.mode.ModeConfigurationException.Code.*;
 
-/**
- * Một nguồn định nghĩa/validate mode phía server, không chứa socket, UI, Room hoặc GameState.
- * Model/definition bất biến; factory dùng chung chỉ giữ hàm tạo, không giữ world của room.
- * Classic, Shadow và Paradox khả dụng; Circuit vẫn bị chặn.
- */
+
 public final class ModeRegistry {
     private final Map<GameMode, ModeDefinition> definitions;
     private final List<ModeDescriptor> descriptors;
 
     public ModeRegistry() { this(ClassicRulesAdapter.serverDefaults()); }
 
-    /** Cho bootstrap/test truyền snapshot rule tường minh, không cần sửa property toàn tiến trình. */
     public ModeRegistry(EffectiveRules.Common classicRules) {
         this(classicRules, new ClassicModeFactory());
     }
 
-    /** Cho bootstrap/test chọn factory; registry vẫn kiểm mode/availability và luật từ server. */
     public ModeRegistry(EffectiveRules.Common classicRules, ModeRuntimeFactory classicFactory) {
         this(classicRules,classicFactory,new com.bombit.server.game.mode.shadow.ShadowModeFactory());
     }
@@ -42,13 +36,11 @@ public final class ModeRegistry {
             if (!entries.containsKey(mode)) entries.put(mode, ModeDefinition.unimplemented(mode));
         }
         definitions = Map.copyOf(entries);
-        // EnumMap bảo đảm thứ tự ổn định, khác iteration order không được hứa của Map.copyOf.
         descriptors = entries.values().stream().map(ModeDefinition::descriptor).toList();
     }
 
     public List<ModeDescriptor> descriptors() { return descriptors; }
 
-    /** find trả cả metadata unavailable; caller vẫn phải qua resolve/validate trước start. */
     public Optional<ModeDefinition> find(GameMode mode) {
         return Optional.ofNullable(definitions.get(Objects.requireNonNull(mode, "mode")));
     }
@@ -65,7 +57,6 @@ public final class ModeRegistry {
         return require(mode).resolve(rulesVersion, preset);
     }
 
-    /** Biên request chưa có codec v3: tên mode/preset sai bị từ chối, không fallback Classic. */
     public MatchConfiguration resolvePublic(String mode, String rulesVersion, String preset) {
         GameMode parsed;
         try { parsed = GameMode.valueOf(mode); }
@@ -87,7 +78,6 @@ public final class ModeRegistry {
         require(configuration.gameMode()).validatePublic(configuration);
     }
 
-    /** Chỉ kiểm luật/số người ở NV04; READY, quyền host và roster/team thuộc NV06/NV07. */
     public void validatePublicStart(MatchConfiguration configuration, int playerCount) {
         validatePublicConfiguration(configuration);
         if(configuration.isTeamMatch()&&playerCount!=4)throw new ModeConfigurationException(INVALID_CONFIGURATION);
@@ -105,10 +95,7 @@ public final class ModeRegistry {
         }
     }
 
-    /**
-     * Lối riêng cho fixture Classic một người/một mạng và hình học khác PUBLIC.
-     * Không được gọi từ request client; PUBLIC validator luôn từ chối profile này.
-     */
+
     public MatchConfiguration resolveInternalClassic(EffectiveRules.Common rules) {
         return new MatchConfiguration(UUID.randomUUID(), GameMode.CLASSIC, "classic-v1",
                 MatchPreset.CLASSIC_INTERNAL, MatchProfile.INTERNAL, "classic-generator-v1",
