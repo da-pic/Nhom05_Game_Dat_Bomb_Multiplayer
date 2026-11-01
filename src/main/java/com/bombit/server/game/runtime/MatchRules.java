@@ -1,9 +1,7 @@
 package com.bombit.server.game.runtime;
 
-/** Configurable demo rules, independent of fuse/range/quota configuration. */
 public record MatchRules(long durationMillis,double dropChance,int maxBombs,int maxRange,double maxSpeed,double speedIncrement,
                          int initialLives,int maxLives) {
-    /** Explicit legacy/test profile with one life. */
     public MatchRules(long durationMillis,double dropChance,int maxBombs,int maxRange,double maxSpeed,double speedIncrement){
         this(durationMillis,dropChance,maxBombs,maxRange,maxSpeed,speedIncrement,1,99);
     }
