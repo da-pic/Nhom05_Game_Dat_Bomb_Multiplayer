@@ -9,12 +9,7 @@ import com.bombit.server.game.core.GameMap;
 import com.bombit.server.game.core.GameState;
 import com.bombit.server.game.core.Player;
 
-/**
- * Ảnh dữ liệu đồng bộ được tạo trên GameLoop rồi chuyển sang worker gửi mạng.
- * FULL_STATE chứa toàn bộ map/player/entity; DELTA chỉ chứa phần thay đổi và khóa bị xóa.
- * tick là phiên bản mới, baseTick là phiên bản client phải đang có để áp dụng delta.
- * Các collection được sao chép để thay đổi GameState sau đó không làm đổi nội dung update.
- */
+
 public final class GameStateUpdate {
     private com.bombit.common.dto.MatchFrame matchFrame;
     public com.bombit.common.dto.MatchFrame getMatchFrame(){return matchFrame;}
@@ -23,13 +18,11 @@ public final class GameStateUpdate {
     }
     private List<com.bombit.common.dto.GameNotice> gameNotices=List.of();
     public List<com.bombit.common.dto.GameNotice> getGameNotices() { return gameNotices; }
-    /** Internal handoff only; wire snapshots carry state, notices use the official event packets. */
     public GameStateUpdate withGameNotices(List<com.bombit.common.dto.GameNotice> notices) {
         var copy=withEntities(entityChanges,removedEntityKeys);copy.gameNotices=List.copyOf(notices);return copy;
     }
     private com.bombit.common.dto.BombFrame bombFrame;
     public com.bombit.common.dto.BombFrame getBombFrame() { return bombFrame; }
-    /** Copies the update; the published instance is never mutated. Null retains snapshot-v2. */
     public GameStateUpdate withBombFrame(com.bombit.common.dto.BombFrame frame) {
         var copy = withEntities(entityChanges, removedEntityKeys);
         copy.bombFrame = frame;
@@ -44,13 +37,10 @@ public final class GameStateUpdate {
     private final List<EntityData> entityChanges;
     private final List<String> removedEntityKeys;
 
-    // Full chứa toàn bộ entity; delta chỉ chứa entity thêm mới hoặc thay đổi.
-    // Mục đích: Đọc EntityChanges để quan sát trạng thái; phương thức không cập nhật mô phỏng.
+
     public List<EntityData> getEntityChanges() { return entityChanges; }
-    // Mục đích: Đọc RemovedEntityKeys để quan sát trạng thái; phương thức không cập nhật mô phỏng.
     public List<String> getRemovedEntityKeys() { return removedEntityKeys; }
 
-    // Mục đích: Tạo update mới giữ metadata/map/player và sao chép danh sách entity. Với full là toàn bộ entity, với delta là entity thêm hoặc thay đổi.
     public GameStateUpdate withEntities(List<EntityData> entities, List<String> removed) {
         var copy = new GameStateUpdate(type, tick, baseTick, mapWidth, mapHeight, tileSize,
                 matchState, matchStateChanged, mapTiles(), tileChanges, players,
@@ -79,7 +69,6 @@ public final class GameStateUpdate {
     private final List<PlayerData> playerChanges;
     private final List<Integer> removedPlayerIds;
 
-    // Mục đích: Khởi tạo GameStateUpdate và kiểm tra dữ liệu đầu vào; xem chú thích của lớp để biết đơn vị và trách nhiệm.
     private GameStateUpdate(
             Type type,
             long tick,
@@ -99,7 +88,6 @@ public final class GameStateUpdate {
                 removedPlayerIds, List.of(), List.of());
     }
 
-    // Mục đích: Khởi tạo GameStateUpdate và kiểm tra dữ liệu đầu vào; xem chú thích của lớp để biết đơn vị và trách nhiệm.
     private GameStateUpdate(Type type, long tick, long baseTick, int mapWidth,
             int mapHeight, int tileSize, GameState.MatchState matchState,
             boolean matchStateChanged, List<com.bombit.server.game.model.TileType> fullMap,
@@ -127,7 +115,6 @@ public final class GameStateUpdate {
         this.removedPlayerIds = immutableCopy(removedPlayerIds);
     }
 
-    /** Compatibility bridge; new code uses fullStateModel with the shared TileType. */
     @Deprecated
     public static GameStateUpdate fullState(long tick, int mapWidth, int mapHeight,
             int tileSize, GameState.MatchState matchState, List<GameMap.TileType> fullMap,
@@ -196,84 +183,66 @@ public final class GameStateUpdate {
                 new ArrayList<>(source));
     }
 
-    // Mục đích: Đọc Type để quan sát trạng thái; phương thức không cập nhật mô phỏng.
     public Type getType() {
         return type;
     }
 
-    // Mục đích: Đọc FullState để quan sát trạng thái; phương thức không cập nhật mô phỏng.
     public boolean isFullState() {
         return type == Type.FULL_STATE;
     }
 
-    // Mục đích: Đọc Tick để quan sát trạng thái; phương thức không cập nhật mô phỏng.
     public long getTick() {
         return tick;
     }
 
-    // Mục đích: Đọc BaseTick để quan sát trạng thái; phương thức không cập nhật mô phỏng.
     public long getBaseTick() {
         return baseTick;
     }
 
-    // Mục đích: Đọc MapWidth để quan sát trạng thái; phương thức không cập nhật mô phỏng.
     public int getMapWidth() {
         return mapWidth;
     }
 
-    // Mục đích: Đọc MapHeight để quan sát trạng thái; phương thức không cập nhật mô phỏng.
     public int getMapHeight() {
         return mapHeight;
     }
 
-    // Mục đích: Đọc TileSize để quan sát trạng thái; phương thức không cập nhật mô phỏng.
     public int getTileSize() {
         return tileSize;
     }
 
-    // Mục đích: Đọc MatchState để quan sát trạng thái; phương thức không cập nhật mô phỏng.
     public GameState.MatchState getMatchState() {
         return matchState;
     }
 
-    // Mục đích: Đọc MatchStateChanged để quan sát trạng thái; phương thức không cập nhật mô phỏng.
     public boolean isMatchStateChanged() {
         return matchStateChanged;
     }
 
-    //FULL_STATE: Bản đồ đc lm phẳng theo từng hàng
-    //Vị trí phần tử = y * mapWidth + x.
-    // Mục đích: Đọc FullMap để quan sát trạng thái; phương thức không cập nhật mô phỏng.
     public List<com.bombit.server.game.model.TileType> mapTiles() { return fullMap; }
     @Deprecated public List<GameMap.TileType> getFullMap() {
         return fullMap.stream().map(t -> GameMap.TileType.valueOf(t.name())).toList();
     }
 
-    //DELTA: Các ô bản đồ có thay đổi
-    // Mục đích: Đọc TileChanges để quan sát trạng thái; phương thức không cập nhật mô phỏng.
+
     public List<TileChange> getTileChanges() {
         return tileChanges;
     }
 
-    //FULL_STATE: Danh sách tất cả Player.
-    // Mục đích: Đọc Players để quan sát trạng thái; phương thức không cập nhật mô phỏng.
+
     public List<PlayerData> getPlayers() {
         return players;
     }
 
-    //DELTA: Player mới hoặc Player có trạng thái thay đổi
-    // Mục đích: Đọc PlayerChanges để quan sát trạng thái; phương thức không cập nhật mô phỏng.
     public List<PlayerData> getPlayerChanges() {
         return playerChanges;
     }
 
-    //ID của các Player đã bị xoá khỏi GameState
-    // Mục đích: Đọc RemovedPlayerIds để quan sát trạng thái; phương thức không cập nhật mô phỏng.
+
     public List<Integer> getRemovedPlayerIds() {
         return removedPlayerIds;
     }
 
-    // Mục đích: Full luôn có ý nghĩa đồng bộ; delta có ý nghĩa nếu bất kỳ tile, player, entity, khóa xóa hoặc trạng thái trận thay đổi.
     public boolean hasChanges() {
         return isFullState()
                 || !tileChanges.isEmpty()
@@ -288,7 +257,6 @@ public final class GameStateUpdate {
     }
 
     @Override
-    // Mục đích: Tạo chuỗi chẩn đoán cho console/debug; không dùng chuỗi này làm payload protocol.
     public String toString() {
         return "GameStateUpdate{" +
                 "type=" + type +
@@ -314,17 +282,14 @@ public final class GameStateUpdate {
             this.newType = com.bombit.server.game.model.TileType.valueOf(Objects.requireNonNull(newType).name());
         }
 
-        // Mục đích: Đọc X để quan sát trạng thái; phương thức không cập nhật mô phỏng.
         public int getX() {
             return x;
         }
 
-        // Mục đích: Đọc Y để quan sát trạng thái; phương thức không cập nhật mô phỏng.
         public int getY() {
             return y;
         }
 
-        // Mục đích: Đọc NewType để quan sát trạng thái; phương thức không cập nhật mô phỏng.
         @Deprecated public GameMap.TileType getNewType() { return GameMap.TileType.valueOf(newType.name()); }
         public com.bombit.server.game.model.TileType tileType() { return newType; }
         public TileChange(int x,int y,com.bombit.server.game.model.TileType type) {
@@ -368,37 +333,30 @@ public final class GameStateUpdate {
             this(id, x, y, width, height, speed, direction, moving, alive, 0);
         }
 
-        // Mục đích: Đọc Id để quan sát trạng thái; phương thức không cập nhật mô phỏng.
         public int getId() {
             return id;
         }
 
-        // Mục đích: Đọc X để quan sát trạng thái; phương thức không cập nhật mô phỏng.
         public double getX() {
             return x;
         }
 
-        // Mục đích: Đọc Y để quan sát trạng thái; phương thức không cập nhật mô phỏng.
         public double getY() {
             return y;
         }
 
-        // Mục đích: Đọc Width để quan sát trạng thái; phương thức không cập nhật mô phỏng.
         public double getWidth() {
             return width;
         }
 
-        // Mục đích: Đọc Height để quan sát trạng thái; phương thức không cập nhật mô phỏng.
         public double getHeight() {
             return height;
         }
 
-        // Mục đích: Đọc Speed để quan sát trạng thái; phương thức không cập nhật mô phỏng.
         public double getSpeed() {
             return speed;
         }
 
-        // Mục đích: Đọc Direction để quan sát trạng thái; phương thức không cập nhật mô phỏng.
         @Deprecated public Player.Direction getDirection() { return Player.Direction.valueOf(direction.name()); }
         public com.bombit.server.game.model.Direction direction() { return direction; }
         public PlayerData(int id,double x,double y,double width,double height,double speed,
@@ -409,12 +367,10 @@ public final class GameStateUpdate {
             this.moving=moving; this.alive=alive; this.lastProcessedInput=ack;
         }
 
-        // Mục đích: Đọc Moving để quan sát trạng thái; phương thức không cập nhật mô phỏng.
         public boolean isMoving() {
             return moving;
         }
 
-        // Mục đích: Đọc Alive để quan sát trạng thái; phương thức không cập nhật mô phỏng.
         public boolean isAlive() {
             return alive;
         }
