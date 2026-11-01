@@ -7,7 +7,6 @@ import com.bombit.server.session.Session;
 import com.bombit.server.session.SessionManager;
 import com.bombit.server.session.SessionState;
 
-/** Only session transport handlers. Gameplay/room handlers are registered in later steps. */
 public final class SessionHandlers {
     private SessionHandlers() { }
 
@@ -34,12 +33,10 @@ public final class SessionHandlers {
         });
         router.registerHandler(PacketType.DISCONNECT, (id, packet) -> {
             SessionPacketCodec.disconnect(packet);
-            // ClientHandler drains the writer and removes the session after this handler returns.
         });
     }
 
     public static final class UnsupportedVersionException extends IllegalArgumentException { }
-    /** Chỉ composition root live v3 bật handler này, không đổi profile chẩn đoán legacy. */
     public static void registerCurrent(MessageRouter router,SessionManager sessions,OutboundSender sender,java.util.function.Consumer<Session> connected){
         register(router,sessions,sender,connected);
         router.registerHandler(PacketType.CONNECT,(id,packet)->{
