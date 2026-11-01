@@ -5,7 +5,6 @@ import com.bombit.server.game.event.*;
 import com.bombit.server.game.item.ItemType;
 import java.util.*;
 
-/** Official item/death/result schemas. Notices never apply world effects on clients. */
 public final class GameplayPacketCodec {
     private GameplayPacketCodec(){}
     public static Packet notice(long tick,GameNotice notice,MatchContext context){
