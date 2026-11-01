@@ -4,7 +4,6 @@ import com.bombit.server.game.model.TilePosition;
 
 import java.util.Objects;
 
-/** Thực thể bom do server nắm quyền quyết định. */
 public final class Bomb {
     private final int id;
     private final String ownerPlayerId;
