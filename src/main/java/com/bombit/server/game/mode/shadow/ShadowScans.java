@@ -8,7 +8,6 @@ import com.bombit.server.game.movement.EntityData;
 import java.util.*;
 import java.util.function.*;
 
-/** Timer/quota của scan chỉ chạy trên game thread, không scheduler và không gây damage. */
 final class ShadowScans implements BombExtras {
     private record Pending(int id,int owner,TeamId team,TilePosition cell,long due) { }
     private record Active(int id,int owner,TeamId team,TilePosition cell,long expires) { }
@@ -55,7 +54,6 @@ final class ShadowScans implements BombExtras {
         state.putEntity(new EntityData(EntityData.Kind.SCAN_BEACON,p.id(),p.cell().x(),p.cell().y(),roster.player(p.owner()).sessionId(),0,now+rules.activeMillis()));
     }
     void update(){long now=now();publishedTime=now;for(var p:List.copyOf(pending.values()))if(now>=p.due())activate(p,now);active.values().removeIf(s->{if(now<s.expires())return false;state.removeEntity("SCAN_BEACON:"+s.id());return true;});}
-    // Giữ timestamp của lần xử lý timer: CPU tạo frame không được làm deadline hết hạn trước state đã xử lý.
     ShadowScanFrame snapshot(){return new ShadowScanFrame(publishedTime,pending.values().stream().map(p->new ShadowScanFrame.Pending(p.id(),p.owner(),p.team(),p.cell().x(),p.cell().y(),p.due())).toList(),
             active.values().stream().map(p->new ShadowScanFrame.Active(p.id(),p.owner(),p.team(),p.cell().x(),p.cell().y(),p.expires())).toList(),cooldown);}
     void clear(){for(int id:pending.keySet())state.removeEntity("SCAN_PENDING:"+id);for(int id:active.keySet())state.removeEntity("SCAN_BEACON:"+id);pending.clear();active.clear();cooldown.clear();}
