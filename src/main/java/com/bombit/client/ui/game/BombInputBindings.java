@@ -6,7 +6,6 @@ import java.awt.event.*;
 import java.util.*;
 import java.util.function.*;
 
-/** Một lần nhấn chỉ gửi một request. Nhấn khi bị khóa vẫn phải nhả phím trước khi thử lại. */
 public final class BombInputBindings implements AutoCloseable {
     private final JComponent root;
     private final Window window;
