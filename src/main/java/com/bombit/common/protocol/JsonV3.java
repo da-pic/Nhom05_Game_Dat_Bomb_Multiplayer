@@ -4,7 +4,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Pattern;
 
-/** JSON v3 có giới hạn byte/depth/count; parser legacy giữ nguyên cho fixture v2. */
 public final class JsonV3 {
     private static final Pattern NUMBER=Pattern.compile("-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?(?:[eE][+-]?[0-9]+)?");
     private final String text; private int pos;
