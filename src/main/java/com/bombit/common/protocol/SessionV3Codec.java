@@ -4,7 +4,6 @@ import com.bombit.common.dto.GameMode;
 import java.util.*;
 import static com.bombit.common.protocol.JsonV3.*;
 
-/** Handshake live v3: kiểm version/features trước ownership, không downgrade qua reconnect. */
 public final class SessionV3Codec {
     public record Connect(String playerName,Set<String> features){public Connect{features=Set.copyOf(features);}}
     public record Reconnect(String playerId,String reconnectToken,Set<String> features){public Reconnect{features=Set.copyOf(features);}}
