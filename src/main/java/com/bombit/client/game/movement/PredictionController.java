@@ -5,10 +5,7 @@ import com.bombit.server.game.model.Direction;
 import com.bombit.server.game.movement.*;
 import java.util.*;
 
-/** Dự đoán nhân vật local bằng cùng movement/collision server, mỗi mẫu đúng 50 ms.
- * Chỉ gọi trên một UI/simulation thread. Giữ lịch sử hữu hạn để replay khi nhận ACK.
- * Đây là state client riêng, tuyệt đối không truyền Player này cho server runtime.
- */
+
 public final class PredictionController {
     public static final double STEP_SECONDS = 0.05;
     private final GameState predicted;
@@ -24,13 +21,13 @@ public final class PredictionController {
         player.setAlive(initial.isAlive()); predicted.addPlayer(player); predicted.startMatch();
         acknowledged = initial.getLastProcessedInput(); nextSequence = acknowledged + 1;
     }
-    /** Tạo và mô phỏng input trước khi gửi mạng. Đầy lịch sử thì dừng, không âm thầm xóa input chưa ACK. */
+ 
     public MovePacketCodec.Input predict(Direction direction, boolean moving) {
         if (pending.size() >= 256) throw new IllegalStateException("Too many unacknowledged inputs; resync required");
         var input = new MovePacketCodec.Input(nextSequence++, direction, moving);
         pending.put(input.sequence(), input); simulate(input); return input;
     }
-    /** Compatibility bridge; new callers use model.Direction. */
+   
     @Deprecated
     public MovePacketCodec.Input predict(Player.Direction direction, boolean moving) {
         return predict(Direction.valueOf(Objects.requireNonNull(direction).name()), moving);
@@ -42,7 +39,7 @@ public final class PredictionController {
                 : new StopMovingCommand(playerId, input.direction(), input.sequence()));
         movement.update(predicted, STEP_SECONDS);
     }
-    /** Reset về ảnh server và replay chỉ input mới hơn ACK. Bỏ ảnh ACK cũ để không lùi lịch sử. */
+   
     public void reconcile(GameStateUpdate.PlayerData authoritative) {
         if (authoritative.getId() != playerId) throw new IllegalArgumentException("Wrong local player");
         long ack = authoritative.getLastProcessedInput();
@@ -53,11 +50,11 @@ public final class PredictionController {
         p.setPosition(authoritative.getX(), authoritative.getY()); p.setSpeed(authoritative.getSpeed());
         p.setAlive(authoritative.isAlive()); p.setDirection(authoritative.direction());
         p.setMoving(authoritative.isMoving()); p.acknowledgeInput(ack);
-        // Server đã xác nhận chết: input cũ không còn tác dụng trong trận này.
+
         if (!authoritative.isAlive()) { pending.clear(); return; }
         for (var input : pending.values()) simulate(input);
     }
-    /** Làm mới map/entity trước replay để collision prediction theo trạng thái mới nhất nhận được. */
+
     public void updateWorld(ClientWorldState replica) {
         GameMap map = predicted.getMap();
         if (map.getWidthInTiles() != replica.getWidth() || map.getHeightInTiles() != replica.getHeight()
@@ -74,12 +71,9 @@ public final class PredictionController {
                 p.direction(),p.isMoving(),p.isAlive(),acknowledged);
     }
     public int pendingCount() { return pending.size(); }
-    /** Bỏ input chưa ACK sau mất mạng; không phát lại thao tác offline.
-     * Giữ sequence tăng đơn điệu và trở về ảnh authoritative trước khi mở input.
-     */
+    
     public void resetAfterRecovery(GameStateUpdate.PlayerData authoritative) {
         pending.clear();reconcile(authoritative);
     }
-    /** Discard pre-respawn prediction without reusing any input sequence numbers. */
     public void respawn(){pending.clear();}
 }
