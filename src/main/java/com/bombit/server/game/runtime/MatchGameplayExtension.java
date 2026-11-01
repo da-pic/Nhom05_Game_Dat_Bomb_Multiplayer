@@ -9,10 +9,8 @@ import com.bombit.server.game.model.TilePosition;
 import java.util.*;
 import java.util.function.*;
 
-/** One tick: bomb batch/damage -> destroy exposed items -> block drops -> pickups -> final decision. */
 public final class MatchGameplayExtension implements GameplayExtension,
         com.bombit.server.game.checkpoint.CheckpointParticipant<MatchGameplayExtension.Checkpoint> {
-    /** Shadow dùng chung bom/item nhưng tự quyết định kết quả đội sau bước gameplay nền. */
     public enum ResultPolicy { INDIVIDUAL, EXTERNAL }
     private final ResultPolicy resultPolicy;
     private final GameState state;
@@ -33,7 +31,6 @@ public final class MatchGameplayExtension implements GameplayExtension,
     private MatchResult result;
     private TeamMatchPolicy teamPolicy;
     private TeamMatchResult teamResult;
-    /** Composition root chọn trước start; roster không nằm trong checkpoint để rewind không đổi đội. */
     public MatchGameplayExtension useTeams(List<Integer> slots){
         if(owner!=null||resultPolicy!=ResultPolicy.INDIVIDUAL)throw new IllegalStateException("Cannot change result policy");
         var policy=new TeamMatchPolicy(slots);
@@ -61,7 +58,6 @@ public final class MatchGameplayExtension implements GameplayExtension,
         this.state=Objects.requireNonNull(state);this.players=Map.copyOf(players);this.rules=Objects.requireNonNull(rules);
         this.nanos=Objects.requireNonNull(nanos);
         checkpointDrops = drops instanceof CheckpointItemSpawnPolicy policy ? policy : null;
-        // Extras của Shadow có state riêng: không cho xuất checkpoint thiếu scan/trạm.
         checkpointSupported = checkpointDrops != null && extras == BombExtras.NONE && ids == null;
         if(rules.maxBombs()<bombRules.quota()||rules.maxRange()<bombRules.range()
                 ||state.getPlayers().stream().anyMatch(p->p.getSpeed()>rules.maxSpeed()))throw new IllegalArgumentException("Caps below initial stats");
@@ -85,7 +81,6 @@ public final class MatchGameplayExtension implements GameplayExtension,
         for(var cell:blast)world.itemAt(cell).ifPresent(i->world.removeItem(i.id()));
         blast.clear();
         for(var cell:blocks)items.trySpawn(cell,now,world);blocks.clear();
-        // Stable numeric player order is the tie-breaker, independent of packet/thread scheduling.
         players.entrySet().stream().sorted(Map.Entry.comparingByValue()).forEach(p->items.tryPickUp(p.getKey(),now,world));
         for(int id:players.values()) {var p=state.getPlayer(id);if(p==null||!p.isAlive())deaths.putIfAbsent(id,tick);}
         int alive=players.size()-deaths.size();long elapsed=nanos.getAsLong()-started;
@@ -112,7 +107,6 @@ public final class MatchGameplayExtension implements GameplayExtension,
     }
     public void onStop(){check();try{bombs.onStop();}finally{world.clear();blocks.clear();blast.clear();stopped=true;}}
 
-    /** Checkpoint version 1 đầy đủ cho nền Classic của Paradox, chỉ chụp tại ranh giới tick. */
     public record Checkpoint(int version, UUID ownerId,
             com.bombit.server.game.checkpoint.CoreWorldCheckpoint core,
             BombGameplayExtension.Checkpoint bombs, List<ItemWorldAdapter.SavedItem> items,
@@ -137,7 +131,6 @@ public final class MatchGameplayExtension implements GameplayExtension,
         return new Checkpoint(1, checkpointOwner, com.bombit.server.game.checkpoint.CoreWorldCheckpoint.capture(state),
                 bombs.captureCheckpoint(), world.captureCheckpoint(), deaths, tick, checkpointDrops.captureCheckpoint());
     }
-    /** Toàn bộ validation chạy trước lần ghi đầu tiên để checkpoint hỏng không làm mất world. */
     public void validateRestore(Checkpoint checkpoint) {
         checkCheckpointAccess(); Objects.requireNonNull(checkpoint);
         if (!checkpointOwner.equals(checkpoint.ownerId())) throw new IllegalArgumentException("Checkpoint from another match");
@@ -162,10 +155,8 @@ public final class MatchGameplayExtension implements GameplayExtension,
         bombs.restoreCheckpoint(checkpoint.bombs()); world.restoreCheckpoint(checkpoint.items());
         checkpointDrops.restoreCheckpoint(checkpoint.randomState());
         deaths.clear(); deaths.putAll(checkpoint.deaths()); tick = checkpoint.simulationTick();
-        // Người hết grace không quay lại. Frozen được BombGameplayExtension giữ theo lifecycle hiện tại.
         for (int id : players.values()) if (state.getPlayer(id) == null) deaths.putIfAbsent(id, tick);
         blocks.clear(); blast.clear(); state.clearGameNotices(); state.clearPlantResults();
-        // started/deadline, event ID, item/bomb allocator và input ACK không bị rewind.
         int remaining = (int)Math.max(0, (rules.durationMillis() - (nanos.getAsLong() - started) / 1_000_000L + 999) / 1000);
         publish(remaining);
     }
