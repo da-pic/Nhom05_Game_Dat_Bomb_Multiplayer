@@ -8,13 +8,10 @@ import com.bombit.server.session.*;
 import java.util.Objects;
 import java.util.function.Function;
 
-/** Router TV4 đăng ký handler cho MOVE. Resolver phải tìm session theo clientId tin cậy.
- * Từ chối bằng exception để tầng tích hợp trả ERROR; không sửa state từ thread socket.
- */
+
 public final class MovementHandler implements MessageHandler {
     private final GameRuntimeManager gameRuntimes;
     private final Function<String, Session> sessions;
-    /** Constructor contract mới; resolver vẫn thuộc tầng tích hợp TV1/TV4. */
     public MovementHandler(GameRuntimeManager runtimes, Function<String, Session> sessions) {
         this.gameRuntimes = Objects.requireNonNull(runtimes); this.sessions = Objects.requireNonNull(sessions);
     }
