@@ -3,7 +3,6 @@ package com.bombit.server.game.replication;
 import com.bombit.server.game.movement.GameStateUpdate;
 import java.util.Set;
 
-/** Ảnh đầy đủ được chụp trên game thread; khác network delta và checkpoint timer/RNG. */
 public record WorldFrame(GameStateUpdate snapshot,long matchTimeMillis,long epochOrigin,Set<Integer> frozen,
                           java.util.List<com.bombit.common.dto.PlantRequestResult> plantResults,
                           com.bombit.common.dto.ShadowFrame shadow,com.bombit.common.dto.ShadowScanFrame scans,
