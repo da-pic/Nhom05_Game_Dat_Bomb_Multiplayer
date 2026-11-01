@@ -2,7 +2,6 @@ package com.bombit.common.dto;
 
 import java.util.*;
 
-/** Final server decision. Equal survival time receives equal rank. */
 public record MatchResult(long tick,Integer winnerPlayerId,Reason reason,List<Ranking> rankings) {
     public enum Reason { LAST_ALIVE, ALL_DEAD, TIMEOUT, ABORTED }
     public record Ranking(int playerId,int rank) {
