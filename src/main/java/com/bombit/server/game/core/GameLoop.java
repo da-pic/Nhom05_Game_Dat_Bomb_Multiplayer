@@ -6,10 +6,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
 
-/** Một luồng sở hữu state: command FIFO → movement → extension TV3 → full/delta.
- * Network chỉ submit hoặc đọc snapshot bất biến, không đọc GameState trực tiếp.
- * Thay đổi lifecycle dùng command riêng; gameplay TV3 chỉ đi qua GameplayExtension.
- */
+
 public class GameLoop {
     private final GameState state;
     private final MovementSystem movement;
@@ -39,11 +36,9 @@ public class GameLoop {
     public GameLoop(GameState state,MovementSystem movement) {
         this(state,movement,GameplayExtension.none(),4096,50_000_000L);
     }
-    /** Constructor cấu hình giúp test queue nhỏ; bước mô phỏng lấy từ periodNanos, không lấy từ client. */
     public GameLoop(GameState state,MovementSystem movement,GameplayExtension extension,int capacity,long periodNanos) {
         this(state,movement,extension,capacity,periodNanos,false,System::nanoTime,System::currentTimeMillis);
     }
-    /** Chọn pipeline trước start; frame đầy đủ có thể bỏ khi queue đầy mà không đứt chuỗi delta. */
     public GameLoop(GameState state,MovementSystem movement,GameplayExtension extension,int capacity,long periodNanos,
                     boolean framePipeline,java.util.function.LongSupplier frameNanos,java.util.function.LongSupplier frameEpoch) {
         if(capacity<=0 || periodNanos<=0 || periodNanos>100_000_000L) throw new IllegalArgumentException("Invalid loop config");
@@ -57,11 +52,9 @@ public class GameLoop {
         if(state.getMatchState()!=GameState.MatchState.RUNNING) throw new IllegalStateException("Match not running");
         running=true;thread=new Thread(this::runLoop,"GameLoop-"+Integer.toHexString(System.identityHashCode(this)));thread.start();
     }
-    /** offer không chờ; chỉ đếm queue-full, tách biệt với submit sau khi loop đã đóng. */
     public synchronized boolean submitCommand(GameCommand command) {
         return submitCommand(command, timelineEpoch);
     }
-    /** Đường protocol mới truyền epoch của client; lifecycle luôn áp theo hiện tại. */
     public synchronized boolean submitCommand(GameCommand command, long epoch) {
         Objects.requireNonNull(command);
         if(epoch<0)throw new IllegalArgumentException("Invalid timeline epoch");
@@ -80,7 +73,6 @@ public class GameLoop {
                 processCommands();
                 for(int id:frozen) {Player p=state.getPlayer(id);if(p!=null)p.setMoving(false);}
                 if(!extension.skipSimulationTick())movement.update(state,periodNanos/1_000_000_000.0);
-                // TV3 cập nhật timer, explosion, item sau movement và trước snapshot.
                 extension.update(framePipeline?frameEpoch.getAsLong():System.currentTimeMillis());
                 tick++;publish();
                 next+=periodNanos;long remaining=next-System.nanoTime();
@@ -104,8 +96,7 @@ public class GameLoop {
             GameCommand next=queued.command();
             boolean lifecycle=next instanceof PlayerDisconnectedCommand || next instanceof PlayerReconnectedCommand;
             if(!lifecycle && !(next instanceof RewindCommand) && queued.timelineEpoch()!=timelineEpoch){commands.poll();processed++;continue;}
-            // Không đảo thứ tự toàn cục: mẫu thứ hai của cùng player chờ tick sau.
-            // Contract FIFO ưu tiên thứ tự; handler/rate-limit TV4 cần chặn client spam.
+     
             if(next.isMovement() && next.getSequence()>0 && sampled.contains(next.getPlayerId()))break;
             GameCommand command=commands.poll().command();processed++;
             if(command instanceof PlayerDisconnectedCommand disconnected) {
@@ -118,13 +109,11 @@ public class GameLoop {
             } else if(command.isMovement() && !frozen.contains(command.getPlayerId())) {
                 if(movement.applyCommand(state,command) && command.getSequence()>0)sampled.add(command.getPlayerId());
             }
-            // TV2 không xử lý PlantBombCommand; TV3 nhận qua interface này.
             extension.processCommand(command);
             long epoch=extension.timelineEpoch();
             if(epoch!=timelineEpoch){
                 if(epoch<timelineEpoch)throw new IllegalStateException("Timeline epoch cannot decrease");
                 timelineEpoch=epoch;fullRequested.set(true);outbound.clear();frames.clear();latest=null;latestFrame=null;
-                // Không tái áp intent của nhánh cũ; lifecycle phía sau vẫn đi qua FIFO.
                 for(Player p:state.getPlayers())p.setMoving(false);
                 sampled.clear();
             }
@@ -148,7 +137,6 @@ public class GameLoop {
         if(outbound.offer(update)){builder.commit(update);state.clearGameNotices();state.clearPlantResults();latest=update;}
         else {outboundFull++;if(full)fullRequested.set(true);}
     }
-    /** Trả ảnh đã công bố gần nhất; không tạo snapshot trên network thread. Dùng queue để không bỏ delta. */
     public GameStateUpdate createUpdate() {return latest;}
     public GameStateUpdate takeOutboundUpdate() throws InterruptedException {return outbound.take();}
     public GameStateUpdate pollOutboundUpdate() {return outbound.poll();}
@@ -167,7 +155,6 @@ public class GameLoop {
     public Throwable getFailure(){return failure;}
     public boolean isRunning(){return running;}
     public synchronized boolean isThreadAlive(){return thread!=null&&thread.isAlive();}
-    /** Không giữ monitor khi join, để finally của loop có thể hoàn tất cleanup. */
     public void stop() {
         Thread current;
         synchronized(this){running=false;current=thread;}
