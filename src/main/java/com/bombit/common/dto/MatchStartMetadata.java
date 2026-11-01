@@ -2,7 +2,6 @@ package com.bombit.common.dto;
 
 import java.util.*;
 
-/** Context v3 đầy đủ, bao identity cũ; không đoán rule từ constructor MatchContext legacy. */
 public record MatchStartMetadata(MatchContext identity,MatchConfiguration configuration,long configurationRevision,
                                  List<Member> players,StreamContext stream) {
     public record Member(String sessionId,int playerId,int slot,String username,TeamId team) {
