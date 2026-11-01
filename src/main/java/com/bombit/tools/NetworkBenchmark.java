@@ -17,7 +17,6 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BooleanSupplier;
 
-/** Headless protocol-2 workload runner; never changes authoritative world outside the normal packets. */
 public final class NetworkBenchmark {
     public static final List<String> COLUMNS=List.of("run_id","scenario","timestamp_utc","label","revision","scope","host","port",
             "runner_clients","match_players","client_index","mode","warmup_seconds","window_seconds","probe_interval_ms",
@@ -194,7 +193,6 @@ public final class NetworkBenchmark {
                     throw new IllegalStateException("Missing shared bomb/explosion or plant acknowledgement");
             }
             for(var p:peers){p.measuring=false;p.finishing=true;}
-            // Separate runners may start a few ms apart. Do not abort another runner at our window boundary.
             if(!c.local()&&c.clients()<c.expected()){
                 long settle=System.nanoTime()+TimeUnit.MILLISECONDS.toNanos(1500);
                 while(System.nanoTime()<settle){for(var p:peers)p.poll();Thread.sleep(5);}
