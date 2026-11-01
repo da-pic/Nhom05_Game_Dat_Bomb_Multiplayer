@@ -2,7 +2,6 @@ package com.bombit.common.dto;
 
 import java.util.*;
 
-/** Complete HUD state in both full and delta snapshots; speed is already in PlayerData. */
 public record MatchFrame(int remainingSeconds,List<Stats> players,MatchResult result,TeamMatchResult teamResult) {
     public MatchFrame(int seconds,List<Stats> players,MatchResult result){this(seconds,players,result,null);}
     public record Stats(int playerId,int bombLimit,int range,int lives,boolean shield,int respawns) {
