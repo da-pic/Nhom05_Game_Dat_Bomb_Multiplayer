@@ -499,6 +499,8 @@ RTT đo PING/PONG; MOVE ACK đo từ gửi input đến xử lý snapshot xác n
 
 ### Kiểm thử chức năng
 
+Trong VS Code, mở **Terminal → New Terminal**, chọn PowerShell và chạy lệnh `mvn test` biên dịch source và chạy các bài kiểm thử JUnit trong dự án.
+
 ```powershell
 mvn test
 ```
