@@ -5,7 +5,6 @@ import com.bombit.server.game.movement.GameStateUpdate;
 import java.util.List;
 import java.util.Set;
 
-/** Update của view riêng; không giữ WorldFrame hoặc private detail ngoài quyền người nhận. */
 public record ShadowSnapshotV6(GameStateUpdate update,long simulationTick,long matchTimeMillis,
                                 List<ClassicSnapshotV6.PublicPlayer> publicPlayers,long lastProcessedInput,
                                 boolean inputEnabled,ShadowFrame objectives,Set<TilePosition> visibleCells,
