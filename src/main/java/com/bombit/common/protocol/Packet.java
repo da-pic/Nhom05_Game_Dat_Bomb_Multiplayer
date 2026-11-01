@@ -2,7 +2,6 @@ package com.bombit.common.protocol;
 
 import java.util.Objects;
 
-/** Một message gồm mã loại 16-bit và payload JSON UTF-8 (không bao gồm framing TCP). */
 public final class Packet {
     private final short type;
     private final String jsonPayload;
