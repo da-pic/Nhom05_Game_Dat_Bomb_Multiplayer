@@ -2,7 +2,6 @@ package com.bombit.server.game.runtime;
 
 import com.bombit.server.game.model.TilePosition;
 
-/** Server-owned movement balance; spawn is centered without changing the map's grid geometry. */
 public record PlayerMovementRules(double hitboxSize,double initialSpeed) {
     public PlayerMovementRules {
         if(!Double.isFinite(hitboxSize)||hitboxSize<=0||!Double.isFinite(initialSpeed)||initialSpeed<=0)
