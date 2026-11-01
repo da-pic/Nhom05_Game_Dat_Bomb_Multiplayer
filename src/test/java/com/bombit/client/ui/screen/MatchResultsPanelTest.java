@@ -16,8 +16,7 @@ class MatchResultsPanelTest {
             assertTrue(panel.summary().contains("Mai"));assertEquals(2,panel.rowCount());
             panel.setSize(400,200);panel.doLayout();var image=new BufferedImage(400,200,BufferedImage.TYPE_INT_ARGB);var graphics=image.createGraphics();
             try{panel.paint(graphics);}finally{graphics.dispose();}
-            // Góc của panel bo tròn được phép trong suốt; kiểm tra có nội dung vẽ
-            // thay vì ép pixel (0,0) phải có màu như giao diện vuông cũ.
+          
             assertTrue(java.util.stream.IntStream.range(0,400*200)
                     .anyMatch(i->(image.getRGB(i%400,i/400)>>>24)!=0));
             panel.showResult(new MatchResult(10,null,MatchResult.Reason.TIMEOUT,List.of(new MatchResult.Ranking(1,1))),Map.of());
