@@ -24,12 +24,10 @@ public final class RoomCleanupSink implements GameEventSink {
 
     @Override
     public void onPlayerDisconnected(Session session) {
-        // Soft drop: keep the seat in the room while the reconnect window is open.
     }
 
     @Override
     public void onPlayerReconnected(Session session) {
-        // FULL_STATE_SYNC is sent by the game layer once the router is wired.
     }
 
     @Override
