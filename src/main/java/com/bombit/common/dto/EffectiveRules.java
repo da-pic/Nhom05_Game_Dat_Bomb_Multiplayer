@@ -5,18 +5,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
-/**
- * Luật có kiểu dữ liệu rõ ràng, không giữ Map<Object> tùy ý có thể bị sửa sau validate.
- * Classic không có field scan/team giả. Shadow dùng preset v1 cố định của NV02.
- * Các record lồng nhau chỉ chứa primitive/String/record bất biến nên an toàn chia sẻ.
- */
+
 public sealed interface EffectiveRules permits EffectiveRules.Classic, EffectiveRules.ShadowRelay, EffectiveRules.Paradox {
     Common common();
 
-    /**
-     * Tạo dạng phẳng đúng tên field contract để codec NV06 sử dụng sau này.
-     * Đây chưa phải JSON codec; cả map ngoài và map scan đều không sửa được.
-     */
     default Map<String, Object> toWireFields() {
         var fields = new LinkedHashMap<>(common().toWireFields());
         if (this instanceof ShadowRelay shadow) {
@@ -34,11 +26,7 @@ public sealed interface EffectiveRules permits EffectiveRules.Classic, Effective
         return Collections.unmodifiableMap(fields);
     }
 
-    /**
-     * Thông số nền: kích thước/tick/movement, bom/item/lives và các thời hạn phiên.
-     * Chỉ kiểm quan hệ số hợp lệ ở đây; PUBLIC còn kiểm grid/tick tại MatchConfiguration.
-     * Grace và budget có mốc bắt đầu khác nhau, không so trực tiếp hai deadline.
-     */
+
     record Common(int width, int height, int tilePixels, int tickTargetMillis, int inputStepMillis,
                   double hitboxPixels, double initialSpeed, double speedIncrement, double maxSpeed,
                   int initialLives, int maxLives, long normalFuseMillis, int initialBombQuota,
@@ -71,13 +59,11 @@ public sealed interface EffectiveRules permits EffectiveRules.Classic, Effective
             }
         }
 
-        /** Giá trị Shadow không đọc system property của Classic. Thay preset phải đổi revision luật. */
         public static Common shadowRelayV1() {
             return new Common(17, 15, 32, 50, 50, 24, 80, 8, 144, 3, 99,
                     3000, 1, 5, 1, 8, .75, 180000, 30000, 29000);
         }
 
-        /** Chỉ xuất giá trị immutable; không trả map nội bộ hoặc reference tới server config. */
         public Map<String, Object> toWireFields() {
             var fields = new LinkedHashMap<String, Object>();
             fields.put("width", width); fields.put("height", height); fields.put("tilePixels", tilePixels);
@@ -94,20 +80,15 @@ public sealed interface EffectiveRules permits EffectiveRules.Classic, Effective
         }
     }
 
-    /** Chỉ chứa luật nền, không chứa vùng nhìn/trạm/scan để điền cho đủ field. */
     record Classic(Common common) implements EffectiveRules {
         public Classic { Objects.requireNonNull(common, "common"); }
     }
 
-    /** Paradox v1 giữ luật nền, chỉ bổ sung rewind 40 tick/1 lượt/3 giây. */
     record Paradox(Common common) implements EffectiveRules {
         public Paradox { Objects.requireNonNull(common); }
     }
 
-    /**
-     * Tên shadow-relay-v1 gắn với chính xác preset đã chốt, chưa phải kết quả cân bằng.
-     * Không cho sửa 40 tick/60 điểm/cooldown rồi vẫn gắn cùng tên phiên bản luật.
-     */
+
     record ShadowRelay(Common common, int players, int teamSize, boolean friendlyFire,
                        int normalVisionRadius, int captureRadius, int captureTicks,
                        int scorePeriodTicks, int targetScore, Scan scan) implements EffectiveRules {
@@ -126,7 +107,6 @@ public sealed interface EffectiveRules permits EffectiveRules.Classic, Effective
         }
     }
 
-    /** Timer scan do server quyết định; record này không tự đặt timer hoặc mở thread. */
     record Scan(long fuseMillis, long activeMillis, int radius, long cooldownMillis) {
         public Scan {
             if (fuseMillis <= 0 || activeMillis <= 0 || cooldownMillis <= 0 || radius <= 0
