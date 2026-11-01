@@ -5,7 +5,6 @@ import com.bombit.server.game.runtime.MatchRules;
 import java.util.*;
 import java.util.function.BiConsumer;
 
-/** Immutable effect catalog: new types register effects without changing world/pickup control flow. */
 public final class ItemEffectRegistry {
     private final Map<ItemType,BiConsumer<Player,MatchRules>> effects;
     public ItemEffectRegistry(Map<ItemType,BiConsumer<Player,MatchRules>> effects){
