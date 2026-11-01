@@ -11,7 +11,6 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.RoundRectangle2D;
 
-/** Vẽ hiệu ứng lửa dao động cho từng ô chịu ảnh hưởng do server cung cấp. */
 public final class ExplosionRenderer {
     public void render(
             Graphics2D graphics,
