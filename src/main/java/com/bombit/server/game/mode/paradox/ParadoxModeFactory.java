@@ -8,7 +8,6 @@ import com.bombit.server.game.mode.ModeRuntimeFactory;
 import com.bombit.server.game.runtime.*;
 import java.util.*;
 
-/** Mỗi trận có world, lịch sử và RNG riêng; theme không thay đổi luật rewind. */
 public final class ParadoxModeFactory implements ModeRuntimeFactory {
     public GameMode gameMode(){return GameMode.PARADOX;}
     private EffectiveRules.Common rules(MatchConfiguration configuration){
