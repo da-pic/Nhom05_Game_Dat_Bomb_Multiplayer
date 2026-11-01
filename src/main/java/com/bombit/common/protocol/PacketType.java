@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/** Mã thông điệp dùng chung giữa client và server; các giá trị là một phần của protocol. */
 public final class PacketType {
     private PacketType() { }
 
@@ -35,14 +34,12 @@ public final class PacketType {
     public static final short GAME_OVER = 0x0031;
     public static final short PLAYER_DISCONNECTED = 0x0032;
     public static final short FULL_STATE_SYNC = 0x0033;
-    /** C->S resync request; protocol 2 requires the current match envelope. */
     public static final short REQUEST_FULL_STATE = 0x0034;
     public static final short END_GAME = 0x0035;
     public static final short PING = 0x0040;
     public static final short PONG = 0x0041;
     public static final short DISCONNECT = 0x0042;
     public static final short RECONNECT = 0x0043;
-    /** Thông báo mất mạng có thể gửi best-effort khi socket vẫn còn khả năng truyền. */
     public static final short NETWORK_LOST = 0x0044;
     public static final short ERROR = (short) 0x00FF;
 
