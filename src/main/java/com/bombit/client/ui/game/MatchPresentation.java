@@ -3,7 +3,6 @@ package com.bombit.client.ui.game;
 import com.bombit.common.dto.*;
 import java.awt.Color;
 
-/** Cùng roster authoritative cho màu, nhãn và hướng dẫn; không suy đội từ playerId. */
 public final class MatchPresentation {
     private MatchPresentation(){}
     public static TeamId team(MatchStartMetadata metadata,int playerId){
