@@ -9,10 +9,8 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
-/** Permanent listeners precede CONNECT; metadata/full/delta are dispatched in order to the UI. */
 public final class GameClientConnection implements AutoCloseable {
     public enum RecoveryState { CONNECTING, CONNECTED, RECONNECTING, WAITING_ACK, WAITING_FULL, CLOSED }
-    /** Deadline riêng từng pha và toàn đợt. Constructor package-private giúp test server im lặng nhanh. */
     record RecoveryTimeouts(long totalMillis,long ackMillis,long fullMillis,long retryMillis,int connectMillis) {
         RecoveryTimeouts {
             if(totalMillis<=0||ackMillis<=0||fullMillis<=0||retryMillis<=0||connectMillis<=0)
@@ -37,7 +35,6 @@ public final class GameClientConnection implements AutoCloseable {
     private final ScheduledExecutorService control = Executors.newSingleThreadScheduledExecutor(task -> {
         Thread thread = new Thread(task, "Demo-Client-Control"); thread.setDaemon(true); return thread;
     });
-    // Watchdog độc lập: connect/send đang block trên control không làm mất deadline ACK/full.
     private final ScheduledExecutorService recoveryWatchdog=Executors.newSingleThreadScheduledExecutor(task->{
         var thread=new Thread(task,"Client-Recovery-Watchdog");thread.setDaemon(true);return thread;
     });
@@ -79,7 +76,7 @@ public final class GameClientConnection implements AutoCloseable {
     public com.bombit.common.dto.RoomStateView roomState(){return roomState;}
     public Packet lastPlantResult(){return lastPlantResult;}
     public Packet matchCommand(Packet inner)throws IOException{if(context==null)throw new IllegalStateException("No active match");return currentProtocol?MatchEnvelopeV3Codec.command(context.matchId(),metadata.stream().timelineEpoch(),inner):MatchEnvelopeCodec.wrap(context.matchId(),inner);}
-    /** Product lobby dùng factory này; constructor cũ giữ diagnostic v2, không auto downgrade. */
+    
     public static GameClientConnection current(Executor ui,Consumer<MovementClientController> started,Consumer<String> status,Consumer<Throwable> errors){
         return new GameClientConnection(ui,started,status,errors,new RecoveryTimeouts(29000,2500,4000,200,1500),true);
     }
@@ -101,25 +98,25 @@ public final class GameClientConnection implements AutoCloseable {
         network.addPacketListener(packet -> {
             receivedNanos = System.nanoTime();
             long epoch=wireEpoch.get();
-            // Packet đã xếp lên UI của socket trước không được áp sau khi đổi socket.
+            
             dispatch(() -> {if(epoch==wireEpoch.get())packet(packet);},6+packet.getJsonPayload().getBytes(java.nio.charset.StandardCharsets.UTF_8).length);
         });
         network.setOnDisconnect(this::connectionLost);
         recoveryWatchdog.scheduleAtFixedRate(this::checkRecoveryTimeouts,50,50,TimeUnit.MILLISECONDS);
     }
-    /** Lobby events and command errors remain recoverable on the UI executor. */
+    
     public void setLobbyListener(Consumer<Packet> listener) { lobby=listener; }
     public String sessionId() { return sessionId; }
     public String reconnectToken() { return reconnectToken; }
     public boolean isReconnecting() { return reconnecting.get(); }
     public RecoveryState recoveryState() { return recoveryState; }
-    /** Callback được phát trên UI executor, không cập nhật Swing từ reader/control. */
+   
     public void setRecoveryStateListener(Consumer<RecoveryState> listener) { recoveryListener=java.util.Objects.requireNonNull(listener); }
     public void setAutoReconnect(boolean enabled) { this.autoReconnect = enabled; }
     public boolean isAutoReconnect() { return autoReconnect; }
     public void send(Packet packet) {
         long epoch=wireEpoch.get();
-        // Không giữ lệnh chat/room/end từ connection cũ để phát lại sau khi phục hồi.
+      
         if(closed.get()||reconnecting.get())return;
         if(!controlSlots.tryAcquire()){fail(new IOException("Client control queue full"));return;}
         try { control.execute(() -> {
@@ -181,7 +178,7 @@ public final class GameClientConnection implements AutoCloseable {
         if(!currentProtocol){packetLegacy(packet);return;}
         try{packetCurrent(packet);}catch(IOException error){fail(error);}
     }
-    /** V3 được kiểm strict trước khi dùng DTO bridge tới controller/logic recovery hiện có. */
+    
     private void packetCurrent(Packet packet)throws IOException{
         switch(packet.getType()){
             case PacketType.CONNECT_ACK->{var ack=SessionV3Codec.decodeAcknowledgement(packet);
@@ -240,7 +237,7 @@ public final class GameClientConnection implements AutoCloseable {
             case PacketType.BOMB_PLANTED,PacketType.BOMB_EXPLODE,PacketType.ITEM_SPAWN,PacketType.ITEM_PICKED_UP,PacketType.PLAYER_DIE->{
                 if(metadata==null||movement==null||recovery!=null)return;try{movement.acceptNoticeV3(MatchEnvelopeV3Codec.unwrapUpdate(packet,metadata.identity().matchId(),metadata.stream()));}catch(ProtocolRejection stale){return;}}
             case PacketType.ERROR->{String code=SessionV3Codec.errorCode(packet);if(code.equals("UNSUPPORTED_PROTOCOL")||code.equals("UNSUPPORTED_SNAPSHOT")||code.equals("CLIENT_CAPABILITY_MISMATCH")){fail(new IOException("Connection rejected: "+code));return;}
-                // Logic cũ nhận DTO lỗi đã validate; callback UI vẫn giữ nguyên packet v3.
+                
                 if(recovery!=null)packetLegacy(SessionPacketCodec.error(code));else if(lobby!=null)lobby.accept(packet);else fail(new IOException(code));}
             default->{ }
         }
@@ -288,7 +285,7 @@ public final class GameClientConnection implements AutoCloseable {
                         if(!r.match.equals(next))throw new IllegalStateException("Recovery match metadata mismatch");
                         r.metadata=true;
                     }
-                    // Giữ controller/cửa sổ và counter plant; server đã chủ động yêu cầu full.
+               
                     return;
                 }
                 if (context != null && context.matchId().equals(next.matchId())) {
@@ -358,7 +355,7 @@ public final class GameClientConnection implements AutoCloseable {
             default -> { }
         }
     }
-    /** Called on the UI owner thread. Rate-limit requests without blocking the UI. */
+
     public void requestFullState() {
         if (closed.get() || reconnecting.get() || context == null || !resyncQueued.compareAndSet(false, true)) return;
         var match = context.matchId();
@@ -422,8 +419,7 @@ public final class GameClientConnection implements AutoCloseable {
     }
     private void attempt(Recovery r) {
         if(closed.get()||recovery!=r)return;
-        // Dừng/join reader cũ trên worker; sau đó mới đổi epoch và mở socket mới.
-        // Nhờ vậy không gắn packet cũ đang chờ UI sang attempt mới.
+       
         network.disconnect();
         long epoch;
         synchronized(recoveryLock) {
@@ -473,7 +469,7 @@ public final class GameClientConnection implements AutoCloseable {
     }
     private void fail(Throwable error) { if(beginClose())finishClose(error); }
     private void finishClose(Throwable error) {
-        // Không giữ recoveryLock khi đóng/join network; reader/UI có thể đang chờ khóa đó.
+      
         control.shutdownNow();recoveryWatchdog.shutdownNow();network.close();
         if(movement!=null)movement.close();
         try{ui.execute(() -> {
@@ -490,6 +486,6 @@ public final class GameClientConnection implements AutoCloseable {
     public boolean isClosed(){return closed.get();}
     public boolean workersStopped(){return control.isTerminated()&&recoveryWatchdog.isTerminated()&&!network.isReaderAlive();}
     public int listenerCount(){return network.listenerCount();}
-    // Quan sát budget dispatch trong test interleaving UI; không đọc world từ reader.
+    
     int pendingUiActions(){return 256-uiSlots.availablePermits();}
 }
