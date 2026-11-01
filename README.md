@@ -515,7 +515,7 @@ java -Xss512k -cp "target\classes;target\test-classes" com.bombit.tools.NetworkB
 
 Mỗi dòng trong `target\network-stresstest-gameplay-expanded.csv` là một mốc tải. `PASS` nghĩa là đạt các ngưỡng trên; khi gặp `FAIL`, mức client cao nhất trước đó có trạng thái `PASS` là mức tối đa đạt trong lượt đo. Server và các client mô phỏng cùng chạy trong một JVM trên loopback.
 
-### Kiểm thử tốc độ lệnh ở nhiều phòng (Multi-room Command Rate Stress Test)
+### Kiểm thử tốc độ lệnh ở nhiều phòng 
 
 Chạy một dòng lệnh trong PowerShell để kiểm tra lần lượt 10, 50 và 100 client. Benchmark phân bố client thành khoảng 3, 13 và 25 phòng; mỗi lượt tăng tốc độ MOVE từ 20 lệnh/giây/người. Mỗi mức client được ghi vào một CSV riêng trong `target`.
 
