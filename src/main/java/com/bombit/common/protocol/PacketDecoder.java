@@ -11,11 +11,9 @@ import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
-/** Đọc frame TCP chính xác theo length prefix, kể cả khi read chỉ trả về một phần dữ liệu. */
 public final class PacketDecoder {
     private PacketDecoder() { }
 
-    /** Đọc một frame. EOF sạch trước frame kế tiếp được trả về dưới dạng EOFException. */
     public static Packet decode(InputStream input) throws IOException {
         Objects.requireNonNull(input, "input");
         DataInputStream in = input instanceof DataInputStream data ? data : new DataInputStream(input);
@@ -27,7 +25,7 @@ public final class PacketDecoder {
         }
         PacketEncoder.validateLength(length);
         byte[] body = new byte[length];
-        in.readFully(body); // readFully xử lý các lần đọc ngắn của TCP stream.
+        in.readFully(body); 
         short type = ByteBuffer.wrap(body, 0, Short.BYTES).order(ByteOrder.BIG_ENDIAN).getShort();
         String payload;
         try {
@@ -41,7 +39,6 @@ public final class PacketDecoder {
         return new Packet(type, payload);
     }
 
-    /** Tương thích với API DataInputStream thường dùng ở socket handler. */
     public static Packet decode(DataInputStream input) throws IOException {
         return decode((InputStream) input);
     }
