@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-/** Compact arcade-style map selector; avoids the platform-dependent JComboBox appearance. */
 public final class MapSelectionPicker extends JPanel {
     private static final Color PANEL = new Color(10,17,31,225);
     private final Map<MapSelection,MapButton> buttons=new EnumMap<>(MapSelection.class);
