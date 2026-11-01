@@ -7,7 +7,7 @@ import com.bombit.server.game.movement.*;
 import java.io.IOException;
 import java.util.*;
 
-/** Replica UI-owner: kiểm candidate trước, rồi commit world/mode/self cùng một update hợp lệ. */
+
 public final class ShadowReplica {
     private final ClientWorldState world;
     private MatchStartMetadata metadata;
@@ -37,7 +37,7 @@ public final class ShadowReplica {
         var expected=new HashSet<Integer>();details.forEach(p->expected.add(p.getId()));
         var candidatePlayers=new HashSet<Integer>();if(!update.isFullState())candidatePlayers.addAll(world.getPlayers().keySet());
         candidatePlayers.removeAll(update.getRemovedPlayerIds());candidatePlayers.addAll(expected);
-        // Mỗi update mang đủ record của tập private hiện tại: thiếu removal hide phải resync, không giữ vị trí cũ.
+
         if(!candidatePlayers.equals(expected)||!expected.equals(update.getMatchFrame().players().stream().map(MatchFrame.Stats::playerId).collect(java.util.stream.Collectors.toSet())))return reject();
         TeamId team=metadata.players().stream().filter(p->p.playerId()==metadata.stream().recipientPlayerId()).findFirst().orElseThrow().team();
         var roster=new HashMap<Integer,ClassicSnapshotV6.PublicPlayer>();frame.publicPlayers().forEach(p->roster.put(p.playerId(),p));
