@@ -8,7 +8,6 @@ import com.bombit.server.game.runtime.*;
 import java.util.*;
 import java.util.function.*;
 
-/** Command -> placement, movement -> due explosions, then the loop publishes snapshots. No scheduler. */
 public final class BombGameplayExtension implements GameplayExtension {
     private final GameState state;
     private final BombWorldAdapter world;
@@ -27,7 +26,6 @@ public final class BombGameplayExtension implements GameplayExtension {
                                  GameEventSink events,Consumer<BombCommandResult> results) {
         this(state,players,rules,events,results,System::nanoTime,System::currentTimeMillis);
     }
-    /** Injectable clocks allow deadline tests without sleep or changing the simulation period. */
     public BombGameplayExtension(GameState state,Map<String,Integer> players,BombRules rules,
                                  GameEventSink events,Consumer<BombCommandResult> results,
                                  LongSupplier nanoClock,LongSupplier epochClock) {
@@ -100,7 +98,6 @@ public final class BombGameplayExtension implements GameplayExtension {
     public record Checkpoint(List<BombWorldAdapter.SavedBomb> bombs, List<SavedExplosion> explosions) {
         public Checkpoint { bombs = List.copyOf(bombs); explosions = List.copyOf(explosions); }
     }
-    /** Capture giữa các tick, giữ thời gian còn lại của fuse và hiệu ứng; không giữ disconnect. */
     public Checkpoint captureCheckpoint() {
         checkThread(); long now = nanoClock.getAsLong();
         var effects = new ArrayList<SavedExplosion>();
@@ -131,7 +128,6 @@ public final class BombGameplayExtension implements GameplayExtension {
                     start + BombFrame.ANIMATION_MILLIS, effect.cells()));
             explosionNanos.put(effect.bombId(), nanos - effect.ageNanos());
         }
-        // Bộ đếm ID và disconnected giữ hiện tại; restore không phát lại event gây damage.
         for (int id : disconnected) { var player = state.getPlayer(id); if (player != null) player.setMoving(false); }
         publishEffects(now);
     }
