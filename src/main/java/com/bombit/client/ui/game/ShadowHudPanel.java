@@ -8,7 +8,6 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.Locale;
 
-/** HUD chỉ đọc replica đã lọc; đối thủ ẩn không được gán stats giả bằng 0. */
 public final class ShadowHudPanel extends JPanel {
     public static final String RULES="<html><b>SHADOW RELAY — 2 đội, mỗi đội 2 người</b><br><br>"+
             "Mũi tên: di chuyển · Space: bom thường · F: bom quét.<br>"+
