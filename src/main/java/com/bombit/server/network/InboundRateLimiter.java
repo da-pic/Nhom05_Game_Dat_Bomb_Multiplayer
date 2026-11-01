@@ -3,7 +3,6 @@ package com.bombit.server.network;
 import com.bombit.common.protocol.PacketType;
 import java.util.concurrent.TimeUnit;
 
-/** Per captured connection. Counts decoded frames, including unknown or rejected requests. */
 public final class InboundRateLimiter {
     public enum Decision { ALLOW, REJECT, CLOSE }
     private boolean initialized;
