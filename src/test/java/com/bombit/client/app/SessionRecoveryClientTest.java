@@ -15,7 +15,6 @@ import java.util.function.BooleanSupplier;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-/** TCP thật với server có thể giữ ACK/full hoặc ngắt đúng giữa các pha recovery. */
 @Timeout(12)
 class SessionRecoveryClientTest {
     private static final GameClientConnection.RecoveryTimeouts FAST=
@@ -29,7 +28,7 @@ class SessionRecoveryClientTest {
             assertEquals(PacketType.MOVE,read(first).getType());
             assertEquals(1,BombPacketCodec.decodePlant(MatchEnvelopeCodec.unwrap(read(first),f.match.matchId())));
             f.sendFull(first,2,1);f.await(()->original.world().getTick()==2);
-            f.call(()->{prediction.predict(Direction.RIGHT,true);return null;}); // Input chưa gửi/ACK.
+            f.call(()->{prediction.predict(Direction.RIGHT,true);return null;}); 
             first.close();Socket resumed=f.reconnect();
             f.await(()->f.app.recoveryState()==GameClientConnection.RecoveryState.WAITING_ACK);
             f.assertLocked(resumed);
@@ -37,7 +36,7 @@ class SessionRecoveryClientTest {
             f.metadata(resumed);f.assertLocked(resumed);
             var delta=GameStateUpdate.delta(3,2,3,3,32,GameState.MatchState.RUNNING,false,List.of(),List.of(),List.of());
             send(resumed,MatchEnvelopeCodec.wrap(f.match.matchId(),SnapshotPacketCodec.encode(delta)));
-            f.sendFull(resumed,2,1); // full trùng tick không được coi là phục hồi thành công.
+            f.sendFull(resumed,2,1);
             f.call(()->null);assertTrue(f.app.isReconnecting());
             assertFalse(f.call(original::isInputReady));
             f.sendFull(resumed,3,1);f.await(()->!f.app.isReconnecting()&&original.isInputReady());
@@ -64,7 +63,7 @@ class SessionRecoveryClientTest {
             send(resumed,MatchEnvelopeCodec.wrap(f.match.matchId(),GameplayPacketCodec.result(result)));
             f.await(()->results.get()==1&&!f.app.isReconnecting());
             assertEquals(result,f.call(f.app::lastResult));
-            assertEquals(1,f.call(f.app::localId)); // Còn identity để UI hiện kết quả local.
+            assertEquals(1,f.call(f.app::localId));
             assertNull(f.call(f.app::context));assertNull(f.call(f.app::movement));
             assertTrue(original.isClosed());assertFalse(original.isInputReady());
             assertFalse(f.app.isClosed());assertNull(f.failure.get());
@@ -126,7 +125,6 @@ class SessionRecoveryClientTest {
         }
     }
     @Test void callbackStatesAlsoRunOnSwingEdt() throws Exception {
-        // Dùng EDT thật, không mở JFrame/cửa sổ tương tác trong test.
         try(var f=new Fixture(new GameClientConnection.RecoveryTimeouts(2500,600,900,30,200),true)) {
             f.start().close();Socket peer=f.reconnect();f.ack(peer);
             f.await(()->f.states.contains(GameClientConnection.RecoveryState.WAITING_FULL));
@@ -169,7 +167,6 @@ class SessionRecoveryClientTest {
         final List<GameClientConnection.RecoveryState> states=new CopyOnWriteArrayList<>();
         final List<Socket> sockets=new ArrayList<>();
         final String id=UUID.randomUUID().toString(),token=UUID.randomUUID().toString();
-        // Theme khác mặc định phải được giữ trong metadata của cùng trận khi reconnect.
         final MatchContext match=new MatchContext(UUID.randomUUID().toString(),UUID.randomUUID(),MapTheme.ICE,List.of(new MatchContext.PlayerIdentity(id,1)));
         final GameClientConnection app;
         final boolean swing;
