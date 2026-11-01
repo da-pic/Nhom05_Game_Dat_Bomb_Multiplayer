@@ -8,7 +8,6 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.function.IntConsumer;
 
-/** Lập lịch thời điểm hết hạn ngòi nổ và chỉ đưa mã bom vào hàng đợi cho Game Loop. */
 public final class BombScheduler implements AutoCloseable {
     private final ScheduledExecutorService executor;
     private final IntConsumer explosionCommandSink;
