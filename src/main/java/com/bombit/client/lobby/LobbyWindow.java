@@ -17,7 +17,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 
-/** Coordinates client state and navigation; screen layout lives under client.ui. */
+
 public final class LobbyWindow extends JFrame {
     private static final String LOGIN="LOGIN",BROWSE="BROWSE",ROOM="ROOM",RESULTS="RESULTS";
     private final JTextField host=new JTextField(12),port=new JTextField(5),name=new JTextField(16);
@@ -115,8 +115,6 @@ public final class LobbyWindow extends JFrame {
             if(client!=next)return;
             if(p.getType()==PacketType.ROOM_STATE)syncMapSelection(legacyView(MetadataV3Codec.decodeRoom(p)));packet(p);
         });
-        // Callback của kết nối cũ không được sửa màn hình của lần Connect mới.
-        // Giữ cửa sổ/controller trong recovery; chỉ mở thao tác sau full đã được áp.
         next.setRecoveryStateListener(state->{
             if(client!=next)return;
             boolean newlyConnected=!connected;
