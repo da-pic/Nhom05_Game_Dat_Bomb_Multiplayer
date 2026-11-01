@@ -7,7 +7,6 @@ import java.util.Objects;
 import java.util.OptionalInt;
 import java.util.UUID;
 
-/** Immutable mapping published in GAME_STARTED. Never accepts an identity supplied by MOVE. */
 public record MatchContext(String roomId, UUID matchId, MapTheme mapTheme, List<PlayerIdentity> players) {
     public record PlayerIdentity(String sessionId, int playerId) {
         public PlayerIdentity {
@@ -34,7 +33,6 @@ public record MatchContext(String roomId, UUID matchId, MapTheme mapTheme, List<
         }
     }
 
-    /** Compatibility constructor for fixed/demo matches. */
     public MatchContext(String roomId, UUID matchId, List<PlayerIdentity> players) {
         this(roomId, matchId, MapTheme.CLASSIC, players);
     }
