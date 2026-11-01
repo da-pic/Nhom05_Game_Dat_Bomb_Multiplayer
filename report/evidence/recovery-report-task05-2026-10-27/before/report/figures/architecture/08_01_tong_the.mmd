@@ -1,0 +1,32 @@
+flowchart LR
+    subgraph CLIENT["Một tiến trình client Swing"]
+        UI["LobbyWindow / MovementGameWindow / Results"]
+        APP["DemoClientConnection<br/>context và điều phối client"]
+        MC["MovementClientController<br/>replica / prediction / interpolation"]
+        CN["ClientNetwork"]
+        UI <--> APP
+        APP --> MC
+        MC --> UI
+        APP <--> CN
+        MC --> CN
+    end
+    subgraph SERVER["Một tiến trình server"]
+        IO["Server / ClientHandler / SessionWriter<br/>TCP reader và writer"]
+        LOBBY["MessageRouter → LobbyGameServer"]
+        SERVICES["SessionManager / RoomManager<br/>ChatHandler / HeartbeatManager"]
+        RM["GameRuntimeManager"]
+        RA["Runtime phòng A<br/>GameLoop + state + gameplay"]
+        RB["Runtime phòng B<br/>GameLoop + state + gameplay"]
+        PUMP["Snapshot worker theo match<br/>codec + match envelope"]
+        IO --> LOBBY
+        LOBBY <--> SERVICES
+        LOBBY --> RM
+        RM --> RA
+        RM --> RB
+        RA --> PUMP
+        RB --> PUMP
+        PUMP --> IO
+        SERVICES --> IO
+    end
+    CN <-->|"TCP frames"| IO
+    OTHER["Các client khác"] <-->|"TCP frames"| IO

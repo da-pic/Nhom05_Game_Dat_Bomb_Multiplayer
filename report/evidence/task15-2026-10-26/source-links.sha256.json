@@ -1,0 +1,66 @@
+﻿[
+    {
+        "sha256":  "adbce38b42ae40ab3f75bf39dab319f5d3d5fb6d01b1f294ca3f788dc784aa08",
+        "path":  "phancong/Instruction.md"
+    },
+    {
+        "sha256":  "b043b33c9fd41ecdddbbec072e7a1ef025a1ee3dbabefd3f697b0ab4e5eac588",
+        "path":  "report/chapters/12_KET_QUA.md"
+    },
+    {
+        "sha256":  "dcd65166056e619c538692ffbbcb1e5762f1c715a30a4824504d39ea84d068eb",
+        "path":  "report/evidence/task12-2026-10-26/README.md"
+    },
+    {
+        "sha256":  "9723106eeca478293d174df9cc2eb8b0ad3f20abb7f4ba149cbb5d2cd20d2362",
+        "path":  "report/evidence/task13-2026-10-26/d1/movement-4/r1.csv"
+    },
+    {
+        "sha256":  "e3903ef9a2e6f734b8d294813d47340f299aea2030ceceb097de29cf5fb1b0be",
+        "path":  "report/evidence/task13-2026-10-26/README.md"
+    },
+    {
+        "sha256":  "3f30c2c6fb058b9b2081dc2bf7ce53764ae04143dcf2733bd8eb09e9be38759e",
+        "path":  "report/evidence/task13-2026-10-26/summary.csv"
+    },
+    {
+        "sha256":  "e96058fac55575a97393fb37c341dcf74fae7e1ac7c8429ab7b38b0955535299",
+        "path":  "report/evidence/task14-2026-10-26/network-summary.csv"
+    },
+    {
+        "sha256":  "d73a4ebc3e2a882c49deff048d75cff1478a4520dda89d6034bb4ee569a9151e",
+        "path":  "report/evidence/task14-2026-10-26/README.md"
+    },
+    {
+        "sha256":  "5e6195f55cb562df1de23fcf42a25904a0edf2fa0963000d4c3a483dd3651580",
+        "path":  "report/evidence/task14-2026-10-26/reliability-summary.json"
+    },
+    {
+        "sha256":  "c1bdef9c3e2a3d54806da2f21669bdbd5590b6ee96d293221276cdc3089c2c11",
+        "path":  "src/main/java/com/bombit/client/game/movement/InputController.java"
+    },
+    {
+        "sha256":  "75d4dcf19dd69e815c805c3f62c99e1be0000e98782fb71e6fc224fd6d147aa8",
+        "path":  "src/main/java/com/bombit/client/game/movement/MovementClientController.java"
+    },
+    {
+        "sha256":  "50f7d8e38cb16b962f49e6bc916e3062bff1f1b188c2f864a75757a1e0e3fcf9",
+        "path":  "src/main/java/com/bombit/client/game/movement/PredictionController.java"
+    },
+    {
+        "sha256":  "b421f8cf12771920a8a8c85c3392d6b246c363a2a7d0b11c6b36539efdeb65af",
+        "path":  "src/main/java/com/bombit/server/game/bomb/BombSystem.java"
+    },
+    {
+        "sha256":  "d39f72f069425209ec03d31818469659b3f5cf1350f4f9b57765a6a008e480bf",
+        "path":  "src/main/java/com/bombit/server/game/core/GameLoop.java"
+    },
+    {
+        "sha256":  "c1c7fcaa3e4cf818afc0a0ec06aff9e1d1078d3c61d327f09371d496f56bee82",
+        "path":  "src/main/java/com/bombit/server/game/movement/StateDeltaBuilder.java"
+    },
+    {
+        "sha256":  "478d50b0247d0119ebf4e9370ddb7893edc9ec4e1b669f658618bab128cea527",
+        "path":  "src/main/java/com/bombit/server/game/runtime/MatchGameplayExtension.java"
+    }
+]

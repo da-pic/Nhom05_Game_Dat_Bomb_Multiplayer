@@ -1,0 +1,104 @@
+{
+  "task": 5,
+  "date": "2026-10-27",
+  "timezone": "Asia/Saigon",
+  "head": "492c03127f15a25f4fc685fd004eafe424d53f9f",
+  "chapters": [
+    {
+      "path": "report/chapters/08_KIEN_TRUC_HE_THONG.md",
+      "before_sha256": "c1a56e63b61d00c6649d3d98f000d722e9468e272b6607de348b0d882aa3d684",
+      "after_sha256": "181f00e375f2ddbaaf672991bca6d66b2b774c39f0e7740f1bc0503a0b68dab9",
+      "captions": {
+        "Bảng": [
+          "8.1",
+          "8.2",
+          "8.3",
+          "8.4",
+          "8.5",
+          "8.6",
+          "8.7"
+        ],
+        "Hình": [
+          "8.1",
+          "8.2",
+          "8.3",
+          "8.4"
+        ]
+      },
+      "mermaid_sources": [
+        "report/figures/architecture/08_01_tong_the.mmd",
+        "report/figures/architecture/08_02_thread_va_queue.mmd",
+        "report/figures/architecture/08_03_luong_movement.mmd",
+        "report/figures/architecture/08_04_trang_thai_recovery.mmd"
+      ]
+    },
+    {
+      "path": "report/chapters/09_THIET_KE_GIAO_TIEP_MANG.md",
+      "before_sha256": "be15780cf283a685f45ce839670358e454040ec9901a82cf56c2611f8539324c",
+      "after_sha256": "64f29ea531b8663923bb9c82e9603ae5b288c61ecfaab2e9ec8b2d419fd2f21c",
+      "captions": {
+        "Bảng": [
+          "9.1",
+          "9.2",
+          "9.3",
+          "9.4",
+          "9.5",
+          "9.6",
+          "9.7",
+          "9.8",
+          "9.9",
+          "9.10"
+        ],
+        "Hình": [
+          "9.1",
+          "9.2",
+          "9.3",
+          "9.4",
+          "9.5",
+          "9.6"
+        ]
+      },
+      "mermaid_sources": [
+        "report/figures/network/09_01_ket_noi_va_start.mmd",
+        "report/figures/network/09_02_move_va_resync.mmd",
+        "report/figures/network/09_03_bom_va_event.mmd",
+        "report/figures/network/09_04_ket_thuc_va_choi_lai.mmd",
+        "report/figures/network/09_05_reconnect_full_delta.mmd",
+        "report/figures/network/09_06_reconnect_tu_choi_va_het_han.mmd"
+      ]
+    }
+  ],
+  "diagrams_rendered": 5,
+  "existing_diagrams_updated": 2,
+  "new_diagrams": 3,
+  "inline_mermaid_verified": 10,
+  "images_visually_reviewed": 5,
+  "render_context": "Local cached Mermaid, Chrome headless outside sandbox with approval, no upload",
+  "unchanged_java_sources": 219,
+  "unchanged_other_chapters": 17,
+  "chapters_6_7_preserved": true,
+  "old_exports_and_canonical_references_preserved": true,
+  "tests_rerun": false,
+  "source_test_evidence": "report/evidence/recovery-report-task03-20261027-200413",
+  "changed_or_added_files": {
+    "report/chapters/08_KIEN_TRUC_HE_THONG.md": "181f00e375f2ddbaaf672991bca6d66b2b774c39f0e7740f1bc0503a0b68dab9",
+    "report/chapters/09_THIET_KE_GIAO_TIEP_MANG.md": "64f29ea531b8663923bb9c82e9603ae5b288c61ecfaab2e9ec8b2d419fd2f21c",
+    "report/figures/architecture/08_01_tong_the.mmd": "d44223a1166fa61a26666fef8609a9d9bebc4e059a6d1c421e743b20e2e66e8c",
+    "report/figures/architecture/08_02_thread_va_queue.mmd": "be9d690e6a3c23c9bf69b6f6229fbc9a38c9bb3493417737973c70e91be9fba7",
+    "report/figures/architecture/08_04_trang_thai_recovery.mmd": "dc1acb4c3d09f7f734e056c84b75dae351a877d9a6cf0cb1391be97e827a738d",
+    "report/figures/network/09_05_reconnect_full_delta.mmd": "6933856e8b6209cedbba5cf9c8879485a2f118afb379d4aaf12e0cbfc965fbc0",
+    "report/figures/network/09_06_reconnect_tu_choi_va_het_han.mmd": "b37f2543cff604b993586a2ede608da4d9c543e7644fc71778cd953c29c7efbf",
+    "report/figures/rendered/08_01_tong_the.png": "422655cfd995991cbddf9fdf28b686677e5d488a1bb4a79fb653ced2a1645642",
+    "report/figures/rendered/08_01_tong_the.svg": "bc5042355480134f37001f83ed2e1b51a1add7da7cd0ae73938ca5a1f28e854d",
+    "report/figures/rendered/08_02_thread_va_queue.png": "f59c699af42bc93eff37269f3f3bed0158e1427b7c3b7e3482a0c4aa1f0e80fb",
+    "report/figures/rendered/08_02_thread_va_queue.svg": "8223dc32e164bb34fdb3cec70f66dcb6d282aea6de3cf969c4003ea80a9167a5",
+    "report/figures/rendered/08_02_thread_va_queue_continuous.png": "44858b26909ed7494d01d9261bbd6447d436308fbe6508a3bb136ecfcdf64a7c",
+    "report/figures/rendered/08_04_trang_thai_recovery.png": "b1481b895b914ce2e06d961016a8f72e9484ab36bfdc5d4b2c091d1d236bbf91",
+    "report/figures/rendered/08_04_trang_thai_recovery.svg": "9e6ce6ba4512f2314972025779483398bb6d613d3a5c03a3ee6e6af80f8de692",
+    "report/figures/rendered/09_05_reconnect_full_delta.png": "0e0261d954514c88fa08835c1a446ca7f0feb46561b65e8c203bcce20191dd63",
+    "report/figures/rendered/09_05_reconnect_full_delta.svg": "cbeb192eeb97a53dc6c1b99ef44d3c4c3c8c1e72685a07c8d89fdd709e3bd677",
+    "report/figures/rendered/09_06_reconnect_tu_choi_va_het_han.png": "e88ede2d1448c2904ffbcbd06a4a1e94833dc07068e45039d6d7b196a4da8867",
+    "report/figures/rendered/09_06_reconnect_tu_choi_va_het_han.svg": "0c8800fe8e069b99845d13d189ae67a4272258b330ba1e0bf0a82d78c5f1cefb"
+  },
+  "pending": "Implementation chapter 10; export DOCX/PDF only after remaining revision tasks"
+}

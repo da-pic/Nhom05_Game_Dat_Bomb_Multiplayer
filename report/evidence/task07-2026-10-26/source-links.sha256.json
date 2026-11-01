@@ -1,0 +1,71 @@
+﻿{
+    "inspected_on":  "2026-10-26",
+    "code_revision":  "e333050997c5dbf78ec4b9b42a9bc9a73ce6a0d5",
+    "scope":  "Java source files directly linked by chapter 7; not a complete dependency inventory",
+    "files":  [
+                  {
+                      "path":  "src/main/java/com/bombit/client/app/DemoClientConnection.java",
+                      "sha256":  "e4bfcf13c99ee7d314502e33adbdd6c7e6c32928c6cbc6bc815d03f0350dff1a"
+                  },
+                  {
+                      "path":  "src/main/java/com/bombit/client/game/movement/ClientWorldState.java",
+                      "sha256":  "3fec58ab7870000c79785e6954d4f017e82d035c8bf1edfb1ff5490a9d724991"
+                  },
+                  {
+                      "path":  "src/main/java/com/bombit/client/game/movement/InterpolationController.java",
+                      "sha256":  "1d0fcb60511164d62efd09fe624a8238a3df52b1c77eb7bca40d7a7f6dcecd15"
+                  },
+                  {
+                      "path":  "src/main/java/com/bombit/client/game/movement/MovementClientController.java",
+                      "sha256":  "75d4dcf19dd69e815c805c3f62c99e1be0000e98782fb71e6fc224fd6d147aa8"
+                  },
+                  {
+                      "path":  "src/main/java/com/bombit/client/game/movement/PredictionController.java",
+                      "sha256":  "50f7d8e38cb16b962f49e6bc916e3062bff1f1b188c2f864a75757a1e0e3fcf9"
+                  },
+                  {
+                      "path":  "src/main/java/com/bombit/server/app/LobbyGameServer.java",
+                      "sha256":  "a571d1513ec5f3c1788bb4e7e3c1f1244666cc5f9bdea3e82e825ec7db71658e"
+                  },
+                  {
+                      "path":  "src/main/java/com/bombit/server/game/bomb/BombSystem.java",
+                      "sha256":  "b421f8cf12771920a8a8c85c3392d6b246c363a2a7d0b11c6b36539efdeb65af"
+                  },
+                  {
+                      "path":  "src/main/java/com/bombit/server/game/core/GameLoop.java",
+                      "sha256":  "d39f72f069425209ec03d31818469659b3f5cf1350f4f9b57765a6a008e480bf"
+                  },
+                  {
+                      "path":  "src/main/java/com/bombit/server/game/core/Player.java",
+                      "sha256":  "16ba44c9a0c94184e30809dd912b801a55c8968035f816fc64cc630c45b4c1a9"
+                  },
+                  {
+                      "path":  "src/main/java/com/bombit/server/game/movement/CollisionSystem.java",
+                      "sha256":  "eecaa7a1d615f0f660146fb8180bd1aa805895f27a28787e7b723b59a4e823e7"
+                  },
+                  {
+                      "path":  "src/main/java/com/bombit/server/game/movement/MovementSystem.java",
+                      "sha256":  "3a9db6fe5d7749282468339e8185e0af9a1b69c6d07a1199b77c3a78a2f741db"
+                  },
+                  {
+                      "path":  "src/main/java/com/bombit/server/game/movement/SnapshotPacketCodec.java",
+                      "sha256":  "c6b2fc17a7a06ff12c58bffae69304edb93fd46d9d5032ae50ae53dcb0fc7fb1"
+                  },
+                  {
+                      "path":  "src/main/java/com/bombit/server/game/movement/StateDeltaBuilder.java",
+                      "sha256":  "c1c7fcaa3e4cf818afc0a0ec06aff9e1d1078d3c61d327f09371d496f56bee82"
+                  },
+                  {
+                      "path":  "src/main/java/com/bombit/server/game/runtime/GameRuntime.java",
+                      "sha256":  "40c6cde3c8a7d74420fe556f7854c91ec10a43df9b16bd483f1a51bb9e4f4c22"
+                  },
+                  {
+                      "path":  "src/main/java/com/bombit/server/game/runtime/GameRuntimeManager.java",
+                      "sha256":  "31ad68a0cf2aa046e1efa1c23186fee295c5a94e3fec69a3c13b5624c09b0a60"
+                  },
+                  {
+                      "path":  "src/main/java/com/bombit/server/game/runtime/MatchGameplayExtension.java",
+                      "sha256":  "478d50b0247d0119ebf4e9370ddb7893edc9ec4e1b669f658618bab128cea527"
+                  }
+              ]
+}

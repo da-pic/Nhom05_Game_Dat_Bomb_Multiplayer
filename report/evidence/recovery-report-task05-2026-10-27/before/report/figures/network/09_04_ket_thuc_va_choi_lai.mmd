@@ -1,0 +1,25 @@
+sequenceDiagram
+    participant H as Host client
+    participant C as Guest client
+    participant S as Server / lobby / pump
+    participant R as Runtime
+    R-->>S: Full FINISHED có MatchResult
+    S-->>H: GAME_SNAPSHOT full FINISHED
+    S-->>C: GAME_SNAPSHOT full FINISHED
+    opt Có gameplay notices của tick cuối
+        S-->>H: Notices sau snapshot
+        S-->>C: Notices sau snapshot
+    end
+    S->>R: Stop runtime
+    S-->>H: GAME_OVER
+    S-->>C: GAME_OVER
+    S-->>H: ROOM_STATE WAITING
+    S-->>C: ROOM_STATE WAITING
+    Note over H,C: Đóng controller cũ, hiển thị kết quả; giữ TCP nếu còn hợp lệ
+    C->>S: READY ready=true
+    H->>S: START_GAME
+    S->>R: Tạo runtime/world mới với matchId mới
+    S-->>H: GAME_STARTED của lượt mới
+    S-->>C: GAME_STARTED của lượt mới
+    S-->>H: Full snapshot lượt mới
+    S-->>C: Full snapshot lượt mới

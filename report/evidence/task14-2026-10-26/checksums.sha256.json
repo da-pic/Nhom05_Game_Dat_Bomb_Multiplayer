@@ -1,0 +1,410 @@
+﻿[
+    {
+        "sha256":  "de7d1286f57b81b2a8178d39bf3eebdcb2d522e176c85e0a47ade7f4993adcff",
+        "path":  "report/evidence/task14-2026-10-26/all-peer-rows.csv"
+    },
+    {
+        "sha256":  "723e2a8b3ba35fbb4fa32a54924cdbb7a6b635049849f29726079342edb2a9e2",
+        "path":  "report/evidence/task14-2026-10-26/analysis.log"
+    },
+    {
+        "sha256":  "ec491ee767148a06210eb0cdf7debc2bc9fa8ff5b189179447c2e268e4d55a2e",
+        "path":  "report/evidence/task14-2026-10-26/environment-errors.txt"
+    },
+    {
+        "sha256":  "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+        "path":  "report/evidence/task14-2026-10-26/network/T1-r01/exit-code.txt"
+    },
+    {
+        "sha256":  "d81eb934081247666ebeb7e1fee3b798f4d72919ce4fb731e78df89da9325557",
+        "path":  "report/evidence/task14-2026-10-26/network/T1-r01/finished-at.txt"
+    },
+    {
+        "sha256":  "bf60adbc29d7f8ec29bac9839b70ec67dd488beb6e7a726cfba326584c5c84b8",
+        "path":  "report/evidence/task14-2026-10-26/network/T1-r01/runner.csv"
+    },
+    {
+        "sha256":  "64c40f8fcd125ff77c4efa2d17fa879a96504accee284fb936a26ad85107da00",
+        "path":  "report/evidence/task14-2026-10-26/network/T1-r01/runner.log"
+    },
+    {
+        "sha256":  "ccea20412855d9b080c5b6678a0542f527efa85917e30e2af32ec03876108236",
+        "path":  "report/evidence/task14-2026-10-26/network/T1-r01/started-at.txt"
+    },
+    {
+        "sha256":  "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+        "path":  "report/evidence/task14-2026-10-26/network/T1-r02/exit-code.txt"
+    },
+    {
+        "sha256":  "99c66ac2c1886aafcf5e9d1627e1034bceccff550f73c1daa52fe44d3c90970a",
+        "path":  "report/evidence/task14-2026-10-26/network/T1-r02/finished-at.txt"
+    },
+    {
+        "sha256":  "7d68d402abb56497f1d74f43ac932deb39a4b5235d412e1eb4a0e6fcad9876de",
+        "path":  "report/evidence/task14-2026-10-26/network/T1-r02/runner.csv"
+    },
+    {
+        "sha256":  "6f26cb11ed8171fa1c9b2d1ece59f651fe3ebc1d09aee17fbd1b6d416f1e858a",
+        "path":  "report/evidence/task14-2026-10-26/network/T1-r02/runner.log"
+    },
+    {
+        "sha256":  "d58c8c554a51b1c7565de67be44490ad9f1168631b288383583a7eee6149eac4",
+        "path":  "report/evidence/task14-2026-10-26/network/T1-r02/started-at.txt"
+    },
+    {
+        "sha256":  "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+        "path":  "report/evidence/task14-2026-10-26/network/T1-r03/exit-code.txt"
+    },
+    {
+        "sha256":  "8c816b12a7918da908554d47f8826abc6ed8863915a796f9bd33db471cf786b5",
+        "path":  "report/evidence/task14-2026-10-26/network/T1-r03/finished-at.txt"
+    },
+    {
+        "sha256":  "29cf476315169d3a7fc069b180499a9df6a14974044f8fd1585244c66c0ca00c",
+        "path":  "report/evidence/task14-2026-10-26/network/T1-r03/runner.csv"
+    },
+    {
+        "sha256":  "f9811d2ad6113f5e22ab79dd23e33ce742e9c741e2d0e3d8ad53b7882d77ec92",
+        "path":  "report/evidence/task14-2026-10-26/network/T1-r03/runner.log"
+    },
+    {
+        "sha256":  "db41f9825bc60d00b4874fe14a0b3aa2026440db07c8e59a10b09e79ea216a9a",
+        "path":  "report/evidence/task14-2026-10-26/network/T1-r03/started-at.txt"
+    },
+    {
+        "sha256":  "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+        "path":  "report/evidence/task14-2026-10-26/network/T1-r04/exit-code.txt"
+    },
+    {
+        "sha256":  "288e7adfd6ac2336682092a4bfc3ac11a51d0c7259b1d75cade36a32be73bbd6",
+        "path":  "report/evidence/task14-2026-10-26/network/T1-r04/finished-at.txt"
+    },
+    {
+        "sha256":  "1c236beaac64f576150ff469ec8c2d903b98d2cecb9cd6205ef5ad3c7c95111f",
+        "path":  "report/evidence/task14-2026-10-26/network/T1-r04/runner.csv"
+    },
+    {
+        "sha256":  "45ec4fc9cb0edd813b93f5c2e21454a97150e22fea15cc1ead94eede65a054f8",
+        "path":  "report/evidence/task14-2026-10-26/network/T1-r04/runner.log"
+    },
+    {
+        "sha256":  "345a5942828c2f8b0a807d1acf67549a19269558261b3fa58e872c705c783f28",
+        "path":  "report/evidence/task14-2026-10-26/network/T1-r04/started-at.txt"
+    },
+    {
+        "sha256":  "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+        "path":  "report/evidence/task14-2026-10-26/network/T1-r05/exit-code.txt"
+    },
+    {
+        "sha256":  "f2c2bde1769b5a35cf1735fc25e96b9de07c08dc9ac7839f948f8cc3c3d3ac65",
+        "path":  "report/evidence/task14-2026-10-26/network/T1-r05/finished-at.txt"
+    },
+    {
+        "sha256":  "daad4d682959779dca7b1ac3bfad18de2ee23d8d58f94c199a134b8b998cce4b",
+        "path":  "report/evidence/task14-2026-10-26/network/T1-r05/runner.csv"
+    },
+    {
+        "sha256":  "08f448404fc27717508ff077629281f4160b1c73fd2ab1b6c447a12b736a10d3",
+        "path":  "report/evidence/task14-2026-10-26/network/T1-r05/runner.log"
+    },
+    {
+        "sha256":  "6b995608b120ae3f1532cc049532a4cebc235f5f7896839213017a11b9c3df9a",
+        "path":  "report/evidence/task14-2026-10-26/network/T1-r05/started-at.txt"
+    },
+    {
+        "sha256":  "e96058fac55575a97393fb37c341dcf74fae7e1ac7c8429ab7b38b0955535299",
+        "path":  "report/evidence/task14-2026-10-26/network-summary.csv"
+    },
+    {
+        "sha256":  "faeb2b56264860f17f0c0318415297f05ac1df039ffd65710a181b7a1d8b2979",
+        "path":  "report/evidence/task14-2026-10-26/network-summary.json"
+    },
+    {
+        "sha256":  "b887b3a6f80bb511c7be6c40a59ea8f97b6b2594c533943a6dc8b43bfdd70bfd",
+        "path":  "report/evidence/task14-2026-10-26/network-tables.md"
+    },
+    {
+        "sha256":  "7d088d6413972eefcfe6622c4d3ea313badc9043c6a5c25bd154f9235f26b626",
+        "path":  "report/evidence/task14-2026-10-26/per-run-metrics.csv"
+    },
+    {
+        "sha256":  "d73a4ebc3e2a882c49deff048d75cff1478a4520dda89d6034bb4ee569a9151e",
+        "path":  "report/evidence/task14-2026-10-26/README.md"
+    },
+    {
+        "sha256":  "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+        "path":  "report/evidence/task14-2026-10-26/reliability/r01/exit-code.txt"
+    },
+    {
+        "sha256":  "e6711e7efc2ef9af7fb096551401dcf08adbe740c0612daf2dee4f4be29bbc0f",
+        "path":  "report/evidence/task14-2026-10-26/reliability/r01/finished-at.txt"
+    },
+    {
+        "sha256":  "74d8373aacdfbb045e75d22b945bdd26b1ba2f3d634e3ed1945d4234216acde2",
+        "path":  "report/evidence/task14-2026-10-26/reliability/r01/junit-summary.json"
+    },
+    {
+        "sha256":  "9d10dbff8b15891221acd044f3ca344c8c464467663a4756961252e20be0aa65",
+        "path":  "report/evidence/task14-2026-10-26/reliability/r01/maven.log"
+    },
+    {
+        "sha256":  "f638f4b3d1c0a879382f2174a533ebe0ea0324217bffd33cdef1e2d6e96534dc",
+        "path":  "report/evidence/task14-2026-10-26/reliability/r01/started-at.txt"
+    },
+    {
+        "sha256":  "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+        "path":  "report/evidence/task14-2026-10-26/reliability/r02/exit-code.txt"
+    },
+    {
+        "sha256":  "9bb561ecc36b944e8744f839086605978c273ece84e7b1ab8e59fe00daa14ba2",
+        "path":  "report/evidence/task14-2026-10-26/reliability/r02/finished-at.txt"
+    },
+    {
+        "sha256":  "74d8373aacdfbb045e75d22b945bdd26b1ba2f3d634e3ed1945d4234216acde2",
+        "path":  "report/evidence/task14-2026-10-26/reliability/r02/junit-summary.json"
+    },
+    {
+        "sha256":  "9d10dbff8b15891221acd044f3ca344c8c464467663a4756961252e20be0aa65",
+        "path":  "report/evidence/task14-2026-10-26/reliability/r02/maven.log"
+    },
+    {
+        "sha256":  "24caadf9c1111e3b28a223f99947cb630108602b32607dae827d789572f2b6c9",
+        "path":  "report/evidence/task14-2026-10-26/reliability/r02/started-at.txt"
+    },
+    {
+        "sha256":  "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+        "path":  "report/evidence/task14-2026-10-26/reliability/r03/exit-code.txt"
+    },
+    {
+        "sha256":  "a9d7f1ade361ce0f27410f0098ca426bf9cde165f9eee9fa5146aabd913b88c2",
+        "path":  "report/evidence/task14-2026-10-26/reliability/r03/finished-at.txt"
+    },
+    {
+        "sha256":  "74d8373aacdfbb045e75d22b945bdd26b1ba2f3d634e3ed1945d4234216acde2",
+        "path":  "report/evidence/task14-2026-10-26/reliability/r03/junit-summary.json"
+    },
+    {
+        "sha256":  "9d10dbff8b15891221acd044f3ca344c8c464467663a4756961252e20be0aa65",
+        "path":  "report/evidence/task14-2026-10-26/reliability/r03/maven.log"
+    },
+    {
+        "sha256":  "eb9c0e5c887e36ff44182d67d03813e3f3c1c7424c13499baef34208d863d69f",
+        "path":  "report/evidence/task14-2026-10-26/reliability/r03/started-at.txt"
+    },
+    {
+        "sha256":  "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r01/exit-code.txt"
+    },
+    {
+        "sha256":  "a9dbd8097c408e1f39e709fc50c554c86dbdd84a345745d18efc3557008298f5",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r01/finished-at.txt"
+    },
+    {
+        "sha256":  "2ecd7d97d9e2eb89fdeeff12b3c5b0792cabe384af0ae52c0fbe2837022223a5",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r01/junit-summary.json"
+    },
+    {
+        "sha256":  "309c0f8eeafe76cff2f6c236d4ee1fc57071cde93046e78335ab293dfbf3a945",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r01/m1-client-a-process.log"
+    },
+    {
+        "sha256":  "96da441ec1e7053e18628f24054fd64c2800290c714362d69d0423ee037dea7e",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r01/m1-client-b-process.log"
+    },
+    {
+        "sha256":  "ef60a65d9731fb080e009566f0bb8d1bf113c361d8e70ebe5b15492196cadeb7",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r01/m1-server-process.log"
+    },
+    {
+        "sha256":  "0781be98fda00589cd4540c6ef1c35e859c62e83d2188ad6524047d538ea995c",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r01/maven.log"
+    },
+    {
+        "sha256":  "b2f075c7ac84a3f6ebcb17012da1a4910011018c44033b4e4bb78a5d7abe3847",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r01/started-at.txt"
+    },
+    {
+        "sha256":  "733e36d42b202e3f0dad9f52fe5b1d2245b14c0260181a8f37d5f9dd6ec2916d",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r01/surefire/TEST-com.bombit.client.network.ClientStabilityTest.xml"
+    },
+    {
+        "sha256":  "6ec9f866d3b1c72f1f63e6b0b15a8fe452ca704ebe4e208a0cbd38a5b24a2964",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r01/surefire/TEST-com.bombit.integration.LobbyLifecycleTest.xml"
+    },
+    {
+        "sha256":  "dfcf3b8b60c3428242ef0c02f8d1fae14588b3dd30080a77d7c0bfc5dd4f0598",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r01/surefire/TEST-com.bombit.integration.MovementDemoProcessTest.xml"
+    },
+    {
+        "sha256":  "74af86229f994f2525495b3a368851ed0f72f91701ce79dfa60b81ac2a32c3d9",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r01/surefire/TEST-com.bombit.integration.StabilityLifecycleTest.xml"
+    },
+    {
+        "sha256":  "a8105dccdb8878127a221e7abeda912879dd8873f37e8651a8fbaaef21cd454a",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r01/surefire/TEST-com.bombit.server.game.runtime.RuntimeContractTest.xml"
+    },
+    {
+        "sha256":  "62720f7265fe998b241faca942b51040e1eadf92fe83b76ce354e39f6c3a5f86",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r01/surefire/TEST-com.bombit.server.network.SessionWriterTest.xml"
+    },
+    {
+        "sha256":  "8d6422791bf4ebeaf213e899b761f4b01a042e33420aca4431f15947a3541bf7",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r01/surefire/TEST-com.bombit.server.network.TransportStabilityTest.xml"
+    },
+    {
+        "sha256":  "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r02/exit-code.txt"
+    },
+    {
+        "sha256":  "eace923bef8e3842e1b6afe5d6c5cb6d592e3a3c5e3669c0b5451d52375ed8af",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r02/finished-at.txt"
+    },
+    {
+        "sha256":  "2ecd7d97d9e2eb89fdeeff12b3c5b0792cabe384af0ae52c0fbe2837022223a5",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r02/junit-summary.json"
+    },
+    {
+        "sha256":  "001d74429ac663322926becc1939b0594ded68f94c51c22c3c94cd227b495bb1",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r02/m1-client-a-process.log"
+    },
+    {
+        "sha256":  "981c8638bd1168076264bec38f9f6b580f6d626ad6b27489ae2b9574f34b5709",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r02/m1-client-b-process.log"
+    },
+    {
+        "sha256":  "ac88309bc20f581feeeafe8ef893cb084b1db61504db8efa19206bcf33f27eed",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r02/m1-server-process.log"
+    },
+    {
+        "sha256":  "a9146a3cad27c3450764a1c0c69b24a56d5ac9c6232f8f5c54cb19659cd1673c",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r02/maven.log"
+    },
+    {
+        "sha256":  "a83dd506d3e550fa72bf40d53aad84f8c53c62f2bc3b104e7c0b5eebd321c853",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r02/started-at.txt"
+    },
+    {
+        "sha256":  "e81303e83b02ae8e7d1d8eae7c3956aeef63c8712799082b9ec5315db8634d10",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r02/surefire/TEST-com.bombit.client.network.ClientStabilityTest.xml"
+    },
+    {
+        "sha256":  "05d08a0c0f69ae5f19c10432bda9318572671e4ac00180a26b243cd28871fccf",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r02/surefire/TEST-com.bombit.integration.LobbyLifecycleTest.xml"
+    },
+    {
+        "sha256":  "90f64e2b0ccee7ed6c17ff6155668acb155281efdacd69051abcd2aff5539e9b",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r02/surefire/TEST-com.bombit.integration.MovementDemoProcessTest.xml"
+    },
+    {
+        "sha256":  "0f3e7f0aef6a2a7bc2486ec19a73034f776fbe4293438703820b72ed8e8c77f5",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r02/surefire/TEST-com.bombit.integration.StabilityLifecycleTest.xml"
+    },
+    {
+        "sha256":  "107df32c4d9b422738db2038df82c90f5689018a244e765c9d09b80458d667d8",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r02/surefire/TEST-com.bombit.server.game.runtime.RuntimeContractTest.xml"
+    },
+    {
+        "sha256":  "e8455630e0f64a284b1eed35992d588480dfbc92d10c86549890cce7231cb334",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r02/surefire/TEST-com.bombit.server.network.SessionWriterTest.xml"
+    },
+    {
+        "sha256":  "7f4848e0c23437b35fa51c2ca0ab6c8aa92381c7fd29d32fc841f8b7cbac4a5c",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r02/surefire/TEST-com.bombit.server.network.TransportStabilityTest.xml"
+    },
+    {
+        "sha256":  "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r03/exit-code.txt"
+    },
+    {
+        "sha256":  "0a07e516c1991a427725b0442373bb8b2ef4f252f97dfbad2103ee7bdba33439",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r03/finished-at.txt"
+    },
+    {
+        "sha256":  "2ecd7d97d9e2eb89fdeeff12b3c5b0792cabe384af0ae52c0fbe2837022223a5",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r03/junit-summary.json"
+    },
+    {
+        "sha256":  "9f1d0d1d5df05aafdeb16f13421610c612da0f0423b04f7f56fb8a93dbaa02ea",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r03/m1-client-a-process.log"
+    },
+    {
+        "sha256":  "0ddd498c82c98b4e0043c2b25c4d8aa230174449ea75cfda8545da2dfe0fd60d",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r03/m1-client-b-process.log"
+    },
+    {
+        "sha256":  "3fa981cd790657ca0952c34c4b47b5c59e3323e2c1bfa766a57fa332407464fd",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r03/m1-server-process.log"
+    },
+    {
+        "sha256":  "b378fdbdd8239261fb968c8f42e6e1cdd634115914e12ae9474047e6b02d964c",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r03/maven.log"
+    },
+    {
+        "sha256":  "9728e0c89c122aa3e0cc7870753dbce83645127b6c1a8e8dc89d2812b5445b0a",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r03/started-at.txt"
+    },
+    {
+        "sha256":  "2f9996f82af00e3acd00c3f23e090d52e2d686ad77a67db00ff8ea3da0865835",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r03/surefire/TEST-com.bombit.client.network.ClientStabilityTest.xml"
+    },
+    {
+        "sha256":  "363725d1645142fe5eb3984b5a7927383a501560c8c751e6caf8b44f3c68b4bc",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r03/surefire/TEST-com.bombit.integration.LobbyLifecycleTest.xml"
+    },
+    {
+        "sha256":  "d9946b629c402325fab3925b382292b4a57fc145d46db38451383810a3132f4d",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r03/surefire/TEST-com.bombit.integration.MovementDemoProcessTest.xml"
+    },
+    {
+        "sha256":  "30cf0f7b11771315ffe2a6087a8fd1ec3b62b6daa7b3472f6cbfd20e0209e5e0",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r03/surefire/TEST-com.bombit.integration.StabilityLifecycleTest.xml"
+    },
+    {
+        "sha256":  "dd77c7629eca7c2eaae7d41c36a80103008a44539bbc9dfa36c468ab07b5ee0c",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r03/surefire/TEST-com.bombit.server.game.runtime.RuntimeContractTest.xml"
+    },
+    {
+        "sha256":  "690fa49ca7fb96b36e3539e0d523657d774c049963edd49f37d61e568a8d926a",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r03/surefire/TEST-com.bombit.server.network.SessionWriterTest.xml"
+    },
+    {
+        "sha256":  "62d6358cc1b6465d4c02deb5ccf4ad2fd1b2553f1fb32bf8169ad33f65836756",
+        "path":  "report/evidence/task14-2026-10-26/reliability-executed/r03/surefire/TEST-com.bombit.server.network.TransportStabilityTest.xml"
+    },
+    {
+        "sha256":  "5e6195f55cb562df1de23fcf42a25904a0edf2fa0963000d4c3a483dd3651580",
+        "path":  "report/evidence/task14-2026-10-26/reliability-summary.json"
+    },
+    {
+        "sha256":  "c7ce44fc8e90941eb74b3e0fcdec702fd412e7714d3f3d284ec94c4a188fddbe",
+        "path":  "report/evidence/task14-2026-10-26/run-manifest.json"
+    },
+    {
+        "sha256":  "1bae1ab0d6949606cee7dcf0214a71871a372a9e366bfb1c8168912190887d46",
+        "path":  "report/evidence/task14-2026-10-26/started-manifest.json"
+    },
+    {
+        "sha256":  "be0f35b6e31b9ccd88aa3ad4231ed3d41920fa89814a3d2503c0a35458a81d67",
+        "path":  "report/evidence/task14-2026-10-26/validation.txt"
+    },
+    {
+        "sha256":  "918fe7884edb653e19bf59b85f6a49fd051f749a3f7482cecfcf0f16b91d4289",
+        "path":  "report/experiments/analyze_network.py"
+    },
+    {
+        "sha256":  "b53723fe0ce21a3d3d71beecc37dcd31906928c6ea223674ff319b78a6d10047",
+        "path":  "report/experiments/run_reliability.ps1"
+    },
+    {
+        "sha256":  "072b3e20e8823638161677aca8a98505174f73548822516c067dcf2cc6886ff9",
+        "path":  "report/figures/network-results/12_6_loopback.pdf"
+    },
+    {
+        "sha256":  "0e53c3253c122497b78665f8329c9a0ef258c6dead8ae07e6233987a783195f9",
+        "path":  "report/figures/network-results/12_6_loopback.png"
+    },
+    {
+        "sha256":  "b5808143793d3cd02f4b3443c1dc10e42d5a0cdd88597cf077af97f1c5fdb44c",
+        "path":  "report/figures/network-results/12_6_loopback.svg"
+    }
+]

@@ -1,0 +1,92 @@
+[
+  {
+    "name": "07_01_giai_phap_tong_the",
+    "source": "report\\figures\\approach\\07_01_giai_phap_tong_the.mmd",
+    "orientation_override": true,
+    "svg": "report\\figures\\rendered\\07_01_giai_phap_tong_the.svg",
+    "png": "report\\figures\\rendered\\07_01_giai_phap_tong_the.png",
+    "width": 2069,
+    "height": 1793,
+    "svg_viewbox": "0 20 1034.453125 892"
+  },
+  {
+    "name": "07_02_delta_va_commit",
+    "source": "report\\figures\\approach\\07_02_delta_va_commit.mmd",
+    "orientation_override": false,
+    "svg": "report\\figures\\rendered\\07_02_delta_va_commit.svg",
+    "png": "report\\figures\\rendered\\07_02_delta_va_commit.png",
+    "width": 1521,
+    "height": 3205,
+    "svg_viewbox": "0 20 760.15625 1597.296875"
+  },
+  {
+    "name": "08_01_tong_the",
+    "source": "report\\figures\\architecture\\08_01_tong_the.mmd",
+    "orientation_override": true,
+    "svg": "report\\figures\\rendered\\08_01_tong_the.svg",
+    "png": "report\\figures\\rendered\\08_01_tong_the.png",
+    "width": 1669,
+    "height": 2115,
+    "svg_viewbox": "0 -20 834.1484375 1053"
+  },
+  {
+    "name": "08_02_thread_va_queue",
+    "source": "report\\figures\\architecture\\08_02_thread_va_queue.mmd",
+    "orientation_override": false,
+    "svg": "report\\figures\\rendered\\08_02_thread_va_queue.svg",
+    "png": "report\\figures\\rendered\\08_02_thread_va_queue.png",
+    "width": 2040,
+    "height": 2563,
+    "svg_viewbox": "-5.0703125 -20 311.140625 1530"
+  },
+  {
+    "name": "08_03_luong_movement",
+    "source": "report\\figures\\architecture\\08_03_luong_movement.mmd",
+    "orientation_override": true,
+    "svg": "report\\figures\\rendered\\08_03_luong_movement.svg",
+    "png": "report\\figures\\rendered\\08_03_luong_movement.png",
+    "width": 2400,
+    "height": 1875,
+    "svg_viewbox": "-50 -10 1363 1060.1666666666665"
+  },
+  {
+    "name": "09_01_ket_noi_va_start",
+    "source": "report\\figures\\network\\09_01_ket_noi_va_start.mmd",
+    "orientation_override": false,
+    "svg": "report\\figures\\rendered\\09_01_ket_noi_va_start.svg",
+    "png": "report\\figures\\rendered\\09_01_ket_noi_va_start.png",
+    "width": 1634,
+    "height": 2387,
+    "svg_viewbox": "-50 -10 817 1189.5"
+  },
+  {
+    "name": "09_02_move_va_resync",
+    "source": "report\\figures\\network\\09_02_move_va_resync.mmd",
+    "orientation_override": false,
+    "svg": "report\\figures\\rendered\\09_02_move_va_resync.svg",
+    "png": "report\\figures\\rendered\\09_02_move_va_resync.png",
+    "width": 1650,
+    "height": 2761,
+    "svg_viewbox": "-59 -10 825 1376.3333333333335"
+  },
+  {
+    "name": "09_03_bom_va_event",
+    "source": "report\\figures\\network\\09_03_bom_va_event.mmd",
+    "orientation_override": true,
+    "svg": "report\\figures\\rendered\\09_03_bom_va_event.svg",
+    "png": "report\\figures\\rendered\\09_03_bom_va_event.png",
+    "width": 1290,
+    "height": 2179,
+    "svg_viewbox": "-50 -10 645 1085.0833333333335"
+  },
+  {
+    "name": "09_04_ket_thuc_va_choi_lai",
+    "source": "report\\figures\\network\\09_04_ket_thuc_va_choi_lai.mmd",
+    "orientation_override": true,
+    "svg": "report\\figures\\rendered\\09_04_ket_thuc_va_choi_lai.svg",
+    "png": "report\\figures\\rendered\\09_04_ket_thuc_va_choi_lai.png",
+    "width": 1626,
+    "height": 2178,
+    "svg_viewbox": "-50 -10 813 1085"
+  }
+]

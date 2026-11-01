@@ -1,0 +1,14 @@
+﻿Task 07 report verification - 2026-10-26
+PASS: sections 7.1-7.7 and seven ownership notes.
+PASS: four pseudocode captions/blocks, six tables and two figure captions.
+PASS: two inline Mermaid blocks match standalone source files.
+NOT RUN: Mermaid renderer/raster export; source retained for final DOCX.
+PASS: linked citations map to catalogue sources 5, 6, 7, 8, 10, 11.
+PASS: catalogue JSON parses; no reference renumbering or new source ID.
+PASS: tile-only arithmetic 17*15=255; one change=9; 29 changes=261; not a measured packet size.
+PASS: 48 local Markdown links resolve; table columns consistent.
+PASS: 16 linked Java source files recorded with SHA256.
+PASS: no Unicode replacement characters.
+Manual review: pseudocode matches capture/diff/pending/commit/replica contracts; illustrative cases labelled.
+No production source/test changes; no benchmark or game test reruns.
+Chapter SHA256: 9F8052256DEFA4D053092B5C67DEC97EFF6F26C85013F002EB7BBD616E690207

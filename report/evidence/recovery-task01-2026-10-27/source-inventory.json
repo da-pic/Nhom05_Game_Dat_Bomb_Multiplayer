@@ -1,0 +1,162 @@
+[
+  {
+    "path": "src/main/java/com/bombit/client/app/ClientApplication.java",
+    "sha256": "79a36f81f376c70694100d719a23a8a57e82b842562a2077d3caf99c4211b281",
+    "lines": 85
+  },
+  {
+    "path": "src/main/java/com/bombit/client/app/DemoClientConnection.java",
+    "sha256": "436bc54026f1c2628681a612e557aecdb6c787e65c38bdb0ea1c86848decf78d",
+    "lines": 258
+  },
+  {
+    "path": "src/main/java/com/bombit/client/game/movement/MovementClientController.java",
+    "sha256": "75d4dcf19dd69e815c805c3f62c99e1be0000e98782fb71e6fc224fd6d147aa8",
+    "lines": 167
+  },
+  {
+    "path": "src/main/java/com/bombit/client/game/movement/PredictionController.java",
+    "sha256": "50f7d8e38cb16b962f49e6bc916e3062bff1f1b188c2f864a75757a1e0e3fcf9",
+    "lines": 79
+  },
+  {
+    "path": "src/main/java/com/bombit/client/lobby/LobbyWindow.java",
+    "sha256": "202e79640190674ddac43fe211575784d7114ff73fc5a045e4400aabbe337432",
+    "lines": 130
+  },
+  {
+    "path": "src/main/java/com/bombit/client/network/ClientNetwork.java",
+    "sha256": "ef0beedd148012694375b6a517870155bd5279bb3e76b8f5523e4b0d13312447",
+    "lines": 246
+  },
+  {
+    "path": "src/main/java/com/bombit/common/protocol/PacketType.java",
+    "sha256": "f8aeb981f76a0db8020d8242a6a1fe81439e368ab48fbc2f486f59ba88fe7543",
+    "lines": 69
+  },
+  {
+    "path": "src/main/java/com/bombit/common/protocol/ResyncPacketCodec.java",
+    "sha256": "8f6e2595d711db67c6d9f3919381839bd05d101af64d62efd5176eceb32b3912",
+    "lines": 33
+  },
+  {
+    "path": "src/main/java/com/bombit/common/protocol/SessionPacketCodec.java",
+    "sha256": "082965962981f326f2d69d222318ddb837f7df629c05eed29c354a21d8018446",
+    "lines": 152
+  },
+  {
+    "path": "src/main/java/com/bombit/server/app/LobbyGameServer.java",
+    "sha256": "955a17ba44dde5cee7500f80be0a44b2ef2cdd8946158196b41bb0c2c7568cbe",
+    "lines": 326
+  },
+  {
+    "path": "src/main/java/com/bombit/server/app/ServerApplication.java",
+    "sha256": "ec38673df50822cf4dc722925d8c3c4c3a665a3e6a402a54098b99ed77453f0e",
+    "lines": 32
+  },
+  {
+    "path": "src/main/java/com/bombit/server/dispatch/SessionHandlers.java",
+    "sha256": "f59fbe1b6d4bd99e7e2f184ae4e28ef3dd59aabd9bfca9b0eba07e2f9a9b26f1",
+    "lines": 42
+  },
+  {
+    "path": "src/main/java/com/bombit/server/game/bomb/BombGameplayExtension.java",
+    "sha256": "b2b49b4efc1ec74af8b7c97f39b3c6530421ca7298d47ae07aef4da646c8d877",
+    "lines": 89
+  },
+  {
+    "path": "src/main/java/com/bombit/server/game/core/GameLoop.java",
+    "sha256": "d39f72f069425209ec03d31818469659b3f5cf1350f4f9b57765a6a008e480bf",
+    "lines": 133
+  },
+  {
+    "path": "src/main/java/com/bombit/server/game/core/PlayerDisconnectedCommand.java",
+    "sha256": "04c35b6764e98f6d5b5a45dfa4723337ba16860f8719ef476df1e97bfd294603",
+    "lines": 13
+  },
+  {
+    "path": "src/main/java/com/bombit/server/game/core/PlayerReconnectedCommand.java",
+    "sha256": "9a305c251f9039966f2eed2f5f6e3708c2435b7986f9f5273c568ace1fc4ee2f",
+    "lines": 8
+  },
+  {
+    "path": "src/main/java/com/bombit/server/game/movement/MovementSystem.java",
+    "sha256": "3a9db6fe5d7749282468339e8185e0af9a1b69c6d07a1199b77c3a78a2f741db",
+    "lines": 136
+  },
+  {
+    "path": "src/main/java/com/bombit/server/game/movement/SnapshotPacketCodec.java",
+    "sha256": "c6b2fc17a7a06ff12c58bffae69304edb93fd46d9d5032ae50ae53dcb0fc7fb1",
+    "lines": 201
+  },
+  {
+    "path": "src/main/java/com/bombit/server/game/movement/StateDeltaBuilder.java",
+    "sha256": "c1c7fcaa3e4cf818afc0a0ec06aff9e1d1078d3c61d327f09371d496f56bee82",
+    "lines": 307
+  },
+  {
+    "path": "src/main/java/com/bombit/server/game/runtime/GameRuntime.java",
+    "sha256": "40c6cde3c8a7d74420fe556f7854c91ec10a43df9b16bd483f1a51bb9e4f4c22",
+    "lines": 36
+  },
+  {
+    "path": "src/main/java/com/bombit/server/game/runtime/MatchGameplayExtension.java",
+    "sha256": "478d50b0247d0119ebf4e9370ddb7893edc9ec4e1b669f658618bab128cea527",
+    "lines": 80
+  },
+  {
+    "path": "src/main/java/com/bombit/server/integration/RoomCleanupSink.java",
+    "sha256": "70892847b7251b8bc25067a338141358834b9dc8cb7ed2646daac90c725cdc97",
+    "lines": 57
+  },
+  {
+    "path": "src/main/java/com/bombit/server/network/ClientHandler.java",
+    "sha256": "7abf3702faef2f6cab725154b3c90cc6001c7481741fe374c7f5445e51bb840b",
+    "lines": 128
+  },
+  {
+    "path": "src/main/java/com/bombit/server/network/ConnectionManager.java",
+    "sha256": "8df6a81e9b49b5ad584b075b82364d7d91904a22fd262b1eb339618e98b60a03",
+    "lines": 92
+  },
+  {
+    "path": "src/main/java/com/bombit/server/network/Server.java",
+    "sha256": "7a2a66203bea156145f03cc772a8fea2eee92202f0d72fa992017793bde6fcfb",
+    "lines": 181
+  },
+  {
+    "path": "src/main/java/com/bombit/server/network/SessionWriter.java",
+    "sha256": "e82486acde7ac32319cbb2a4ac827070d8ee8f6043b06087700ca09cea5124f6",
+    "lines": 112
+  },
+  {
+    "path": "src/main/java/com/bombit/server/session/Session.java",
+    "sha256": "6c22e1df3ded9a54c6d8b8051192c1a164532d0211b2993b6ac7c12f37ef6640",
+    "lines": 114
+  },
+  {
+    "path": "src/main/java/com/bombit/server/session/SessionManager.java",
+    "sha256": "a2547fc4bb59891b87fbf6acb18b02ee9d828186398288871035c9b697bbc807",
+    "lines": 230
+  },
+  {
+    "path": "src/main/java/com/bombit/server/session/SessionState.java",
+    "sha256": "7d4cfd915751eb25497e54ebbe257c01701628f93e0a94dd9acd86d8eea995fc",
+    "lines": 11
+  },
+  {
+    "path": "src/test/java/com/bombit/integration/LobbyLifecycleTest.java",
+    "sha256": "2e366dd319fb5a074a150b7a5e2fc69e4b7569d0bd21f9ecd2a0269adce284ec",
+    "lines": 315
+  },
+  {
+    "path": "src/test/java/com/bombit/server/session/SessionFaultTest.java",
+    "sha256": "3300ccadb8c5d6162904d390d247bc763bc72c8f2ba0991cddb1e85a728ccfa6",
+    "lines": 31
+  },
+  {
+    "path": "src/test/java/com/bombit/server/session/SessionManagerTest.java",
+    "sha256": "4e1f4acd187158bcc94daa42bb05af9e6330d061fd1f3e3499965c70c5b95f40",
+    "lines": 78
+  }
+]

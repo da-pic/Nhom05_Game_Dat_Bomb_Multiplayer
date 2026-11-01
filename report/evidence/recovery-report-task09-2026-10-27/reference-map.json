@@ -1,0 +1,396 @@
+{
+  "task": 9,
+  "order": [
+    "R01",
+    "R06",
+    "R10",
+    "R07",
+    "R08",
+    "R02",
+    "R13",
+    "R04",
+    "R05",
+    "R03",
+    "R12",
+    "R09",
+    "R11",
+    "R14",
+    "R15",
+    "R16",
+    "R17",
+    "R18",
+    "R19"
+  ],
+  "final_numbers": {
+    "R01": 1,
+    "R06": 2,
+    "R10": 3,
+    "R07": 4,
+    "R08": 5,
+    "R02": 6,
+    "R13": 7,
+    "R04": 8,
+    "R05": 9,
+    "R03": 10,
+    "R12": 11,
+    "R09": 12,
+    "R11": 13,
+    "R14": 14,
+    "R15": 15,
+    "R16": 16,
+    "R17": 17,
+    "R18": 18,
+    "R19": 19
+  },
+  "old_numbers_preserved": true,
+  "normalization_changed_documents": [
+    "report/chapters/05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md"
+  ],
+  "sources_added": [
+    "R15",
+    "R16",
+    "R17",
+    "R18",
+    "R19"
+  ],
+  "reverified_existing_sources": [
+    "R01",
+    "R02",
+    "R10",
+    "R12",
+    "R14"
+  ],
+  "occurrences": [
+    {
+      "id": "R01",
+      "chapter": "04_GIOI_THIEU.md",
+      "line": 12
+    },
+    {
+      "id": "R06",
+      "chapter": "04_GIOI_THIEU.md",
+      "line": 16
+    },
+    {
+      "id": "R10",
+      "chapter": "04_GIOI_THIEU.md",
+      "line": 31
+    },
+    {
+      "id": "R07",
+      "chapter": "04_GIOI_THIEU.md",
+      "line": 37
+    },
+    {
+      "id": "R08",
+      "chapter": "04_GIOI_THIEU.md",
+      "line": 38
+    },
+    {
+      "id": "R01",
+      "chapter": "05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "line": 20
+    },
+    {
+      "id": "R01",
+      "chapter": "05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "line": 32
+    },
+    {
+      "id": "R02",
+      "chapter": "05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "line": 45
+    },
+    {
+      "id": "R13",
+      "chapter": "05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "line": 59
+    },
+    {
+      "id": "R06",
+      "chapter": "05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "line": 75
+    },
+    {
+      "id": "R04",
+      "chapter": "05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "line": 89
+    },
+    {
+      "id": "R05",
+      "chapter": "05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "line": 94
+    },
+    {
+      "id": "R03",
+      "chapter": "05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "line": 113
+    },
+    {
+      "id": "R12",
+      "chapter": "05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "line": 123
+    },
+    {
+      "id": "R09",
+      "chapter": "05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "line": 134
+    },
+    {
+      "id": "R10",
+      "chapter": "05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "line": 138
+    },
+    {
+      "id": "R10",
+      "chapter": "05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "line": 154
+    },
+    {
+      "id": "R11",
+      "chapter": "05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "line": 158
+    },
+    {
+      "id": "R07",
+      "chapter": "05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "line": 168
+    },
+    {
+      "id": "R08",
+      "chapter": "05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "line": 189
+    },
+    {
+      "id": "R09",
+      "chapter": "05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "line": 199
+    },
+    {
+      "id": "R10",
+      "chapter": "05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "line": 213
+    },
+    {
+      "id": "R07",
+      "chapter": "05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "line": 214
+    },
+    {
+      "id": "R08",
+      "chapter": "05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "line": 215
+    },
+    {
+      "id": "R14",
+      "chapter": "05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "line": 247
+    },
+    {
+      "id": "R06",
+      "chapter": "05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "line": 285
+    },
+    {
+      "id": "R07",
+      "chapter": "05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "line": 285
+    },
+    {
+      "id": "R09",
+      "chapter": "05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "line": 286
+    },
+    {
+      "id": "R09",
+      "chapter": "05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "line": 287
+    },
+    {
+      "id": "R04",
+      "chapter": "05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "line": 300
+    },
+    {
+      "id": "R05",
+      "chapter": "05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "line": 301
+    },
+    {
+      "id": "R06",
+      "chapter": "05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "line": 302
+    },
+    {
+      "id": "R07",
+      "chapter": "05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "line": 302
+    },
+    {
+      "id": "R08",
+      "chapter": "05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "line": 302
+    },
+    {
+      "id": "R09",
+      "chapter": "05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "line": 303
+    },
+    {
+      "id": "R10",
+      "chapter": "05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "line": 304
+    },
+    {
+      "id": "R10",
+      "chapter": "05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "line": 328
+    },
+    {
+      "id": "R15",
+      "chapter": "05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "line": 341
+    },
+    {
+      "id": "R16",
+      "chapter": "05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "line": 345
+    },
+    {
+      "id": "R17",
+      "chapter": "05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "line": 357
+    },
+    {
+      "id": "R18",
+      "chapter": "05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "line": 368
+    },
+    {
+      "id": "R19",
+      "chapter": "05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "line": 370
+    },
+    {
+      "id": "R14",
+      "chapter": "05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "line": 371
+    },
+    {
+      "id": "R15",
+      "chapter": "05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "line": 387
+    },
+    {
+      "id": "R16",
+      "chapter": "05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "line": 387
+    },
+    {
+      "id": "R01",
+      "chapter": "06_DINH_NGHIA_BAI_TOAN.md",
+      "line": 298
+    },
+    {
+      "id": "R06",
+      "chapter": "07_GIAI_PHAP_DE_XUAT.md",
+      "line": 23
+    },
+    {
+      "id": "R05",
+      "chapter": "07_GIAI_PHAP_DE_XUAT.md",
+      "line": 114
+    },
+    {
+      "id": "R07",
+      "chapter": "07_GIAI_PHAP_DE_XUAT.md",
+      "line": 187
+    },
+    {
+      "id": "R08",
+      "chapter": "07_GIAI_PHAP_DE_XUAT.md",
+      "line": 203
+    },
+    {
+      "id": "R10",
+      "chapter": "07_GIAI_PHAP_DE_XUAT.md",
+      "line": 237
+    },
+    {
+      "id": "R11",
+      "chapter": "07_GIAI_PHAP_DE_XUAT.md",
+      "line": 441
+    },
+    {
+      "id": "R06",
+      "chapter": "07_GIAI_PHAP_DE_XUAT.md",
+      "line": 537
+    },
+    {
+      "id": "R07",
+      "chapter": "07_GIAI_PHAP_DE_XUAT.md",
+      "line": 538
+    },
+    {
+      "id": "R08",
+      "chapter": "07_GIAI_PHAP_DE_XUAT.md",
+      "line": 538
+    },
+    {
+      "id": "R10",
+      "chapter": "07_GIAI_PHAP_DE_XUAT.md",
+      "line": 539
+    },
+    {
+      "id": "R01",
+      "chapter": "13_THAO_LUAN.md",
+      "line": 121
+    },
+    {
+      "id": "R07",
+      "chapter": "13_THAO_LUAN.md",
+      "line": 129
+    },
+    {
+      "id": "R08",
+      "chapter": "13_THAO_LUAN.md",
+      "line": 135
+    },
+    {
+      "id": "R10",
+      "chapter": "14_DIEM_MOI_VA_DONG_GOP.md",
+      "line": 30
+    },
+    {
+      "id": "R07",
+      "chapter": "14_DIEM_MOI_VA_DONG_GOP.md",
+      "line": 32
+    },
+    {
+      "id": "R08",
+      "chapter": "14_DIEM_MOI_VA_DONG_GOP.md",
+      "line": 32
+    },
+    {
+      "id": "R10",
+      "chapter": "14_DIEM_MOI_VA_DONG_GOP.md",
+      "line": 39
+    },
+    {
+      "id": "R07",
+      "chapter": "14_DIEM_MOI_VA_DONG_GOP.md",
+      "line": 40
+    },
+    {
+      "id": "R08",
+      "chapter": "14_DIEM_MOI_VA_DONG_GOP.md",
+      "line": 40
+    },
+    {
+      "id": "R10",
+      "chapter": "14_DIEM_MOI_VA_DONG_GOP.md",
+      "line": 61
+    }
+  ],
+  "historical_staging_preserved": true
+}

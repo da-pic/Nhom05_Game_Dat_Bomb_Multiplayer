@@ -1,0 +1,18 @@
+sequenceDiagram
+    participant C as Client
+    participant S as Server / lobby / pump
+    participant R as GameLoop và gameplay
+    Note over C,R: Minh họa nhánh đặt bom thành công
+    C->>S: PLANT_BOMB matchId, requestId
+    S->>S: Kiểm tra scope, ID trùng/cũ và rate limit
+    S->>R: Submit PlantBombCommand
+    R->>R: Kiểm tra sống, ô đặt, quota; tạo bom
+    R-->>S: Snapshot và notice placement qua FIFO
+    S-->>C: GAME_SNAPSHOT có entity bom
+    S-->>C: BOMB_PLANTED
+    Note over C,R: Khi bom đến hạn hoặc được kích nổ dây chuyền
+    R->>R: Nổ, damage batch, block/item và cập nhật state
+    R-->>S: Snapshot và notices mới
+    S-->>C: GAME_SNAPSHOT state/effects mới
+    S-->>C: BOMB_EXPLODE và notices khác nếu có
+    C->>C: Render từ snapshot; notice không áp damage/pickup lần hai

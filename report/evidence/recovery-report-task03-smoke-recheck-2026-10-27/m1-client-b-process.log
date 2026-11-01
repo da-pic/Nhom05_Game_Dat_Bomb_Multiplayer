@@ -1,0 +1,3 @@
+Exception in thread "main" java.lang.IllegalStateException: No full snapshot before smoke deadline
+	at com.bombit.client.app.ClientApplication.headless(ClientApplication.java:80)
+	at com.bombit.client.app.ClientApplication.main(ClientApplication.java:19)

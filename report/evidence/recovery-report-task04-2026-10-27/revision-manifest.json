@@ -1,0 +1,68 @@
+{
+  "date": "2026-10-27",
+  "timezone": "Asia/Saigon",
+  "task": 4,
+  "base_commit": "492c03127f15a25f4fc685fd004eafe424d53f9f",
+  "chapters": [
+    {
+      "path": "report/chapters/06_DINH_NGHIA_BAI_TOAN.md",
+      "before_sha256": "0ba5a14cee32859f2bdd102551362a68d370a9b610f2edfe8d7a44e4d9df8cc9",
+      "after_sha256": "a4f9503ae5b400bbe53113da02e0458b104a38415dce2ff4924f7872c8b06a63",
+      "before_lines": 315,
+      "after_lines": 370,
+      "local_links_checked": 26,
+      "captions": {
+        "Bảng": [
+          "6.1",
+          "6.2",
+          "6.3",
+          "6.4",
+          "6.5",
+          "6.6",
+          "6.7"
+        ],
+        "Hình": [],
+        "Thuật toán": []
+      }
+    },
+    {
+      "path": "report/chapters/07_GIAI_PHAP_DE_XUAT.md",
+      "before_sha256": "b09e2d7760533756be8f634bb9c3960876ae20324fc67b66e7a786552e3a6378",
+      "after_sha256": "c7c580699c5c9d7677a8e6b901e19ecdb99937a491e1a960749ededdbdbaacf0",
+      "before_lines": 505,
+      "after_lines": 674,
+      "local_links_checked": 29,
+      "captions": {
+        "Bảng": [
+          "7.1",
+          "7.2",
+          "7.3",
+          "7.4",
+          "7.5",
+          "7.6",
+          "7.7"
+        ],
+        "Hình": [
+          "7.1",
+          "7.2"
+        ],
+        "Thuật toán": [
+          "7.1",
+          "7.2",
+          "7.3",
+          "7.4",
+          "7.5"
+        ]
+      }
+    }
+  ],
+  "unchanged_java_sources": 219,
+  "unchanged_other_chapters": 17,
+  "unchanged_final_exports": 4,
+  "unchanged_canonical_references": true,
+  "historical_report_manifest_unchanged": true,
+  "tests_rerun": false,
+  "evidence_used": "report/evidence/recovery-report-task03-20261027-200413",
+  "validation": "PASS: links, citations, fences, FR numbering, caption sequences, source and unrelated report hashes",
+  "pending": "Update chapters 8-9 next; remaining chapters and DOCX/PDF still describe prior report revision."
+}

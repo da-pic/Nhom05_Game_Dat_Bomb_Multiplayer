@@ -1,0 +1,270 @@
+[
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/attempt-2/TEST-com.bombit.integration.RecoveryGameplayIntegrationTest.xml",
+    "sha256": "1ab273349b4dc1b8213022c78bacac6d89d56698d8b6e4aff78ecd18056305cc"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/attempt-2/TEST-com.bombit.server.session.SessionRecoveryTest.xml",
+    "sha256": "fd77f5f36cbc2293014b5bcece0b4a3fca966fc633c3e05b28bab89b92fc32a5"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/case-results.csv",
+    "sha256": "244729e4b940b94155f17acd5032e97c97dbcb8e674f424190f61a92c6372b18"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/case-results.json",
+    "sha256": "0baf60f8f143093876483eeccad4ef42e6e2549f7960b0a275e51cc5cb3fc549"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/junit-summary.json",
+    "sha256": "7857c6a061d813b91ebe523dad8fa855dc4cd28961b5ca620eae61c965848103"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/README.md",
+    "sha256": "34a728aa5b2a3b6a4216868a17db5cb9f34faeb663fcd4e90dcd6e8c8f0e7256"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/recovery-complete-focused-2.log",
+    "sha256": "38068f41ed551b04bb989928c97b7263c5d36b74cddb632597e05fa9330f42da"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/recovery-complete-focused-3.log",
+    "sha256": "fc724cf788cbc97c95cf7c0ac16163ca65c88218dc967fc91d0b5ee7a8221cec"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/recovery-complete-focused.log",
+    "sha256": "198f0799ac1bc84545a5c4fd3f5888db7dab348e95b4bc4fc4cd202977e852c0"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/recovery-complete-full-tests.log",
+    "sha256": "6807f54c94635564d91c5b592b1481b20f1c85ec84d9919785611a7e4bebfa0d"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/recovery-complete-javac.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/recovery-complete-network.log",
+    "sha256": "204a3f6f1af4a7d5d4ceb0c87f3f719cee67e00d229a8820f155721af70015c5"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/recovery-complete-tv2.log",
+    "sha256": "19fbb75aa1517c3d39e98a8952b982b64a390ca0cf7e001ed2028242a4960f12"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/run-manifest.json",
+    "sha256": "3b5cd6f63ef76e490e16fce85723e6a56160ddb77bc96ed45ca57db08dff974e"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/source/docs/SESSION_RECOVERY_VALIDATION.md",
+    "sha256": "47fdedf7430fcbc9e9dfe8307d9a24769deb4e4ccc4535744a103374438f3c07"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/source/src/main/java/com/bombit/server/app/LobbyGameServer.java",
+    "sha256": "0943ac784e17307c9f1463dc786a818805caf2d536e180ad183814e0c7b4db21"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/source/src/main/java/com/bombit/server/session/SessionManager.java",
+    "sha256": "16a12f94865ca6690216cef5c7c82063b3284f8a2fb9195017eb33c96c04f85b"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/source/src/main/java/com/bombit/server/session/SessionRecoveryRejectedException.java",
+    "sha256": "c34229cb573c292cffe6c90ed4094a2b3eeb20043474bb08be2802b3dbfefd19"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/source/src/test/java/com/bombit/integration/RecoveryGameplayIntegrationTest.java",
+    "sha256": "d88f086535a632a231009013a2bbb217bb3f2502d7c2b4e3ec134aa19252ce0f"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/source/src/test/java/com/bombit/server/session/SessionRecoveryTest.java",
+    "sha256": "7d68b3380e8107611210679369eaf1a5a85c38792ca2d0dc8dce49f2cc98b3a3"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/source-inventory.json",
+    "sha256": "fbf7393a3a9fab00fe01ddd3fe5d01a963f5f71cc659aa555d9a220a1862f5d7"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.client.app.SessionRecoveryClientTest.xml",
+    "sha256": "8efe71b26cb11d7fb9b5234f24b1f80d41b95192bae9957f2b2a70f5e7822890"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.client.game.bomb.BombPresentationStateTest.xml",
+    "sha256": "40e8ee105173cbe3cddb45cbff7eca497ded2b9db989ff06ebfaa486d5086017"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.client.game.bomb.BombSceneTest.xml",
+    "sha256": "de90131125e8d4d5d01b234d74d57e1812a67e4c5e60dfdd176c2c72b5c7f2dc"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.client.game.bomb.Java2DRendererTest.xml",
+    "sha256": "e839d49e7a745f8d4102ffe0f9c0c3c5c8de3deaf2382a5fbefb65b8bce1bd2e"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.client.game.item.ItemClientStateTest.xml",
+    "sha256": "0f158e8182b27b1ef59d1bffd867b703f8c1b31741de1bdab4de57497794201a"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.client.game.movement.RecoveryInputTest.xml",
+    "sha256": "596993b2da107c7aa5784e80aa151758c91ba4a3eb06f21ebfa3720a6cb4b103"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.client.game.movement.RespawnPredictionTest.xml",
+    "sha256": "e8eb95d5d05c42b56a24ccb018b4302aee097932fdfc10f3d372e6445a0bc180"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.client.game.movement.TileGridRendererTest.xml",
+    "sha256": "f3ef483081f62b103a1d80c7d0dddfa39a9047db793ffd732acacc7295430db8"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.client.lobby.MatchResultsPanelTest.xml",
+    "sha256": "2ed5afa535b43aa073b4babf00d3cde50fde9259703541fe11e5478b4ebd2f44"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.client.network.ClientStabilityTest.xml",
+    "sha256": "8aa6c36d5b50802810d9d50ce875adede2c8ddae7c6d67996af4698665b64278"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.client.network.ConnectCancellationTest.xml",
+    "sha256": "f319e11e0595a09c7c56b77233bbfd5a227f23b37186d92b6369c279d2ea37a9"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.common.protocol.BombProtocolTest.xml",
+    "sha256": "4ea3988dd261f459d070c92bc34357cb0885fae421f42de0bf74f0348762daf5"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.common.protocol.GameplayProtocolTest.xml",
+    "sha256": "e4a29ceca6746c07698222c9975b844f6353ca60c47ab66e7906ff4565ed659c"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.common.protocol.IntegrationContractTest.xml",
+    "sha256": "0c86d328f5ba72ecafd36bde6fbe0aec19094fd554ab5137b0f6322823222c02"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.common.protocol.LobbyContractTest.xml",
+    "sha256": "f3eed011d083aad1f6fa7ed1eefcd2477c74bf8626e4ad3fa2086c867800b779"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.integration.BombClientIntegrationTest.xml",
+    "sha256": "50473e8e4261e95d423b52375cd4cf2faf3050f74a87edc8b964fb6c272578be"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.integration.LobbyLifecycleTest.xml",
+    "sha256": "7110ae70170d61711f1534d97ae721e71cd461b139e7a126d937c39dca6276d5"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.integration.MatchLifecycleIntegrationTest.xml",
+    "sha256": "888edee0eebc75cf439be8a72df301dc3af4b5d3d02698bd92d43179a03b041c"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.integration.MovementDemoProcessTest.xml",
+    "sha256": "38c739213744770a60a1ec04823c7001281541c01f8abc1b4d736cceb55330d0"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.integration.MovementDemoTest.xml",
+    "sha256": "da11ab6ecc6936167a3ba224a26eb65d43fda59672dce865eae3a39d12dc1a8c"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.integration.RecoveryGameplayIntegrationTest.xml",
+    "sha256": "3bb16cc6cc807e19128a7a3bb9476da16144d2d78c3a0a6312c4b09ff451ed5b"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.integration.StabilityLifecycleTest.xml",
+    "sha256": "9f3891308908235131fd7ed10c0c92db785dd604640e1f5578a49f04b09da5b3"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.server.chat.ChatFaultTest.xml",
+    "sha256": "c04386aa9d43d9b146dd79e643bea44bf180d8203aafed8bd2a24132b7c0dfc8"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.server.game.bomb.BombGameplayTest.xml",
+    "sha256": "c6214f0ca53a50b89efa62dc2de319654db81d29359c4b7279ec9db4f747110a"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.server.game.bomb.BombSchedulerTest.xml",
+    "sha256": "e681fdb5894645c30870f35c6a51d5a547bf76ce26783a2cbca2126baf06c469"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.server.game.bomb.BombSystemTest.xml",
+    "sha256": "a6e7379ad45a467e9c03a074caba01fa9d3431deb5df5775504aa107b806fac8"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.server.game.item.ItemSystemTest.xml",
+    "sha256": "c6bb01b4cbf9669c139bc1ae1620b79a399b2b3948fdf7dd771d629008c303d6"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.server.game.map.DefaultArenaMapTest.xml",
+    "sha256": "8d2209bda25ccd7def5fe771addd4168ae64b8981c36b265861123f20f7598dc"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.server.game.movement.DeltaCompressionTest.xml",
+    "sha256": "5f5163284c411b6df9775ec29d2f1a2c520d4196892102464c7c64592d1b659d"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.server.game.movement.MovementFeatureTest.xml",
+    "sha256": "882327ce7958561852572d432f51af6439583b40d85e55d009d5206a4ecf379e"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.server.game.runtime.BombRuntimeIntegrationTest.xml",
+    "sha256": "5ee9b8dda84da3b3446e6212fb7681857b3d23128e7101ea3eb85e5a8225f3a5"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.server.game.runtime.ExtendedItemsTest.xml",
+    "sha256": "6ec03400f5db4aa51a126202bf336723eb986f1b14c53e71a420a1c5283a0c42"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.server.game.runtime.MatchGameplayTest.xml",
+    "sha256": "bc539c204215840ed94f771e03663df88a7dceaa9ea9fe9feb43f6baba9900a0"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.server.game.runtime.MovementBalanceTest.xml",
+    "sha256": "0759310034dcd216c28640afc893a4b2e61e52e7d0ad3c063529b21371e8ab6f"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.server.game.runtime.RuntimeContractTest.xml",
+    "sha256": "495cba4d896b2e986498461e69331ed986b1613cb3a78ea2ef7b496be4d76d0c"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.server.network.RecoveryWriterTest.xml",
+    "sha256": "dbc34fcb584677092a9ae794c81841bbdf172fc0df9488750523e8265e0a207b"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.server.network.ServerTransportTest.xml",
+    "sha256": "e15c0ca7a85995756fdac54be2608ba7ce9cfa5a2b29566ab79359a65ba6ab24"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.server.network.SessionWriterTest.xml",
+    "sha256": "eb4e2c2a3480e73151e8bda3923d67d278eddde391e10dbcb31e400c9ebf3f23"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.server.network.TransportStabilityTest.xml",
+    "sha256": "738bcaadefbd4e81eb67def4e963915c9b198ee85850000ac5515569dbc529ef"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.server.room.RoomManagerTest.xml",
+    "sha256": "ac4ff91cb52f3c84a2132da8f70e9386671412c9dee9d92eefb88c1b99e6c7aa"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.server.session.SessionFaultTest.xml",
+    "sha256": "ed716da3165d69b15cf5a30b2d3b53d6e11afa0a44c233fe74e2169edf34ed1e"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.server.session.SessionManagerTest.xml",
+    "sha256": "aba0f3cf5f60a1ce36046b98a9bd186c099049c8d585db7c08824059c06ac3de"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.server.session.SessionRecoveryTest.xml",
+    "sha256": "955d161e79c2b97096579f2f212b1fb42f73a637d9edd7e596ebe863abf801a5"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/surefire/TEST-com.bombit.tools.NetworkBenchmarkTest.xml",
+    "sha256": "d8d8ecab683ae05d5598700e2899ee68d9ff662a9398576924936282c24b0ba0"
+  },
+  {
+    "path": "report/evidence/recovery-complete-task03-2026-10-27/task03-changes.patch",
+    "sha256": "1339cdf4bc56a81fa2fab01b01e96c52a9848bf291ced660a8790631fa573aee"
+  },
+  {
+    "path": "report/experiments/collect_recovery_validation.py",
+    "sha256": "031db972143e22707438fcb1101c25162dcc2fba74a7a7f7e82b64d69cbe9912"
+  }
+]

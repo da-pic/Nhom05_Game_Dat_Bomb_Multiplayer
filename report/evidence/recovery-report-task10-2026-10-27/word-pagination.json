@@ -1,0 +1,93 @@
+﻿{
+    "word_version":  "16.0",
+    "pdf":  "D:\\LTM\\BombItMultiplayer-Structure\\report\\final\\NhomXX_BombItMultiplayer_Report.pdf",
+    "toc_texts":  [
+                      "1. Tên đề tài — Title\t1\r2. Tóm tắt — Abstract\t9\r3. Từ khóa — Keywords\t9\r4. Giới thiệu — Introduction\t10\r4.1. Bối cảnh và động lực\t10\r4.2. Vấn đề đồng bộ game nhiều người chơi\t10\r4.3. Mục tiêu và phạm vi\t11\r4.4. Đóng góp chính và tổ chức báo cáo\t11\r5. Cơ sở lý thuyết và công trình liên quan\t12\r5.1. TCP, framing, kết nối và session\t12\r5.2. Server authoritative, GameLoop và concurrency\t13\r5.3. Full/delta, prediction, reconciliation và interpolation\t14\r5.4. Tile map, bom, timer và event gameplay\t16\r5.5. Các cách tiếp cận liên quan, đối chứng và lựa chọn thiết kế\t17\r5.6. Session Recovery và các cách tiếp cận liên quan\t18\r6. Định nghĩa bài toán\t20\r6.1. Input, output và đối tượng sử dụng\t20\r6.2. Luật game và arena hiện hành\t22\r6.3. Yêu cầu chức năng\t25\r6.4. Yêu cầu phi chức năng, mô hình mạng và giả định\t26\r6.5. Phạm vi hỗ trợ và giới hạn kết luận\t28\r7. Giải pháp đề xuất\t30\r7.1. Ý tưởng server authoritative và luồng input → state → client\t30\r7.2. Quản lý connection, session và room\t32\r7.3. Single-writer state, command queue và runtime theo phòng\t32\r7.4. Movement/collision và đồng bộ chuyển động phía client\t34\r7.5. State Delta Compression và phục hồi baseline\t35\r7.6. Bom/item/event, damage batch, respawn và kết quả\t40\r7.7. Protocol, match scope, routing và backpressure\t41\r7.8. Seamless Session Recovery và tái đồng bộ trước khi tiếp tục\t43\r8. Kiến trúc hệ thống\t46\r8.1. Sơ đồ tổng thể Client–Server\t47\r8.2. Tầng transport, session và room\t48\r8.3. Model, state, runtime và movement\t49\r8.4. Gameplay extension và world adapters\t51\r8.5. Client lobby, movement, renderer và results\t52\r8.6. Router, worker, queue, quyền sở hữu thread và cleanup\t53\r8.7. Quyền sở hữu và trạng thái trong Session Recovery\t57\r9. Thiết kế giao tiếp mạng\t59\r9.1. TCP framing, UTF-8, size limit và handshake protocol 2\t59\r9.2. Session, room, match identity và vòng đời kết nối\t60\r9.3. Message lobby và room\t63\r9.4. MOVE, input sequence/ACK, snapshot v2–v5 và full/delta/resync\t64\r9.5. PLANT_BOMB, event, dedupe và GAME_OVER\t67\r9.6. Sơ đồ tuần tự các luồng chính\t68\r9.7. Packet lỗi, timeout, client chậm, queue đầy và stale match\t81\r10. Triển khai hệ thống\t84\r10.1. Java 25, Swing, Maven, cấu trúc project và bootstrap\t84\r10.2. TCP server/client lifecycle, room/lobby/chat/heartbeat\t86\r10.3. Model/map/state, command queue, GameLoop và runtime\t91\r10.4. Movement, collision, snapshot builder và delta codec\t93\r10.5. Input, prediction, replay, interpolation và respawn reset\t95\r10.6. Bom, chain reaction, block, item, lives/shield/damage/result\t98\r10.7. Renderer bom/item, grid/HUD và bảng kết quả\t101\r10.8. Router, ClientNetwork, metrics, benchmark và vận hành\t103\r11. Thiết lập thực nghiệm — Experimental Setup\t108\r11.1. Revision, phần cứng, OS/JDK và cấu hình\t108\r11.2. Môi trường loopback, nhiều process và LAN nếu có\t109\r11.3. Map, luật game, input workload và seed\t110\r11.4. Kịch bản chức năng và lỗi\t111\r11.5. Đối chứng full mỗi tick so với delta + full định kỳ\t112\r11.6. Metric, đơn vị, công cụ, số lần lặp và cách tái lập\t113\r11.7. Thiết lập kiểm thử Session Recovery trên phiên bản tích hợp\t116\r12. Kết quả — Results\t120\r12.1. Chức năng phòng/kết nối\t121\r12.2. Movement/runtime/client synchronization\t121\r12.3. Gameplay bomb/item/lives/result\t122\r12.4. Concurrency, fault handling và cleanup\t124\r12.5. Full so với delta\t126\r12.6. Latency/ACK/throughput/message rate theo workload\t129\r12.7. Test chưa đạt và phần chưa có bằng chứng\t133\r12.8. Kết quả Session Recovery trên phiên bản tích hợp\t134\r13. Thảo luận — Discussion\t138\r13.1. Mức đáp ứng mục tiêu và điều kiện thực nghiệm\t138\r13.2. Hiệu quả/chi phí và trường hợp delta kém lợi\t139\r13.3. Tick, FIFO, backlog, prediction correction và độ trễ\t140\r13.4. Tính nhất quán gameplay, event và respawn\t141\r13.5. Bottleneck, lỗi quan sát được và giới hạn kết luận\t141\r13.6. Đánh giá Session Recovery và quan hệ với State Delta Compression\t142\r14. Điểm mới và đóng góp — Novelty and Contributions\t144\r14.1. Baseline kỹ thuật, phần kế thừa và phần tự phát triển\t144\r14.2. State Delta Compression: phương pháp và bằng chứng\t145\r14.3. Các đóng góp triển khai bổ sung được chứng minh\t145\r14.4. Bảng Contribution — Description — Evidence\t146\r14.5. Seamless Session Recovery: đóng góp chịu lỗi và bằng chứng\t147\r15. Hạn chế — Limitations\t149\r15.1. Hạn chế chức năng và reconnect\t149\r15.2. GUI/LAN/tải/soak chưa nghiệm thu\t150\r15.3. Giới hạn số liệu lịch sử, fixture và công cụ đo\t151\r15.4. Giới hạn riêng của phục hồi phiên và bằng chứng mới\t152\r16. Hướng phát triển — Future Work\t153\r16.1. Hoàn thiện và mở rộng chức năng\t153\r16.2. Tối ưu đồng bộ/client correction và tài nguyên\t154\r16.3. Mở rộng và củng cố recovery đã triển khai\t155\r16.4. Đánh giá nhiều máy, tải lớn hơn và vận hành dài hạn\t156\r17. Kết luận — Conclusion\t157\r18. Tài liệu tham khảo — References\t159\r19. Phụ lục — Appendix\t161\rA. Đặc tả message và sequence bổ sung\t161\rB. Cấu hình/build/run/test/demo\t162\rC. Test cases, log, CSV và kết quả bổ sung\t164\rD. Mã giả/đoạn code quan trọng\t166\rE. Bảng đóng góp thực tế — nhóm xác nhận\t167\r",
+                      "Hình 7.1. Luồng phối hợp của giải pháp. Nhóm tự vẽ từ thiết kế và code project.\t31\rHình 7.2. Tạo delta, pending và commit. Nhóm tự vẽ từ StateDeltaBuilder/GameLoop.\t37\rHình 8.1. Các thành phần chính và ranh giới tiến trình. Nhóm tự vẽ từ code project.\t47\rHình 8.2. Luồng command và snapshot qua các thread/queue. Nhóm tự vẽ từ code project.\t53\rHình 8.3. Một lượt input đi qua runtime và trở về client. Nhóm tự vẽ từ code project.\t55\rHình 8.4. State machine kết nối và recovery của client owner. Nhóm tự vẽ từ code đã xác minh.\t58\rHình 9.1. Kết nối và bắt đầu một trận hai người. Nhóm tự vẽ từ code project.\t69\rHình 9.2. Input sequence và nhánh phục hồi baseline. Nhóm tự vẽ từ code project.\t70\rHình 9.3. Nhánh đặt bom thành công và vụ nổ sau đó. Nhóm tự vẽ từ code project.\t71\rHình 9.4. Kết thúc gameplay bình thường và mở lượt mới. Nhóm tự vẽ từ code project.\t72\rHình 9.5. Phục hồi cùng phiên trận sau mất transport tạm thời. Nhóm tự vẽ từ code đã xác minh.\t74\rHình 9.6. Các nhánh recovery không được tiếp tục trận. Nhóm tự vẽ từ code đã xác minh.\t78\rHình 12.1. Tổng frame ứng dụng theo cấu hình; phần trăm ghi trên cột delta là tỷ lệ giảm so với full của cùng hàng. Đơn vị trục là KiB = 1024 byte; D0 có 200 tick, D1 có 600 tick. Nguồn hình: script phân tích dữ liệu thực chạy.\t127\rHình 12.2. Byte tích lũy của các trace D1 bốn player. Đường dọc ở trace sự kiện chỉ tick 100/160/172/220; đường delta vẫn có chi phí full định kỳ và update timer. Trục tick là thời gian mô phỏng, không phải thời gian đo mạng.\t128\rHình 12.3. Mean RTT có trọng số và tổng RX client; cột là median qua năm run, thanh là min–max. Nhãn TCP tương ứng mode transport, Move tương ứng movement. Đo một JVM/loopback; không suy thành tải tối đa hoặc LAN.\t131\r",
+                      "Bảng 5.1. So sánh các kỹ thuật đồng bộ theo mục tiêu sử dụng.\t15\rBảng 5.2. Đối chiếu các cách tổ chức trạng thái và điều khiển.\t17\rBảng 5.3. Phần kế thừa từ tài liệu và phạm vi áp dụng.\t17\rBảng 5.4. Các phương án xử lý mất kết nối và lựa chọn của project.\t19\rBảng 6.1. Các nhóm input của hệ thống.\t20\rBảng 6.2. Các nhóm output và người nhận.\t21\rBảng 6.3. Cấu hình gameplay mặc định của ứng dụng.\t22\rBảng 6.4. Các loại item và hiệu ứng.\t23\rBảng 6.5. Danh sách yêu cầu chức năng.\t25\rBảng 6.6. Các thuộc tính chất lượng cần kiểm chứng.\t26\rBảng 6.7. Các giả định của phạm vi đề tài.\t28\rBảng 7.1. Vấn đề cần giải quyết và cơ chế được chọn.\t31\rBảng 7.2. Quy tắc phát hiện và biểu diễn thay đổi.\t35\rBảng 7.3. Ví dụ logic về baseline, không phải log thực nghiệm.\t38\rBảng 7.4. Minh họa byte phần giá trị tile theo layout hiện tại, không phải byte toàn packet.\t40\rBảng 7.5. Lựa chọn hiện hành và hệ quả cần đánh giá.\t41\rBảng 7.6. Phần kế thừa, phần nhóm hiện thực và cách kiểm chứng.\t42\rBảng 7.7. Budget phục hồi mặc định của client, không phải SLA đã đo.\t44\rBảng 8.1. Các thành phần hạ tầng server.\t48\rBảng 8.2. Phân biệt dữ liệu model, state và dữ liệu bàn giao.\t49\rBảng 8.3. Các lớp liên kết gameplay với state và đầu ra.\t51\rBảng 8.4. Trách nhiệm các thành phần client.\t52\rBảng 8.5. Thread, dữ liệu sở hữu và cơ chế giới hạn.\t54\rBảng 8.6. Kiến trúc đáp ứng các nhóm yêu cầu ở mục 6.\t56\rBảng 8.7. Dữ liệu recovery và thành phần được phép thay đổi.\t57\rBảng 9.1. Frame ứng dụng trên TCP.\t59\rBảng 9.2. Định danh và phạm vi ý nghĩa.\t60\rBảng 9.3. Các message phiên/control đang được sử dụng.\t61\rBảng 9.4. Các message phòng đang nối vào server/client mặc định.\t63\rBảng 9.5. Message đồng bộ trạng thái, đều có match envelope ở protocol 2.\t64\rBảng 9.6. Thứ tự các khối binary cơ sở v2.\t64\rBảng 9.7. Các version snapshot được decoder hiện tại hỗ trợ.\t65\rBảng 9.8. Body inner của các thông báo gameplay và kết quả.\t67\rBảng 9.9. Các giới hạn mặc định liên quan đến giao tiếp.\t81\rBảng 9.10. Cách xử lý theo lớp lỗi thực tế.\t82\rBảng 10.1. Stack và cấu hình được khai báo trong project.\t84\rBảng 10.2. Các script hiện có và đầu ra/chức năng.\t85\rBảng 10.3. Class/API chính và điểm nối vào ứng dụng.\t86\rBảng 10.4. Ý nghĩa các SessionState trong luồng hiện tại.\t88\rBảng 10.5. API runtime và ranh giới dữ liệu TV2.\t92\rBảng 10.6. Các lớp đồng bộ movement và trách nhiệm.\t95\rBảng 10.7. Thành phần TV3 và cầu nối gameplay.\t98\rBảng 10.8. ItemType, mã truyền và effect mặc định.\t100\rBảng 10.9. Các lớp hạ tầng TV4 và vai trò hiện thực.\t103\rBảng 10.10. Công cụ đo và phạm vi dữ liệu được ghi.\t106\rBảng 11.1. Môi trường khảo sát đã có bằng chứng và thông tin cần bổ sung.\t108\rBảng 11.2. Topology và kết luận được phép rút ra.\t109\rBảng 11.3. Workload và nhịp phát của runner.\t110\rBảng 11.4. Ma trận kiểm chứng chức năng và fault handling.\t111\rBảng 11.5. Phép đo delta và mức sẵn sàng của công cụ.\t112\rBảng 11.6. Metric và cách diễn giải.\t113\rBảng 11.7. Thiết kế số lần chạy và trạng thái theo từng mốc bằng chứng.\t114\rBảng 11.8. Môi trường của lượt kiểm thử recovery mới.\t116\rBảng 11.9. Ma trận recovery được dùng trong lượt kiểm thử mới.\t117\rBảng 12.1. Kết quả thực chạy và phạm vi đếm.\t120\rBảng 12.2. Kết quả phòng, session và lobby.\t121\rBảng 12.3. Kết quả movement và runtime.\t121\rBảng 12.4. Kết quả kiểm tra đồng bộ.\t122\rBảng 12.5. Kết quả gameplay và tích hợp presentation.\t122\rBảng 12.6. Kết quả lifecycle và process smoke.\t124\rBảng 12.7. Test concurrency/reliability theo lớp và số lần lặp.\t124\rBảng 12.8. Full so với delta trên cùng trace; số byte của một lần chạy đại diện.\t127\rBảng 12.9. Chi phí phát packet và phân biệt byte/tick với byte/packet.\t128\rBảng 12.10. Latency theo cấu hình, đơn vị ms.\t130\rBảng 12.11. Tổng lưu lượng phía client; median (min–max) theo run.\t130\rBảng 12.12. Trạng thái và số đếm qua năm run/cấu hình.\t132\rBảng 12.13. Bằng chứng cần bổ sung trước khi nộp.\t133\rBảng 12.14. Các attempt của đợt recovery và kết quả hồi quy.\t134\rBảng 12.15. Execution của các lớp liên quan trong lượt A5.\t134\rBảng 12.16. Kết quả kiểm chứng theo nhóm kịch bản recovery.\t135\rBảng 12.17. Admission quanh biên 15 giây với clock điều khiển.\t136\rBảng 13.1. Mục tiêu, bằng chứng và mức kết luận được hỗ trợ.\t138\rBảng 13.2. Cách đọc hiệu quả delta theo loại dữ liệu.\t139\rBảng 13.3. Phân biệt quan sát thực tế với khả năng cần đo thêm.\t141\rBảng 14.1. Phương pháp kế thừa và phần nhóm hiện thực trong project.\t144\rBảng 14.2. Đóng góp được nhận trong phạm vi báo cáo.\t146\rBảng 15.1. Các giới hạn cơ chế hiện hành.\t150\rBảng 15.2. Khoảng trống nghiệm thu và khả năng khái quát kết quả.\t150\rBảng 15.3. Các giới hạn bổ sung cho Session Recovery.\t152\rBảng 16.1. Các nhóm công việc đề xuất gắn với hạn chế.\t153\rBảng 16.2. Recovery đã có và các phần cần mở rộng kiểm chứng.\t155\rBảng A.1. Nhóm message dùng để đối chiếu log và source.\t161\rBảng B.1. Điểm vào tái lập các nhóm thực nghiệm đã công bố.\t163\rBảng C.1. Nguồn dữ liệu thực tế và giới hạn sử dụng.\t164\rBảng C.2. Các cột cần để đọc hoặc phân tích lại.\t165\rBảng E.1. Trách nhiệm theo tài liệu; phần xác nhận cá nhân còn thiếu.\t167\r"
+                  ],
+    "toc_fields":  3,
+    "inline_shapes":  19,
+    "chapter_pages":  [
+                          {
+                              "page":  1,
+                              "title":  "1. Tên đề tài — Title"
+                          },
+                          {
+                              "page":  9,
+                              "title":  "2. Tóm tắt — Abstract"
+                          },
+                          {
+                              "page":  9,
+                              "title":  "3. Từ khóa — Keywords"
+                          },
+                          {
+                              "page":  10,
+                              "title":  "4. Giới thiệu — Introduction"
+                          },
+                          {
+                              "page":  12,
+                              "title":  "5. Cơ sở lý thuyết và công trình liên quan"
+                          },
+                          {
+                              "page":  20,
+                              "title":  "6. Định nghĩa bài toán"
+                          },
+                          {
+                              "page":  30,
+                              "title":  "7. Giải pháp đề xuất"
+                          },
+                          {
+                              "page":  46,
+                              "title":  "8. Kiến trúc hệ thống"
+                          },
+                          {
+                              "page":  59,
+                              "title":  "9. Thiết kế giao tiếp mạng"
+                          },
+                          {
+                              "page":  84,
+                              "title":  "10. Triển khai hệ thống"
+                          },
+                          {
+                              "page":  108,
+                              "title":  "11. Thiết lập thực nghiệm — Experimental Setup"
+                          },
+                          {
+                              "page":  120,
+                              "title":  "12. Kết quả — Results"
+                          },
+                          {
+                              "page":  138,
+                              "title":  "13. Thảo luận — Discussion"
+                          },
+                          {
+                              "page":  144,
+                              "title":  "14. Điểm mới và đóng góp — Novelty and Contributions"
+                          },
+                          {
+                              "page":  149,
+                              "title":  "15. Hạn chế — Limitations"
+                          },
+                          {
+                              "page":  153,
+                              "title":  "16. Hướng phát triển — Future Work"
+                          },
+                          {
+                              "page":  157,
+                              "title":  "17. Kết luận — Conclusion"
+                          },
+                          {
+                              "page":  159,
+                              "title":  "18. Tài liệu tham khảo — References"
+                          },
+                          {
+                              "page":  161,
+                              "title":  "19. Phụ lục — Appendix"
+                          }
+                      ],
+    "docx":  "D:\\LTM\\BombItMultiplayer-Structure\\report\\final\\NhomXX_BombItMultiplayer_Report.docx",
+    "updated_at":  "2026-10-27T22:25:33.7964709+07:00",
+    "tables":  88,
+    "pages":  167
+}

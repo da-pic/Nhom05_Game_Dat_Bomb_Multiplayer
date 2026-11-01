@@ -11,6 +11,8 @@ public final class SessionPacketCodec {
             "\\s*(\"(?:[^\"\\\\\\x00-\\x1f]|\\\\(?:[\"\\\\/bfnrt]|u[0-9a-fA-F]{4}))*\"|-?(?:0|[1-9][0-9]*)|true|false|null)\\s*");
     public record Connect(String playerName, int protocolVersion) { }
     public record Acknowledgement(String playerId, String reconnectToken) { }
+    /** Seamless Session Recovery: first frame on a new socket that resumes a soft-dropped session. */
+    public record Reconnect(String playerId, String reconnectToken) { }
     private SessionPacketCodec() { }
 
     public static Connect connect(Packet packet) {
@@ -27,18 +29,32 @@ public final class SessionPacketCodec {
 
     public static Packet connectRequest(String name) {
         return new Packet(PacketType.CONNECT, "{\"playerName\":" + quote(name)
-                + ",\"protocolVersion\":" + IntegrationContract.PROTOCOL_VERSION + "}");
+                + ",\"protocolVersion\":" + IntegrationContract.LEGACY_PROTOCOL_VERSION + "}");
     }
 
     public static Acknowledgement decodeAcknowledgement(Packet packet) {
         var fields = object(packet, PacketType.CONNECT_ACK, Set.of("playerId", "reconnectToken", "serverVersion",
                 "protocolVersion", "heartbeatIntervalMs", "heartbeatTimeoutMs", "reconnectGraceMs"));
-        if (!Long.valueOf(IntegrationContract.PROTOCOL_VERSION).equals(fields.get("protocolVersion"))) {
+        if (!Long.valueOf(IntegrationContract.LEGACY_PROTOCOL_VERSION).equals(fields.get("protocolVersion"))) {
             throw new IllegalArgumentException("Unsupported acknowledgement");
         }
         var id = java.util.UUID.fromString((String) fields.get("playerId"));
         var token = java.util.UUID.fromString((String) fields.get("reconnectToken"));
         return new Acknowledgement(id.toString(), token.toString());
+    }
+
+    public static Reconnect reconnect(Packet packet) {
+        var fields = object(packet, PacketType.RECONNECT, Set.of("playerId", "reconnectToken"));
+        if (!(fields.get("playerId") instanceof String id) || !(fields.get("reconnectToken") instanceof String token)) {
+            throw new IllegalArgumentException("Invalid RECONNECT fields");
+        }
+        // UUID parsing rejects oversized or malformed identifiers before any session lookup.
+        return new Reconnect(java.util.UUID.fromString(id).toString(), java.util.UUID.fromString(token).toString());
+    }
+
+    public static Packet reconnectRequest(String playerId, String token) {
+        return new Packet(PacketType.RECONNECT, "{\"playerId\":" + quote(playerId)
+                + ",\"reconnectToken\":" + quote(token) + "}");
     }
 
     public static int pingId(Packet packet) {
@@ -64,7 +80,7 @@ public final class SessionPacketCodec {
     public static Packet acknowledgement(String playerId, String token) {
         return new Packet(PacketType.CONNECT_ACK, "{\"playerId\":" + quote(playerId)
                 + ",\"reconnectToken\":" + quote(token) + ",\"serverVersion\":\"0.1.0\",\"protocolVersion\":"
-                + IntegrationContract.PROTOCOL_VERSION + ",\"heartbeatIntervalMs\":" + IntegrationContract.HEARTBEAT_INTERVAL_MILLIS
+                + IntegrationContract.LEGACY_PROTOCOL_VERSION + ",\"heartbeatIntervalMs\":" + IntegrationContract.HEARTBEAT_INTERVAL_MILLIS
                 + ",\"heartbeatTimeoutMs\":" + IntegrationContract.HEARTBEAT_TIMEOUT_MILLIS
                 + ",\"reconnectGraceMs\":" + IntegrationContract.RECONNECT_GRACE_MILLIS + "}");
     }

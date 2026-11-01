@@ -1,0 +1,21 @@
+sequenceDiagram
+    participant UI as Client EDT
+    participant SEND as Movement-Sender
+    participant IN as Server reader/router/lobby
+    participant LOOP as GameRuntime / GameLoop
+    participant PUMP as Snapshot worker
+    participant WRITE as SessionWriter
+    participant NET as ClientNetwork reader
+    Note over UI,NET: Luồng sau khi đã nhận GAME_STARTED và full hợp lệ
+    UI->>UI: Lấy mẫu input và prediction local
+    UI->>SEND: Enqueue MOVE có sequence
+    SEND->>IN: ClientNetwork.send → TCP frame
+    IN->>LOOP: Kiểm tra scope, submit GameCommand
+    Note over IN,LOOP: Submit thành công chưa phải ACK đã mô phỏng
+    LOOP->>LOOP: Tick: command → movement → gameplay
+    LOOP-->>PUMP: GameStateUpdate qua outbound FIFO
+    PUMP->>WRITE: Snapshot rồi notices qua queue của từng session
+    WRITE-->>NET: Ghi TCP frames
+    NET->>UI: Listener ứng dụng dispatch tuần tự
+    UI->>UI: Ghép replica, dùng ACK để reconcile, ghi mẫu nội suy
+    UI->>UI: Render local prediction và remote interpolation

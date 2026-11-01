@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "operations": 40,
+  "paste_blocks": 34,
+  "unique_local_link_targets": 31,
+  "local_link_occurrences": 62,
+  "citation_numbers": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13
+  ],
+  "primary_citation_urls_match_catalogue": true,
+  "docx_tables": 11,
+  "docx_figures": 2,
+  "instruction_notes_shaded": true,
+  "content_blocks_without_placement_instructions": true,
+  "chapters_or_game_source_written": false
+}

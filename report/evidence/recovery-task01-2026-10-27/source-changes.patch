@@ -1,0 +1,682 @@
+diff --git a/src/main/java/com/bombit/client/app/DemoClientConnection.java b/src/main/java/com/bombit/client/app/DemoClientConnection.java
+index 12324a5..57b1915 100644
+--- a/src/main/java/com/bombit/client/app/DemoClientConnection.java
++++ b/src/main/java/com/bombit/client/app/DemoClientConnection.java
+@@ -22,11 +22,15 @@ public final class DemoClientConnection implements AutoCloseable {
+     private final Semaphore uiSlots = new Semaphore(256);
+     private final Semaphore controlSlots=new Semaphore(128);
+     private final java.util.concurrent.atomic.AtomicLong uiBytes=new java.util.concurrent.atomic.AtomicLong();
+-    private final AtomicBoolean closed = new AtomicBoolean(), resyncQueued = new AtomicBoolean();
++    private final AtomicBoolean closed = new AtomicBoolean(), resyncQueued = new AtomicBoolean(), reconnecting = new AtomicBoolean();
++    private volatile boolean autoReconnect = false;
+     private volatile long receivedNanos = System.nanoTime();
+     private volatile long lastResync;
+     private int pingId;
+     private String sessionId;
++    private volatile String reconnectToken;
++    private volatile String host;
++    private volatile int port;
+     private volatile MatchContext context;
+     private Consumer<Packet> lobby;
+     private volatile MovementClientController movement;
+@@ -41,29 +45,60 @@ public final class DemoClientConnection implements AutoCloseable {
+             receivedNanos = System.nanoTime();
+             dispatch(() -> packet(packet),6+packet.getJsonPayload().getBytes(java.nio.charset.StandardCharsets.UTF_8).length);
+         });
+-        network.setOnDisconnect(error -> fail(error == null ? new IOException("Server disconnected") : error));
++        network.setOnDisconnect(error -> {
++            if (autoReconnect && context != null && !closed.get() && sessionId != null && reconnectToken != null) {
++                tryReconnect(error);
++            } else {
++                fail(error == null ? new IOException("Server disconnected") : error);
++            }
++        });
+     }
+     /** Lobby events and command errors remain recoverable on the UI executor. */
+     public void setLobbyListener(Consumer<Packet> listener) { lobby=listener; }
+     public String sessionId() { return sessionId; }
++    public String reconnectToken() { return reconnectToken; }
++    public boolean isReconnecting() { return reconnecting.get(); }
++    public void setAutoReconnect(boolean enabled) { this.autoReconnect = enabled; }
++    public boolean isAutoReconnect() { return autoReconnect; }
+     public void send(Packet packet) {
+         if(closed.get())return;
+         if(!controlSlots.tryAcquire()){fail(new IOException("Client control queue full"));return;}
+-        try { control.execute(() -> { try { if(!closed.get()) network.send(packet); } catch(Exception e) { fail(e); } finally{controlSlots.release();} }); }
++        try { control.execute(() -> {
++            try {
++                if(!closed.get()) {
++                    if (reconnecting.get()) return;
++                    network.send(packet);
++                }
++            } catch(Exception e) {
++                if (autoReconnect && context != null && !closed.get() && sessionId != null && reconnectToken != null) {
++                    tryReconnect(e);
++                } else {
++                    fail(e);
++                }
++            } finally{controlSlots.release();}
++        }); }
+         catch(RejectedExecutionException stopping) {controlSlots.release();}
+     }
+     public void connect(String host, int port, String name) throws IOException {
++        this.host = host;
++        this.port = port;
+         try {
+             Packet connect = SessionPacketCodec.connectRequest(name);
+             SessionPacketCodec.connect(connect);
+             network.connect(host, port);
+             network.send(connect);
+             control.scheduleAtFixedRate(() -> {
+-                if (closed.get()) return;
++                if (closed.get() || reconnecting.get()) return;
+                 try {
+                     if (System.nanoTime() - receivedNanos > TimeUnit.SECONDS.toNanos(10)) throw new IOException("Server heartbeat timeout");
+                     network.send(new Packet(PacketType.PING, "{\"pingId\":" + ++pingId + "}"));
+-                } catch (Exception error) { fail(error); }
++                } catch (Exception error) {
++                    if (autoReconnect && context != null && !closed.get() && sessionId != null && reconnectToken != null) {
++                        tryReconnect(error);
++                    } else {
++                        fail(error);
++                    }
++                }
+             }, 2, 2, TimeUnit.SECONDS);
+         } catch (IOException | RuntimeException error) { fail(error); throw error; }
+     }
+@@ -85,8 +120,15 @@ public final class DemoClientConnection implements AutoCloseable {
+     private void packet(Packet packet) {
+         switch (packet.getType()) {
+             case PacketType.CONNECT_ACK -> {
+-                sessionId = SessionPacketCodec.decodeAcknowledgement(packet).playerId();
+-                status.accept("Connected. Waiting for the other players...");
++                var ack = SessionPacketCodec.decodeAcknowledgement(packet);
++                sessionId = ack.playerId();
++                reconnectToken = ack.reconnectToken();
++                if (reconnecting.getAndSet(false)) {
++                    status.accept("Reconnected! Resuming match...");
++                    dispatch(this::requestFullState);
++                } else {
++                    status.accept("Connected. Waiting for the other players...");
++                }
+             }
+             case PacketType.ROOM_STATE, PacketType.LIST_ROOMS, PacketType.LEAVE_ROOM, PacketType.CHAT -> {
+                 if(lobby!=null) lobby.accept(packet); else status.accept("Waiting for all demo players to connect...");
+@@ -102,13 +144,21 @@ public final class DemoClientConnection implements AutoCloseable {
+             case PacketType.GAME_STARTED -> {
+                 if (sessionId == null) throw new IllegalStateException("Game started before handshake");
+                 MatchContext next = DemoPacketCodec.decodeStarted(packet);
+-                if (context != null && context.matchId().equals(next.matchId())) return;
++                if (context != null && context.matchId().equals(next.matchId())) {
++                    if (movement == null || movement.isClosed()) {
++                        int localId = context.playerId(sessionId).orElseThrow();
++                        movement = new MovementClientController(network, localId, ui, () -> dispatch(this::requestFullState),
++                                error->{if(context!=null&&context.matchId().equals(next.matchId())&&!reconnecting.get())fail(error);}, context.matchId(), false);
++                        started.accept(movement);
++                    }
++                    return;
++                }
+                 if (movement != null) movement.close();
+                 context = next;
+                 lastResult=null;
+                 int localId = context.playerId(sessionId).orElseThrow();
+                 movement = new MovementClientController(network, localId, ui, () -> dispatch(this::requestFullState),
+-                        error->{if(context!=null&&context.matchId().equals(next.matchId()))fail(error);}, context.matchId(), false);
++                        error->{if(context!=null&&context.matchId().equals(next.matchId())&&!reconnecting.get())fail(error);}, context.matchId(), false);
+                 started.accept(movement);
+             }
+             case PacketType.GAME_SNAPSHOT, PacketType.FULL_STATE_SYNC, PacketType.BOMB_PLANTED, PacketType.BOMB_EXPLODE,
+@@ -144,13 +194,50 @@ public final class DemoClientConnection implements AutoCloseable {
+                         var request = new ResyncPacketCodec.Request(tick, ResyncPacketCodec.Reason.BASELINE_MISMATCH);
+                         network.send(MatchEnvelopeCodec.wrap(match, ResyncPacketCodec.encode(request)));
+                     }
+-                } catch (Exception error) { fail(error); }
++                } catch (Exception error) {
++                    if (autoReconnect && context != null && !closed.get() && sessionId != null && reconnectToken != null) {
++                        tryReconnect(error);
++                    } else {
++                        fail(error);
++                    }
++                }
+                 finally { resyncQueued.set(false); }
+             }, delay, TimeUnit.NANOSECONDS);
+         } catch (RejectedExecutionException stopping) { resyncQueued.set(false); }
+     }
++    private void tryReconnect(Throwable error) {
++        if (closed.get() || reconnecting.getAndSet(true)) return;
++        control.execute(() -> {
++            status.accept("Connection lost. Reconnecting to match...");
++            long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(14);
++            int attempt = 0;
++            while (!closed.get() && context != null && System.nanoTime() < deadline) {
++                attempt++;
++                try {
++                    while (network.isReaderAlive() && System.nanoTime() < deadline) {
++                        Thread.sleep(30);
++                    }
++                    if (closed.get() || context == null) break;
++                    network.connect(host, port);
++                    receivedNanos = System.nanoTime();
++                    network.send(SessionPacketCodec.reconnectRequest(sessionId, reconnectToken));
++                    return;
++                } catch (Exception e) {
++                    try {
++                        Thread.sleep(Math.min(500, 50 * attempt));
++                    } catch (InterruptedException ie) {
++                        Thread.currentThread().interrupt();
++                        break;
++                    }
++                }
++            }
++            reconnecting.set(false);
++            fail(error == null ? new IOException("Failed to reconnect to match") : error);
++        });
++    }
+     private void fail(Throwable error) {
+         if (!closed.compareAndSet(false, true)) return;
++        reconnecting.set(false);
+         network.close(); control.shutdownNow();
+         if(movement!=null)movement.close();
+         try{ui.execute(() -> {context=null;lobby=null;errors.accept(error);});}catch(RejectedExecutionException stopping){}
+@@ -160,6 +247,7 @@ public final class DemoClientConnection implements AutoCloseable {
+     public int localId() { return context.playerId(sessionId).orElseThrow(); }
+     @Override public void close() {
+         if (!closed.compareAndSet(false, true)) return;
++        reconnecting.set(false);
+         network.close(); control.shutdownNow();
+         if(movement!=null)movement.close();
+         try{ui.execute(() -> {movement=null;context=null;lobby=null;});}catch(RejectedExecutionException stopping){}
+diff --git a/src/main/java/com/bombit/common/protocol/SessionPacketCodec.java b/src/main/java/com/bombit/common/protocol/SessionPacketCodec.java
+index de8aaeb..ba32365 100644
+--- a/src/main/java/com/bombit/common/protocol/SessionPacketCodec.java
++++ b/src/main/java/com/bombit/common/protocol/SessionPacketCodec.java
+@@ -11,6 +11,8 @@ public final class SessionPacketCodec {
+             "\\s*(\"(?:[^\"\\\\\\x00-\\x1f]|\\\\(?:[\"\\\\/bfnrt]|u[0-9a-fA-F]{4}))*\"|-?(?:0|[1-9][0-9]*)|true|false|null)\\s*");
+     public record Connect(String playerName, int protocolVersion) { }
+     public record Acknowledgement(String playerId, String reconnectToken) { }
++    /** Seamless Session Recovery: first frame on a new socket that resumes a soft-dropped session. */
++    public record Reconnect(String playerId, String reconnectToken) { }
+     private SessionPacketCodec() { }
+ 
+     public static Connect connect(Packet packet) {
+@@ -41,6 +43,20 @@ public final class SessionPacketCodec {
+         return new Acknowledgement(id.toString(), token.toString());
+     }
+ 
++    public static Reconnect reconnect(Packet packet) {
++        var fields = object(packet, PacketType.RECONNECT, Set.of("playerId", "reconnectToken"));
++        if (!(fields.get("playerId") instanceof String id) || !(fields.get("reconnectToken") instanceof String token)) {
++            throw new IllegalArgumentException("Invalid RECONNECT fields");
++        }
++        // UUID parsing rejects oversized or malformed identifiers before any session lookup.
++        return new Reconnect(java.util.UUID.fromString(id).toString(), java.util.UUID.fromString(token).toString());
++    }
++
++    public static Packet reconnectRequest(String playerId, String token) {
++        return new Packet(PacketType.RECONNECT, "{\"playerId\":" + quote(playerId)
++                + ",\"reconnectToken\":" + quote(token) + "}");
++    }
++
+     public static int pingId(Packet packet) {
+         Object id = object(packet, PacketType.PING, Set.of("pingId")).get("pingId");
+         if (!(id instanceof Long n) || n < Integer.MIN_VALUE || n > Integer.MAX_VALUE) {
+diff --git a/src/main/java/com/bombit/server/app/LobbyGameServer.java b/src/main/java/com/bombit/server/app/LobbyGameServer.java
+index 6a5e954..ac90efc 100644
+--- a/src/main/java/com/bombit/server/app/LobbyGameServer.java
++++ b/src/main/java/com/bombit/server/app/LobbyGameServer.java
+@@ -266,9 +266,52 @@ public final class LobbyGameServer implements AutoCloseable, GameEventSink {
+         catch(IllegalStateException unavailable) { return false; }
+     }
+     private static RequestRejectedException reject(String code) { return new RequestRejectedException(code); }
+-    @Override public synchronized void onPlayerDisconnected(Session s) { leave(s); }
+-    @Override public synchronized void onPlayerHardDropped(Session s) { leave(s); }
+-    @Override public void onPlayerReconnected(Session s) { }
++    private volatile boolean seamlessRecovery = false;
++    public void setSeamlessRecovery(boolean enabled) { this.seamlessRecovery = enabled; }
++    public boolean isSeamlessRecovery() { return seamlessRecovery; }
++
++    @Override public synchronized void onPlayerDisconnected(Session s) {
++        String roomId = s.getRoomId();
++        Match match = roomId == null ? null : matches.get(roomId);
++        if (seamlessRecovery && match != null && match.active) {
++            int playerNum = match.context.playerId(s.getPlayerId()).orElse(-1);
++            if (playerNum > 0) {
++                match.game.submit(new PlayerDisconnectedCommand(playerNum, false));
++            }
++            return;
++        }
++        leave(s);
++    }
++    @Override public synchronized void onPlayerHardDropped(Session s) {
++        String roomId = s.getRoomId();
++        Match match = roomId == null ? null : matches.get(roomId);
++        if (match != null && match.active) {
++            int playerNum = match.context.playerId(s.getPlayerId()).orElse(-1);
++            if (playerNum > 0) {
++                match.game.submit(new PlayerDisconnectedCommand(playerNum, true));
++            }
++        }
++        leave(s);
++    }
++    @Override public synchronized void onPlayerReconnected(Session s) {
++        String roomId = s.getRoomId();
++        Match match = roomId == null ? null : matches.get(roomId);
++        if (match != null && match.active) {
++            int playerNum = match.context.playerId(s.getPlayerId()).orElse(-1);
++            if (playerNum > 0) {
++                match.game.submit(new PlayerReconnectedCommand(playerNum));
++            }
++            var roster = match.roster;
++            var names = new HashMap<String, String>();
++            for (Session p : roster) names.put(p.getPlayerId(), p.getUsername());
++            Packet started = DemoPacketCodec.started(match.context, names);
++            send(s, started);
++            var latest = match.game.createUpdate();
++            match.barrier = latest == null ? -1L : latest.getTick();
++            match.game.requestFullState();
++            match.initialized.add(s.getPlayerId());
++        }
++    }
+     public void start() throws IOException { server.start(); }
+     public int port() { return server.getPort(); }
+     public Server transport() { return server; }
+diff --git a/src/main/java/com/bombit/server/app/ServerApplication.java b/src/main/java/com/bombit/server/app/ServerApplication.java
+index 9444d4e..8c9c371 100644
+--- a/src/main/java/com/bombit/server/app/ServerApplication.java
++++ b/src/main/java/com/bombit/server/app/ServerApplication.java
+@@ -9,6 +9,7 @@ public final class ServerApplication {
+         int port = args.length > 0 ? Integer.parseInt(args[0]) : 8888;
+         if (args.length < 2 || args[1].equals("--lobby")) {
+             try(var lobby=new LobbyGameServer(port)) {
++                lobby.setSeamlessRecovery(true);
+                 Thread hook=new Thread(lobby::close,"Lobby-Server-Shutdown");
+                 Runtime.getRuntime().addShutdownHook(hook);
+                 try { System.out.println("Lobby server: port="+lobby.port()); lobby.start(); }
+diff --git a/src/main/java/com/bombit/server/network/ClientHandler.java b/src/main/java/com/bombit/server/network/ClientHandler.java
+index 7cd7c3c..1d73d76 100644
+--- a/src/main/java/com/bombit/server/network/ClientHandler.java
++++ b/src/main/java/com/bombit/server/network/ClientHandler.java
+@@ -13,11 +13,11 @@ import java.util.concurrent.TimeUnit;
+ /** Decode complete frames, gate handshake, then route using the server-owned session ID. */
+ public final class ClientHandler implements Runnable {
+     private final Socket socket;
+-    private final Session session;
++    private volatile Session session;
+     private final SessionManager sessions;
+     private final ConnectionManager connections;
+     private final MessageRouter router;
+-    private final SessionWriter writer;
++    private volatile SessionWriter writer;
+     private final int frameTimeoutMillis;
+     private final InboundRateLimiter limits=new InboundRateLimiter();
+     private final java.util.function.Consumer<Throwable> failures;
+@@ -46,12 +46,39 @@ public final class ClientHandler implements Runnable {
+                     continue;
+                 }
+                 boolean pending = session.getState() == SessionState.CONNECTED;
+-                if (pending && packet.getType() != PacketType.CONNECT) {
++                if (pending && packet.getType() != PacketType.CONNECT && packet.getType() != PacketType.RECONNECT) {
+                     error("NOT_CONNECTED"); hardDrop=true; drain=true; break;
+                 }
+-                if (!pending && packet.getType() == PacketType.CONNECT) {
++                if (!pending && (packet.getType() == PacketType.CONNECT || packet.getType() == PacketType.RECONNECT)) {
+                     error("INVALID_PACKET"); continue;
+                 }
++                if (pending && packet.getType() == PacketType.RECONNECT) {
++                    SessionPacketCodec.Reconnect req;
++                    try {
++                        req = SessionPacketCodec.reconnect(packet);
++                    } catch (RuntimeException invalid) {
++                        error("INVALID_PACKET"); hardDrop=true; drain=true; break;
++                    }
++                    if (!sessions.canReconnect(req.playerId(), req.reconnectToken())) {
++                        error("RECONNECT_REJECTED"); hardDrop=true; drain=true; break;
++                    }
++                    String provisionalId = session.getPlayerId();
++                    connections.releasePreservingSocket(provisionalId);
++                    sessions.discardProvisional(provisionalId);
++                    var newWriter = new java.util.concurrent.atomic.AtomicReference<SessionWriter>();
++                    boolean ok = sessions.reconnect(req.playerId(), req.reconnectToken(), socket, resumed -> {
++                        var w = connections.open(resumed);
++                        newWriter.set(w);
++                        w.send(resumed, OutboundMessage.fromPacket(
++                                SessionPacketCodec.acknowledgement(resumed.getPlayerId(), resumed.getReconnectToken())));
++                    });
++                    if (!ok || newWriter.get() == null) {
++                        error("RECONNECT_REJECTED"); hardDrop=true; drain=true; break;
++                    }
++                    this.session = sessions.find(req.playerId()).orElseThrow();
++                    this.writer = newWriter.get();
++                    continue;
++                }
+                 try {
+                     if (!router.route(session.getPlayerId(), packet)) { error("UNKNOWN_MESSAGE"); continue; }
+                     if (packet.getType() != PacketType.CONNECT) session.updateHeartbeat();
+diff --git a/src/main/java/com/bombit/server/network/ConnectionManager.java b/src/main/java/com/bombit/server/network/ConnectionManager.java
+index 17a2102..37f9759 100644
+--- a/src/main/java/com/bombit/server/network/ConnectionManager.java
++++ b/src/main/java/com/bombit/server/network/ConnectionManager.java
+@@ -60,6 +60,13 @@ public final class ConnectionManager implements AutoCloseable {
+         }
+     }
+ 
++    public void releasePreservingSocket(String playerId) {
++        SessionWriter writer = writers.remove(playerId);
++        if (writer != null) {
++            writer.close(false);
++        }
++    }
++
+     public void release(String playerId, Socket socket) {
+         SessionWriter writer = writers.get(playerId);
+         if (writer != null && writer.owns(socket) && writers.remove(playerId, writer)) writer.close();
+diff --git a/src/main/java/com/bombit/server/network/SessionWriter.java b/src/main/java/com/bombit/server/network/SessionWriter.java
+index 67809db..e64178c 100644
+--- a/src/main/java/com/bombit/server/network/SessionWriter.java
++++ b/src/main/java/com/bombit/server/network/SessionWriter.java
+@@ -98,10 +98,15 @@ public final class SessionWriter implements OutboundSender, AutoCloseable {
+         if (Thread.currentThread() == worker) return;
+         try { worker.join(millis); } catch (InterruptedException interrupted) { Thread.currentThread().interrupt(); }
+     }
+-    @Override public void close() {
++    public void close(boolean closeSocket) {
+         synchronized(lifecycle){running=false;accepting=false;queue.clear();}
+-        try { socket.close(); } catch (IOException ignored) { }
++        if (closeSocket) {
++            try { socket.close(); } catch (IOException ignored) { }
++        }
+         worker.interrupt();
+         awaitStopped(1_000);
+     }
++    @Override public void close() {
++        close(true);
++    }
+ }
+diff --git a/src/main/java/com/bombit/server/session/Session.java b/src/main/java/com/bombit/server/session/Session.java
+index 930eaa9..1814d38 100644
+--- a/src/main/java/com/bombit/server/session/Session.java
++++ b/src/main/java/com/bombit/server/session/Session.java
+@@ -98,6 +98,13 @@ public final class Session {
+         }
+     }
+ 
++    /** Releases ownership without closing: used when a RECONNECT frame moves this socket to another session. */
++    public synchronized Socket detachSocket() {
++        Socket current = socket;
++        socket = null;
++        return current;
++    }
++
+     private static String requireText(String value, String name) {
+         if (value == null || value.isBlank()) {
+             throw new IllegalArgumentException(name + " must not be blank");
+diff --git a/src/main/java/com/bombit/server/session/SessionManager.java b/src/main/java/com/bombit/server/session/SessionManager.java
+index d550f0d..b540888 100644
+--- a/src/main/java/com/bombit/server/session/SessionManager.java
++++ b/src/main/java/com/bombit/server/session/SessionManager.java
+@@ -17,6 +17,7 @@ import java.util.concurrent.RejectedExecutionException;
+ import java.util.concurrent.atomic.AtomicBoolean;
+ import java.util.concurrent.atomic.AtomicReference;
+ import java.util.concurrent.ScheduledThreadPoolExecutor;
++import java.util.function.Consumer;
+ 
+ public final class SessionManager implements AutoCloseable {
+     private final Map<String, Session> sessions = new ConcurrentHashMap<>();
+@@ -62,7 +63,7 @@ public final class SessionManager implements AutoCloseable {
+         notifySafely(()->gameEventSink.onPlayerDisconnected(session));
+         ScheduledFuture<?> timer;
+         try {
+-            timer = scheduler.schedule(() -> hardDrop(playerId), reconnectGraceSeconds, TimeUnit.SECONDS);
++            timer = scheduler.schedule(() -> expire(playerId, session), reconnectGraceSeconds, TimeUnit.SECONDS);
+         } catch (RejectedExecutionException shuttingDown) {
+             hardDrop(playerId);
+             return;
+@@ -86,15 +87,30 @@ public final class SessionManager implements AutoCloseable {
+     }
+ 
+     public boolean reconnect(String playerId, String token, Socket newSocket) {
+-        if (closed.get()) { closeQuietly(newSocket); return false; }
++        return reconnect(playerId, token, newSocket, resumed -> { });
++    }
++
++    /** True when a RECONNECT frame would be accepted; used before detaching the provisional connection. */
++    public boolean canReconnect(String playerId, String token) {
++        Session session = playerId == null ? null : sessions.get(playerId);
++        if (closed.get() || session == null || token == null || !token.equals(session.getReconnectToken())) return false;
++        SessionState state = session.getState();
++        return state != SessionState.CONNECTED && state != SessionState.CLOSED;
++    }
++
++    /**
++     * Seamless Session Recovery: attach a new socket to the soft-dropped session.
++     * A valid token also takes over a connection the server still believes is alive
++     * (half-open TCP after Wi-Fi loss is detected by the client before the server).
++     * {@code beforeResume} runs before game observers so the new writer exists when they send.
++     */
++    public boolean reconnect(String playerId, String token, Socket newSocket, Consumer<Session> beforeResume) {
++        if (!canReconnect(playerId, token)) { closeQuietly(newSocket); return false; }
+         Session session = sessions.get(playerId);
+-        if (session == null || token == null || !token.equals(session.getReconnectToken())
+-                || session.getState() != SessionState.DISCONNECTED) {
+-            closeQuietly(newSocket);
+-            return false;
+-        }
++        if (session == null) { closeQuietly(newSocket); return false; }
++        if (session.getState() != SessionState.DISCONNECTED) handleUnexpectedDisconnect(playerId);
+         synchronized (session) {
+-            if (session.getState() != SessionState.DISCONNECTED) {
++            if (session.getState() != SessionState.DISCONNECTED || sessions.get(playerId) != session) {
+                 closeQuietly(newSocket);
+                 return false;
+             }
+@@ -102,21 +118,50 @@ public final class SessionManager implements AutoCloseable {
+             session.attachSocket(newSocket);
+             session.restoreStateAfterReconnect(SessionState.PLAYING);
+         }
++        try { beforeResume.accept(session); }
++        catch (RuntimeException failed) { failure.compareAndSet(null, failed); hardDrop(playerId); return false; }
+         notifySafely(()->gameEventSink.onPlayerReconnected(session));
+         return true;
+     }
+ 
++    /**
++     * Removes a provisional (pre-handshake) entry without callbacks and without closing its socket,
++     * because that socket is being handed to the session named in a RECONNECT frame.
++     */
++    public boolean discardProvisional(String provisionalId) {
++        Session session = sessions.get(provisionalId);
++        if (session == null) return false;
++        synchronized (session) {
++            if (session.getState() != SessionState.CONNECTED || !sessions.remove(provisionalId, session)) return false;
++            session.detachSocket();
++            session.setState(SessionState.CLOSED);
++        }
++        return true;
++    }
++
+     public void hardDrop(String playerId) {
+-        Session session = sessions.remove(playerId);
+-        cancelDisconnectTimer(playerId);
++        Session session = sessions.get(playerId);
+         if (session == null) {
++            cancelDisconnectTimer(playerId);
+             return;
+         }
+-        session.setState(SessionState.CLOSED);
+-        session.closeSocket();
++        synchronized (session) {
++            if (!sessions.remove(playerId, session)) return;
++            cancelDisconnectTimer(playerId);
++            session.setState(SessionState.CLOSED);
++            session.closeSocket();
++        }
+         notifySafely(()->gameEventSink.onPlayerHardDropped(session));
+     }
+ 
++    /** Grace timer: a late timer must never drop a session that already resumed on a new socket. */
++    private void expire(String playerId, Session expected) {
++        synchronized (expected) {
++            if (sessions.get(playerId) != expected || expected.getState() != SessionState.DISCONNECTED) return;
++        }
++        hardDrop(playerId);
++    }
++
+     public void broadcastToRoom(String roomId, OutboundMessage message) {
+         if (roomId == null || message == null) {
+             return;
+diff --git a/src/test/java/com/bombit/integration/LobbyLifecycleTest.java b/src/test/java/com/bombit/integration/LobbyLifecycleTest.java
+index 3d2f23e..50a5673 100644
+--- a/src/test/java/com/bombit/integration/LobbyLifecycleTest.java
++++ b/src/test/java/com/bombit/integration/LobbyLifecycleTest.java
+@@ -109,6 +109,7 @@ class LobbyLifecycleTest {
+     }
+     @Test void disconnectAbortsMatchTransfersHostAndAllowsFreshPlayer() throws Exception {
+         try(var f=new Fixture();var a=new Peer(f,"A");var b=new Peer(f,"B");var c=new Peer(f,"C")) {
++            f.server.setSeamlessRecovery(false);
+             String room=create(a,4);join(b,room);ready(b);a.command(PacketType.START_GAME);
+             var old=DemoPacketCodec.decodeStarted(a.take(PacketType.GAME_STARTED));b.take(PacketType.GAME_STARTED);a.close();
+             b.take(PacketType.GAME_OVER);
+@@ -119,6 +120,73 @@ class LobbyLifecycleTest {
+             assertFull(b,fresh);assertFull(c,fresh);
+         }
+     }
++    @Test void seamlessRecoveryFreezesDisconnectedPlayerAndResumesOnReconnect() throws Exception {
++        try(var f=new Fixture();var a=new Peer(f,"A");var b=new Peer(f,"B")) {
++            f.server.setSeamlessRecovery(true);
++            String room=create(a,4);join(b,room);ready(b);a.command(PacketType.START_GAME);
++            var matchA=DemoPacketCodec.decodeStarted(a.take(PacketType.GAME_STARTED));
++            var matchB=DemoPacketCodec.decodeStarted(b.take(PacketType.GAME_STARTED));
++            assertFull(a,matchA);assertFull(b,matchB);
++            int localIdA=matchA.playerId(a.id).orElseThrow();
++            int localIdB=matchB.playerId(b.id).orElseThrow();
++
++            // Client A drops physical connection
++            a.close();
++
++            // Match remains active, snapshot worker alive, server does not abort match immediately
++            Thread.sleep(150);
++            assertEquals(1,f.server.activeMatchCount());
++            assertEquals(1,f.server.snapshotWorkerCount());
++
++            // Peer B receives snapshots where player A is frozen (not removed from world)
++            var update=b.until(p->p.getType()==PacketType.GAME_SNAPSHOT);
++            var stateB=snapshot(update,matchB);
++            assertFalse(stateB.getRemovedPlayerIds().contains(localIdA));
++
++            // Client A reconnects with same playerId and reconnectToken via a fresh TCP connection
++            var netA2 = new ClientNetwork();
++            try {
++                netA2.connect("127.0.0.1", f.server.port());
++                netA2.send(SessionPacketCodec.reconnectRequest(a.id, a.token));
++
++                // Reconnect handshake ACK
++                Packet ack = netA2.receive(Duration.ofSeconds(5));
++                assertNotNull(ack);
++                assertEquals(PacketType.CONNECT_ACK, ack.getType());
++                var decodedAck = SessionPacketCodec.decodeAcknowledgement(ack);
++                assertEquals(a.id, decodedAck.playerId());
++
++                // Server emits started metadata and requests full state
++                Packet started = netA2.receive(Duration.ofSeconds(5));
++                assertNotNull(started);
++                assertEquals(PacketType.GAME_STARTED, started.getType());
++
++                // Server emits full state sync or snapshot to sync client A
++                Packet syncOrSnap = netA2.receive(Duration.ofSeconds(5));
++                assertNotNull(syncOrSnap);
++                assertTrue(syncOrSnap.getType() == PacketType.FULL_STATE_SYNC || syncOrSnap.getType() == PacketType.GAME_SNAPSHOT);
++
++                // Client A sends movement command after reconnecting
++                netA2.send(MatchEnvelopeCodec.wrap(matchA.matchId(),
++                        MovePacketCodec.encode(new MovePacketCodec.Input(1, Direction.RIGHT, true))));
++
++                // Peer B observes player A's input being processed (unfrozen!)
++                b.until(p->{
++                    if(p.getType()!=PacketType.GAME_SNAPSHOT) return false;
++                    var snap=snapshot(p,matchB);
++                    return snap.getPlayerChanges().stream().anyMatch(pl->pl.getId()==localIdA&&pl.getLastProcessedInput()>=1)
++                        || snap.getPlayers().stream().anyMatch(pl->pl.getId()==localIdA&&pl.getLastProcessedInput()>=1);
++                });
++
++                // Both players can finish or end game gracefully
++                netA2.send(MatchEnvelopeCodec.wrap(matchA.matchId(), new Packet(PacketType.END_GAME, "{}")));
++                b.take(PacketType.GAME_OVER);
++                waitFor(() -> f.server.activeMatchCount() == 0 && f.server.snapshotWorkerCount() == 0);
++            } finally {
++                netA2.close();
++            }
++        }
++    }
+     @Test void waitingHostLeaveAndRuntimeStartFailureKeepRoomUsable() throws Exception {
+         var attempts=new AtomicInteger();
+         var manager=new GameRuntimeManager(id->{if(attempts.getAndIncrement()==0)throw new IllegalStateException("test factory failure");return DemoGameServer.map();},(id,state)->GameplayExtension.none());
+@@ -156,6 +224,52 @@ class LobbyLifecycleTest {
+             }
+         } finally {ui.shutdown();assertTrue(ui.awaitTermination(2,TimeUnit.SECONDS));}
+     }
++    @Test void demoClientConnectionRecoversSeamlesslyAfterSocketDrop() throws Exception {
++        var ui=Executors.newSingleThreadExecutor();
++        var failureA=new AtomicReference<Throwable>();
++        var failureB=new AtomicReference<Throwable>();
++        var statusA=new CopyOnWriteArrayList<String>();
++        try(var f=new Fixture();
++            var a=new DemoClientConnection(ui,m->{},statusA::add,failureA::set);
++            var b=new DemoClientConnection(ui,m->{},s->{},failureB::set)) {
++            f.server.setSeamlessRecovery(true);
++            a.setAutoReconnect(true);
++            var room=new AtomicReference<LobbyPacketCodec.RoomView>();
++            a.setLobbyListener(p->{if(p.getType()==PacketType.ROOM_STATE) room.set(LobbyPacketCodec.decodeRoom(p));});
++            a.connect("127.0.0.1",f.server.port(),"A");
++            b.connect("127.0.0.1",f.server.port(),"B");
++            a.send(LobbyPacketCodec.packet(PacketType.CREATE_ROOM,Map.of("roomName","seamless","maxPlayers",2)));
++            waitFor(()->room.get()!=null);
++            b.send(LobbyPacketCodec.packet(PacketType.JOIN_ROOM,Map.of("roomId",room.get().roomId())));
++            waitFor(()->room.get().players().size()==2);
++            b.send(LobbyPacketCodec.packet(PacketType.READY,Map.of("ready",true)));
++            waitFor(()->room.get().players().stream().anyMatch(p->p.state().equals("READY")));
++            a.send(new Packet(PacketType.START_GAME,"{}"));
++            actorAwait(ui,()->a.movement()!=null&&b.movement()!=null&&a.movement().isInputReady()&&b.movement().isInputReady());
++
++            assertNull(failureA.get());
++            assertNull(failureB.get());
++            assertNotNull(a.reconnectToken());
++
++            // Drop client A's active socket on server side (simulating sudden Wi-Fi loss)
++            var sessionA = f.server.transport().getSessionManager().find(a.sessionId()).orElseThrow();
++            sessionA.closeSocket();
++
++            // Client A automatically detects drop, reconnects with same token, and gets full state sync!
++            waitFor(() -> statusA.stream().anyMatch(s -> s.contains("Reconnected")));
++            actorAwait(ui, () -> a.movement() != null && a.movement().isInputReady());
++
++            // Movement still functions after reconnect
++            ui.submit(() -> a.movement().send(a.movement().prediction().predict(Direction.RIGHT, true))).get();
++            actorAwait(ui, () -> b.movement().world().getPlayers().get(a.localId()).getLastProcessedInput() >= 1);
++
++            assertNull(failureA.get());
++            assertNull(failureB.get());
++        } finally {
++            ui.shutdown();
++            assertTrue(ui.awaitTermination(2,TimeUnit.SECONDS));
++        }
++    }
+     private static void actorAwait(ExecutorService ui,BooleanSupplier condition)throws Exception {waitFor(()->{try{return ui.submit(condition::getAsBoolean).get();}catch(Exception e){throw new RuntimeException(e);}});}
+     private static void waitFor(BooleanSupplier condition)throws Exception {long end=System.nanoTime()+TimeUnit.SECONDS.toNanos(5);while(!condition.getAsBoolean()){if(System.nanoTime()>end)fail("Condition timed out");Thread.sleep(10);}}
+     private static String create(Peer a,int capacity)throws Exception {a.command(PacketType.CREATE_ROOM,Map.of("roomName","Room "+a.id,"maxPlayers",capacity));a.room=LobbyPacketCodec.decodeRoom(a.take(PacketType.ROOM_STATE));return a.room.roomId();}
+@@ -164,8 +278,14 @@ class LobbyLifecycleTest {
+     private static GameStateUpdate snapshot(Packet p,MatchContext c) {try{return SnapshotPacketCodec.decode(MatchEnvelopeCodec.unwrap(p,c.matchId()));}catch(Exception e){throw new RuntimeException(e);}}
+     private static void assertFull(Peer p,MatchContext c)throws Exception {p.until(v->v.getType()==PacketType.GAME_SNAPSHOT&&snapshot(v,c).isFullState());}
+     private static final class Peer implements AutoCloseable {
+-        final ClientNetwork net=new ClientNetwork();final String id;final java.util.List<Packet> history=new ArrayList<>();LobbyPacketCodec.RoomView room;
+-        Peer(Fixture f,String name)throws Exception {net.connect("127.0.0.1",f.server.port());send(SessionPacketCodec.connectRequest(name));id=SessionPacketCodec.decodeAcknowledgement(take(PacketType.CONNECT_ACK)).playerId();}
++        final ClientNetwork net=new ClientNetwork();final String id;final String token;final java.util.List<Packet> history=new ArrayList<>();LobbyPacketCodec.RoomView room;
++        Peer(Fixture f,String name)throws Exception {
++            net.connect("127.0.0.1",f.server.port());
++            send(SessionPacketCodec.connectRequest(name));
++            var ack=SessionPacketCodec.decodeAcknowledgement(take(PacketType.CONNECT_ACK));
++            id=ack.playerId();
++            token=ack.reconnectToken();
++        }
+         void send(Packet p)throws Exception {net.send(p);}void command(short type)throws Exception {command(type,Map.of());}
+         void command(short type,Map<String,?> b)throws Exception {send(LobbyPacketCodec.packet(type,b));}
+         Packet take(short type)throws Exception {return until(p->p.getType()==type);}

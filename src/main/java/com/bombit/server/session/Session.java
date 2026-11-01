@@ -17,6 +17,11 @@ public final class Session {
     private volatile long lastHeartbeatNanos = System.nanoTime();
     private volatile OutboundSender outboundSender;
     private volatile SessionState stateBeforeDisconnect;
+    private volatile java.util.Set<String> features=java.util.Set.of();
+    private volatile UUID connectionId=UUID.randomUUID();
+    public java.util.Set<String> features(){return features;}
+    public void setFeatures(java.util.Set<String> features){this.features=java.util.Set.copyOf(features);}
+    public UUID connectionId(){return connectionId;}
 
     public Session(String username, Socket socket) {
         this(UUID.randomUUID().toString(), UUID.randomUUID().toString(), username, socket);
@@ -49,7 +54,8 @@ public final class Session {
     public void setRoomId(String roomId) { this.roomId = roomId; }
     public void setOutboundSender(OutboundSender sender) { this.outboundSender = sender; }
 
-    public boolean transition(SessionState expected, SessionState next) {
+    // Cùng monitor với attach/expiry: ghi stateBeforeDisconnect trước khi giao quyền reconnect.
+    public synchronized boolean transition(SessionState expected, SessionState next) {
         if (!state.compareAndSet(expected, next)) {
             return false;
         }
@@ -59,7 +65,7 @@ public final class Session {
         return true;
     }
 
-    public SessionState restoreStateAfterReconnect(SessionState fallback) {
+    public synchronized SessionState restoreStateAfterReconnect(SessionState fallback) {
         SessionState previous = stateBeforeDisconnect;
         stateBeforeDisconnect = null;
         SessionState restored = previous != null ? previous : fallback;
@@ -67,7 +73,7 @@ public final class Session {
         return restored;
     }
 
-    public void setState(SessionState next) {
+    public synchronized void setState(SessionState next) {
         state.set(Objects.requireNonNull(next, "next"));
     }
 
@@ -83,6 +89,7 @@ public final class Session {
         Objects.requireNonNull(newSocket, "newSocket");
         closeSocket();
         socket = newSocket;
+        connectionId=UUID.randomUUID();
         updateHeartbeat();
     }
 
@@ -96,6 +103,13 @@ public final class Session {
                 // Cleanup is best effort; the session is still removed by its owner.
             }
         }
+    }
+
+    /** Releases ownership without closing: used when a RECONNECT frame moves this socket to another session. */
+    public synchronized Socket detachSocket() {
+        Socket current = socket;
+        socket = null;
+        return current;
     }
 
     private static String requireText(String value, String name) {

@@ -1,0 +1,241 @@
+--- before/chapter05.md
++++ after/chapter05.md
+@@ -64,160 +64,84 @@
+ 
+ > **Phân công: TV2 phụ trách mục 5.2.**
+ 
+-## 5.2. Server authoritative, GameLoop và concurrency
+-
+-### 5.2.1. Quyền quyết định trạng thái
+-
+-Trong kiến trúc server authoritative, client gửi ý định thao tác và server xác định kết quả hợp lệ.
+-Gambetta dùng mô hình này để giải thích vì sao vị trí hoặc sức khỏe do client tự khai báo không nên
+-được coi là trạng thái cuối cùng. Server vẫn có thể có lỗi hoặc lỗ hổng; kiến trúc này không phải bảo đảm
+-chống được mọi gian lận.
+-[[2]](https://www.gabrielgambetta.com/client-server-game-architecture.html)
+-
+-Bomb It áp dụng nguyên tắc trên cho movement, collision, đặt bom và kết quả gameplay.
+-Chẳng hạn, lệnh di chuyển biểu thị hướng và trạng thái di chuyển, còn server tính vị trí sau khi kiểm tra vật cản.
+-Client có thể dự đoán hình ảnh điều khiển nhưng không thay thế quyết định của server.
+-Luồng xử lý này được hiện thực tại
+-[GameLoop](../../src/main/java/com/bombit/server/game/core/GameLoop.java) và
+-[BombGameplayExtension](../../src/main/java/com/bombit/server/game/bomb/BombGameplayExtension.java).
+-
+-### 5.2.2. Vòng cập nhật và bước thời gian
+-
+-Nystrom mô tả game loop như vòng lặp tiếp nhận input, cập nhật trạng thái và phục vụ hiển thị,
+-qua đó tách tiến trình game khỏi tốc độ phát sinh input. Với server của đề tài, phần hiển thị nằm ở client;
+-đầu ra của vòng lặp là dữ liệu trạng thái được công bố cho tầng mạng.
+-[[8]](https://raw.githubusercontent.com/munificent/game-programming-patterns/master/book/game-loop.markdown)
+-
+-Bước thời gian biến đổi sử dụng khoảng thời gian thực giữa các lần cập nhật; bước cố định giữ nguyên
+-`Δt` mô phỏng. Fiedler phân tích ảnh hưởng của cách chọn bước đến mô phỏng và nguy cơ quá tải khi
+-phải chạy bù nhiều bước. Bước cố định không tự bảo đảm chương trình luôn theo kịp thời gian thực.
+-[[9]](https://gafferongames.com/post/fix_your_timestep/)
+-
+-Để mô tả vòng cập nhật của nhóm, gọi `S_k` là state ở tick `k`, `C_k` là các command được chọn xử lý
+-và `F` là toàn bộ phép cập nhật movement/gameplay. Có thể viết:
+-
+-`S_(k+1) = F(S_k, C_k, Δt)`.
+-
+-Đây là ký hiệu mô tả thiết kế, không khẳng định `F` đã được chứng minh deterministic giữa mọi máy.
+-Trong cấu hình mặc định, `Δt = 0,05 s`, tương ứng nhịp mục tiêu 20 tick/giây.
+-Một tick xử lý command, cập nhật movement, gọi gameplay extension và tạo full/delta snapshot.
+-Nếu tick trễ, loop điều chỉnh mốc chạy tiếp; code hiện tại không chạy bù bằng một accumulator đầy đủ.
+-Các chi tiết này lấy từ [GameLoop của project](../../src/main/java/com/bombit/server/game/core/GameLoop.java),
+-không phải tần số hay thuật toán bắt buộc do tài liệu tham khảo quy định.
+-
+-### 5.2.3. Queue hữu hạn và quyền sở hữu state
+-
+-`BlockingQueue` hỗ trợ các cách xử lý khi chưa thể thêm/lấy phần tử: trả kết quả thất bại,
+-chặn hoặc chờ có thời hạn. `offer` không chờ đến khi có chỗ trống như `put`.
+-Queue an toàn khi dùng từ nhiều thread không đồng nghĩa mọi đối tượng mutable đưa qua queue cũng an toàn.
+-[[10]](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/BlockingQueue.html)
+-
+-Từ đó, nhóm chọn một luồng cập nhật state cho mỗi runtime: network tiếp nhận và đưa command vào queue;
+-game thread quyết định khi nào áp dụng; tầng gửi sử dụng snapshot bất biến.
+-Queue hữu hạn cho phép nhận biết quá tải, còn giới hạn command mỗi tick ngăn bước đọc queue chiếm toàn bộ vòng cập nhật.
+-Tuy nhiên, FIFO và giới hạn này vẫn có thể tạo backlog. Thiết kế không mặc nhiên bảo đảm mọi command được xử lý ngay
+-ở tick kế tiếp. Các tham số và chính sách cụ thể sẽ được giải thích trong phần kiến trúc/triển khai.
+-
+-Ở client Swing, phần lớn thao tác với thành phần giao diện phải thực hiện trên Event Dispatch Thread (EDT),
+-trừ các ngoại lệ API cho phép; `invokeLater` hỗ trợ chuyển công việc sang EDT.
+-[[11]](https://docs.oracle.com/en/java/javase/25/docs/api/java.desktop/javax/swing/package-summary.html)
+-Do đó, đồng bộ dữ liệu và chuyển kết quả sang giao diện là hai trách nhiệm cần phối hợp trong thiết kế client.
+-
+-> **Phân công: TV2 phụ trách mục 5.3; TV4 đối chiếu format và cách tính dung lượng.**
+-
+-## 5.3. Full/delta, prediction, reconciliation và interpolation
+-
+-### 5.3.1. Full snapshot và delta snapshot
+-
+-Snapshot là ảnh dữ liệu cần thiết để phía nhận tái dựng trạng thái hoặc biểu diễn game tại một thời điểm.
+-Trong cách tiếp cận snapshot của Fiedler, client dựng biểu diễn từ dữ liệu server thay vì phải mô phỏng giống hệt server.
+-[[12]](https://gafferongames.com/post/snapshot_interpolation/)
+-
+-Full snapshot mang dữ liệu nền đầy đủ theo contract; delta chỉ biểu diễn thay đổi so với **baseline**.
+-Fiedler chỉ ra rằng phía nhận phải có đúng baseline mới giải mã được delta tương ứng.
+-[[3]](https://gafferongames.com/post/snapshot_compression/)
+-
+-Nhóm dùng ký hiệu `D_(b→t) = diff(S_b, S_t)` và `apply(S_b, D_(b→t)) = S_t`
+-để mô tả yêu cầu khôi phục đối với **phần state được contract đồng bộ**.
+-Phép `diff` phải biểu diễn đủ cả thay đổi, thêm mới và xóa; đây không nhất thiết là phép trừ số học.
+-Trong Bomb It, delta bao gồm tile, player và entity theo contract, không chỉ các ô nền thay đổi.
+-Client ghép delta vào replica trước khi dùng dữ liệu cho hiển thị hay reconciliation.
+-Hiện thực tham chiếu là
+-[StateDeltaBuilder](../../src/main/java/com/bombit/server/game/movement/StateDeltaBuilder.java) và
+-[ClientWorldState](../../src/main/java/com/bombit/client/game/movement/ClientWorldState.java).
+-
+-Baseline không được đồng nhất với “tick ngay trước”. Project có thể không công bố update rỗng;
+-delta chỉ áp dụng khi `baseTick` khớp replica. Khi không khớp, client yêu cầu full state.
+-Server hiện gửi full lúc khởi tạo, theo chu kỳ và khi được yêu cầu; baseline được commit sau khi enqueue update thành công.
+-Commit này chưa phải xác nhận client đã nhận hoặc áp dụng.
+-Vì vậy, cơ chế project khác ACK baseline trong ví dụ UDP của Fiedler.
+-[[3]](https://gafferongames.com/post/snapshot_compression/)
+-
+-Base64 là phép biểu diễn dữ liệu nhị phân bằng ký tự, với 3 byte được biểu diễn bởi 4 ký tự.
+-Từ quy tắc đó, dạng có padding có độ dài `4 × ceil(n/3)` cho `n` byte đầu vào.
+-[[13]](https://www.rfc-editor.org/rfc/rfc4648.html)
+-Trong codec của nhóm, binary được bọc Base64 trong JSON. Do đó, phần giảm dữ liệu phải được đánh giá
+-từ delta sau khi tính chi phí biểu diễn/envelope ở cùng một lớp; không gọi Base64 là thuật toán nén.
+-
+-### 5.3.2. Client-side prediction và server reconciliation
+-
+-Prediction cho phép client mô phỏng input local trước khi nhận kết quả server.
+-Reconciliation sử dụng số thứ tự input và số input cuối server đã xử lý: client trở về trạng thái authoritative,
+-bỏ input đã được xác nhận, rồi phát lại các input còn chờ. Cơ chế này xử lý chênh lệch giữa trạng thái server
+-trong quá khứ và trạng thái client đã dự đoán tiếp.
+-[[4]](https://www.gabrielgambetta.com/client-side-prediction-server-reconciliation.html)
+-
+-Áp dụng vào project, một chu kỳ hiệu chỉnh gồm:
+-
+-1. Áp dụng snapshot hợp lệ vào replica và cập nhật map/entity dùng kiểm tra va chạm.
+-2. Đọc `lastProcessedInput` của nhân vật local.
+-3. Khôi phục dữ liệu nhân vật từ server, bỏ input đã ACK và replay phần lịch sử còn lại.
+-
+-Các bước được hiện thực trong
+-[PredictionController](../../src/main/java/com/bombit/client/game/movement/PredictionController.java) và
+-[ReconciliationController](../../src/main/java/com/bombit/client/game/movement/ReconciliationController.java).
+-Client dùng lại movement/collision nhưng chỉ có world mới nhất đã nhận; ví dụ bom hoặc block mới thay đổi
+-có thể chưa xuất hiện trong dữ liệu dự đoán. Vì vậy, vẫn cần hiệu chỉnh. Cơ chế này cải thiện phản hồi local
+-theo mục tiêu thiết kế; mức cải thiện trải nghiệm thực tế cần được đo hoặc nghiệm thu riêng.
+-
+-### 5.3.3. Interpolation cho thực thể từ xa
+-
+-Client không có input tương lai của những người chơi khác. Gambetta đối chiếu dead reckoning,
+-ước lượng tiếp từ trạng thái cũ, với interpolation, hiển thị giữa các mẫu đã biết.
+-Nội suy phù hợp khi cần hạn chế dự đoán sai do đối tượng đổi hướng hoặc dừng đột ngột,
+-đổi lại phía hiển thị phải lùi thời gian.
+-[[5]](https://www.gabrielgambetta.com/entity-interpolation.html)
+-
+-Với hai mẫu vị trí `p_a`, `p_b` ở tick `a`, `b`, công thức nội suy tuyến tính được dùng trong project là:
+-
+-`α = clamp((r − a)/(b − a), 0, 1)`, với `b > a`;
+-
+-`p(r) = (1 − α)p_a + αp_b`.
+-
+-Trong đó `r` là tick muốn hiển thị. Buffer snapshot giúp có các mẫu bao quanh thời điểm render,
+-nhưng thêm buffer cũng tạo đánh đổi giữa tính liên tục và độ trễ.
+-[[12]](https://gafferongames.com/post/snapshot_interpolation/)
+-
+-[InterpolationController](../../src/main/java/com/bombit/client/game/movement/InterpolationController.java)
+-của nhóm nội suy tuyến tính vị trí, giữ mẫu biên khi thiếu dữ liệu và xóa lịch sử khi phát hiện respawn.
+-Đây là biểu diễn phục vụ client, không thay đổi vị trí authoritative trên server.
+-Project chưa hiện thực rewind phục vụ lag compensation; cũng không sử dụng Hermite/quaternion như một số ví dụ tham khảo.
+-
+-### 5.3.4. Phân biệt mục tiêu các kỹ thuật
+-
+-**Bảng 5.1. So sánh các kỹ thuật đồng bộ theo mục tiêu sử dụng.**
+-
+-| Kỹ thuật | Mục tiêu | Điều kiện/chi phí | Vai trò trong Bomb It |
+-|---|---|---|---|
+-| Full snapshot | Tái dựng nền đầy đủ | Dữ liệu lặp lại; không phụ thuộc baseline delta | Khởi tạo và phục hồi |
+-| Delta snapshot | Tránh gửi lại phần không đổi | Cần baseline khớp và metadata thay đổi [[3]](https://gafferongames.com/post/snapshot_compression/) | Đồng bộ tăng dần |
+-| Prediction + reconciliation | Phản hồi input local [[4]](https://www.gabrielgambetta.com/client-side-prediction-server-reconciliation.html) | Lịch sử input, replay và khả năng hiệu chỉnh | Nhân vật local |
+-| Interpolation | Làm mượt dữ liệu từ xa [[5]](https://www.gabrielgambetta.com/entity-interpolation.html) | Buffer và độ trễ hiển thị | Nhân vật remote |
+-
+-Các kỹ thuật có thể kết hợp vì tác động đến những khâu khác nhau.
+-Giảm dung lượng không tự chứng minh phản hồi local nhanh hơn; hình ảnh mượt cũng không tự chứng minh replica luôn khớp server.
+-Trong báo cáo, mỗi mục tiêu cần chỉ số và bằng chứng phù hợp.
+-
++## 5.2. Server authoritative, GameLoop và concurrency
++
++### 5.2.1. Quyền quyết định trạng thái
++
++Trong kiến trúc server authoritative, client gửi ý định thao tác, còn server kiểm tra và quyết định trạng thái hợp lệ.
++Client có thể dự đoán chuyển động để phản hồi input sớm, nhưng kết quả cuối cùng vẫn do server xác định.
++[[2]](https://www.gabrielgambetta.com/client-server-game-architecture.html)
++Bomb It áp dụng nguyên tắc này cho movement, collision, bom/item và kết quả trận.
++
++### 5.2.2. Vòng cập nhật và bước thời gian
++
++Game loop lặp lại việc nhận input, cập nhật trạng thái và tạo đầu ra; trong mô hình client–server,
++server xuất state còn client đảm nhiệm hiển thị. [[8]](https://raw.githubusercontent.com/munificent/game-programming-patterns/master/book/game-loop.markdown)
++Bước thời gian cố định giữ nguyên khoảng mô phỏng `Δt` giữa các lần cập nhật, nhưng không bảo đảm loop luôn chạy kịp thời gian thực.
++[[9]](https://gafferongames.com/post/fix_your_timestep/)
++Bomb It dùng nhịp mục tiêu 50 ms/tick (20 tick/giây), theo thứ tự command → movement → gameplay → snapshot.
++
++### 5.2.3. Queue hữu hạn và quyền sở hữu state
++
++Queue an toàn luồng hỗ trợ nhận command từ nhiều kết nối; `offer` trả về thất bại khi queue đầy thay vì chờ có chỗ trống.
++[[10]](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/BlockingQueue.html)
++Mỗi runtime Bomb It dùng một game thread cập nhật world, còn tầng mạng nhận snapshot bất biến.
++Queue hữu hạn giúp kiểm soát tải nhưng vẫn có thể tồn đọng command.
++Ở client Swing, thao tác giao diện được chuyển về Event Dispatch Thread (EDT) theo chính sách luồng của Swing.
++[[11]](https://docs.oracle.com/en/java/javase/25/docs/api/java.desktop/javax/swing/package-summary.html)
++Chi tiết queue và thread ownership trình bày ở mục 8 và 10.
++
++> **Phân công: TV2 phụ trách mục 5.3; TV4 đối chiếu format và cách tính dung lượng.**
++
++## 5.3. Full/delta, prediction, reconciliation và interpolation
++
++### 5.3.1. Full snapshot và delta snapshot
++
++Snapshot ghi nhận trạng thái tại một thời điểm để client tái dựng world.
++[[12]](https://gafferongames.com/post/snapshot_interpolation/)
++Full snapshot chứa đầy đủ phần state thuộc phạm vi đồng bộ; delta chỉ chứa thay đổi so với baseline.
++Client phải có đúng baseline để áp dụng delta. [[3]](https://gafferongames.com/post/snapshot_compression/)
++Nguyên lý được mô tả bằng:
++
++`D_(b→t) = diff(S_b, S_t)`; `apply(S_b, D_(b→t)) = S_t`.
++
++Phép `diff` cần biểu diễn cập nhật, thêm và xóa.
++Trong Bomb It, delta gồm tile/player/entity; client kiểm tra `baseTick` và yêu cầu full khi baseline không khớp.
++Full được dùng lúc khởi tạo, định kỳ và resync. Chi tiết format nằm ở mục 7.5 và 9.4.
++Khi so sánh dung lượng phải tính cả lớp đóng gói: Base64 là phép biểu diễn dữ liệu, không phải thuật toán nén.
++[[13]](https://www.rfc-editor.org/rfc/rfc4648.html)
++
++### 5.3.2. Client-side prediction và server reconciliation
++
++Prediction mô phỏng input local trước khi có phản hồi server.
++Reconciliation dùng sequence và input cuối server đã xử lý để hiệu chỉnh: khôi phục state authoritative,
++bỏ input đã ACK rồi replay input còn chờ. [[4]](https://www.gabrielgambetta.com/client-side-prediction-server-reconciliation.html)
++Bomb It áp dụng cơ chế này cho nhân vật local. Do world phía client có thể chưa cập nhật kịp,
++dự đoán vẫn có thể sai và cần hiệu chỉnh; mức cải thiện trải nghiệm phải được đánh giá riêng.
++
++### 5.3.3. Interpolation cho thực thể từ xa
++
++Interpolation hiển thị vị trí giữa các mẫu state đã nhận, phù hợp với nhân vật remote mà client không biết input tương lai.
++[[5]](https://www.gabrielgambetta.com/entity-interpolation.html)
++Client giữ một buffer snapshot và render lùi thời gian để có mẫu nội suy;
++đánh đổi là chuyển động liên tục hơn khi đủ mẫu nhưng có thêm độ trễ hiển thị.
++[[12]](https://gafferongames.com/post/snapshot_interpolation/)
++Bomb It nội suy tuyến tính vị trí remote, chỉ thay đổi biểu diễn phía client, không thay state authoritative.
++
++### 5.3.4. Phân biệt mục tiêu các kỹ thuật
++
++**Bảng 5.1. So sánh các kỹ thuật đồng bộ theo mục tiêu sử dụng.**
++
++| Kỹ thuật | Mục tiêu | Điều kiện/chi phí | Vai trò trong Bomb It |
++|---|---|---|---|
++| Full snapshot | Tái dựng nền đầy đủ | Dữ liệu lặp lại; không phụ thuộc baseline delta | Khởi tạo và phục hồi |
++| Delta snapshot | Tránh gửi lại phần không đổi | Cần baseline khớp và metadata thay đổi [[3]](https://gafferongames.com/post/snapshot_compression/) | Đồng bộ tăng dần |
++| Prediction + reconciliation | Phản hồi input local [[4]](https://www.gabrielgambetta.com/client-side-prediction-server-reconciliation.html) | Lịch sử input, replay và khả năng hiệu chỉnh | Nhân vật local |
++| Interpolation | Làm mượt dữ liệu từ xa [[5]](https://www.gabrielgambetta.com/entity-interpolation.html) | Buffer và độ trễ hiển thị | Nhân vật remote |
++
++Các kỹ thuật được phối hợp vì phục vụ những mục tiêu khác nhau.
++Giảm byte snapshot không tự chứng minh giảm latency hoặc cải thiện độ mượt hiển thị.
++
+ > **Phân công: TV3 phụ trách mục 5.4; TV2 xác nhận model, collision và thứ tự runtime.**
+ 
+ ## 5.4. Tile map, bom, timer và event gameplay

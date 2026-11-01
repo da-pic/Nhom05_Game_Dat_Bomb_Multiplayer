@@ -1,6 +1,6 @@
 package com.bombit.integration;
 
-import com.bombit.client.app.DemoClientConnection;
+import com.bombit.client.app.GameClientConnection;
 import com.bombit.common.protocol.*;
 import com.bombit.server.app.LobbyGameServer;
 import com.bombit.server.game.bomb.*;
@@ -26,12 +26,20 @@ class BombClientIntegrationTest {
         final ExecutorService ui=Executors.newSingleThreadExecutor();
         final Queue<Throwable> failures=new ConcurrentLinkedQueue<>();
         final BlockingQueue<Packet> lobby=new LinkedBlockingQueue<>();
-        final DemoClientConnection connection=new DemoClientConnection(ui,c->{},s->{},failures::add);
+        final Queue<String> statuses=new ConcurrentLinkedQueue<>();
+        final GameClientConnection connection;
         Client(int port,String name)throws Exception {
+            this(port,name,false);
+        }
+        Client(int port,String name,boolean current)throws Exception {
+            connection=current?GameClientConnection.current(ui,c->{},statuses::add,failures::add):new GameClientConnection(ui,c->{},statuses::add,failures::add);
             connection.setLobbyListener(lobby::add);connection.connect("127.0.0.1",port,name);
         }
         <T>T call(Callable<T> action)throws Exception {return ui.submit(action).get(2,TimeUnit.SECONDS);}
-        void command(short type,Map<String,?> body){connection.send(LobbyPacketCodec.packet(type,body));}
+        void command(short type,Map<String,?> body){var fields=new LinkedHashMap<String,Object>(body);
+            if(connection.isCurrentProtocol()&&connection.roomState()!=null&&(type==PacketType.READY||type==PacketType.START_GAME||type==PacketType.LEAVE_ROOM||type==PacketType.CHAT||type==PacketType.SET_MAP_SELECTION)){
+                fields.put("roomId",connection.roomState().roomId());if(type==PacketType.READY||type==PacketType.START_GAME)fields.put("configurationRevision",connection.roomState().configurationRevision());}
+            connection.send(JsonV3.packet(type,fields));}
         Packet take(short type)throws Exception {
             long end=System.nanoTime()+TimeUnit.SECONDS.toNanos(4);
             while(System.nanoTime()<end){var p=lobby.poll(100,TimeUnit.MILLISECONDS);if(p!=null&&p.getType()==type)return p;}
@@ -92,7 +100,7 @@ class BombClientIntegrationTest {
     @Test void defaultLobbyBootstrapEnablesBombsWithoutAnInjectedRuntime()throws Exception {
         var server=new LobbyGameServer(0);var failure=new AtomicReference<Throwable>();
         var accept=new Thread(()->{try{server.start();}catch(Throwable e){failure.set(e);}});accept.start();
-        try(server;var a=new Client(server.port(),"Default A");var b=new Client(server.port(),"Default B")) {
+        try(server;var a=new Client(server.port(),"Default A",true);var b=new Client(server.port(),"Default B",true)) {
             start(a,b);assertTrue(a.call(()->a.connection.movement().bombs().enabled()));
             assertTrue(b.call(()->b.connection.movement().bombs().enabled()));
             for(var client:List.of(a,b))client.call(()->{
@@ -110,17 +118,53 @@ class BombClientIntegrationTest {
             assertEquals(0,server.activeMatchCount());assertEquals(0,server.snapshotWorkerCount());
         }
     }
+    @Test void reconnectKeepsControllerInputSequenceAndBombRequestCounterWithRealGameplay()throws Exception {
+        var nanos=new AtomicLong();var results=new LinkedBlockingQueue<BombCommandResult>();
+        var games=new GameRuntimeManager(id->map(),(room,state,ids)->new BombGameplayExtension(state,ids,new BombRules(1000,1,2),
+                e->{},results::add,nanos::get,System::currentTimeMillis));
+        var server=new LobbyGameServer(0,games,new PlayerMovementRules(24,150));server.setSeamlessRecovery(true);
+        var failure=new AtomicReference<Throwable>();
+        var accept=new Thread(()->{try{server.start();}catch(Throwable e){failure.set(e);}});accept.start();
+        try(server;var a=new Client(server.port(),"Recovery A");var b=new Client(server.port(),"Recovery B")) {
+            a.connection.setAutoReconnect(true);start(a,b);
+            var controller=a.call(a.connection::movement);var prediction=a.call(controller::prediction);
+            var context=a.call(a.connection::context);String sessionId=a.connection.sessionId();
+            a.call(()->{controller.plantBomb();return null;});
+            var first=results.poll(3,TimeUnit.SECONDS);assertNotNull(first);assertEquals(BombError.NONE,first.error());
+            for(int n=0;n<6;n++)a.call(()->{controller.send(prediction.predict(Direction.DOWN,true));return null;});
+            waitFor(()->a.call(()->controller.world().getPlayers().get(a.connection.localId()).getLastProcessedInput()>=6));
+            server.transport().getSessionManager().find(sessionId).orElseThrow().closeSocket();
+            waitFor(()->a.statuses.stream().anyMatch(s->s.contains("Reconnected"))
+                    &&a.call(()->!a.connection.isReconnecting()&&controller.isInputReady()));
+            assertSame(controller,a.call(a.connection::movement));assertSame(prediction,a.call(controller::prediction));
+            assertEquals(context,a.call(a.connection::context));assertEquals(sessionId,a.connection.sessionId());
+            assertTrue(a.call(()->controller.world().getEntities().containsKey("BOMB:1")));
+            a.call(()->{controller.send(prediction.predict(Direction.DOWN,true));controller.plantBomb();return null;});
+            var second=results.poll(3,TimeUnit.SECONDS);assertNotNull(second,"Request counter must not reset to duplicate 1");
+            assertEquals(BombError.NONE,second.error());assertEquals(2,second.bombId());
+            waitFor(()->a.call(()->controller.world().getPlayers().get(a.connection.localId()).getLastProcessedInput()>=7)
+                    &&b.call(()->b.connection.movement().world().getEntities().containsKey("BOMB:2")));
+            assertTrue(a.failures.isEmpty());assertTrue(b.failures.isEmpty());
+        }finally {
+            server.close();accept.join(2000);assertFalse(accept.isAlive());assertNull(failure.get());
+            assertEquals(0,server.activeMatchCount());assertEquals(0,server.snapshotWorkerCount());assertTrue(server.failure().isEmpty());
+        }
+    }
     static String start(Client a,Client b)throws Exception {
         a.command(PacketType.CREATE_ROOM,Map.of("roomName","Bomb clients","maxPlayers",2));
-        String room=LobbyPacketCodec.decodeRoom(a.take(PacketType.ROOM_STATE)).roomId();
+        String room=roomView(a,a.take(PacketType.ROOM_STATE)).roomId();
         b.command(PacketType.JOIN_ROOM,Map.of("roomId",room));b.take(PacketType.ROOM_STATE);
         b.command(PacketType.READY,Map.of("ready",true));
         waitFor(()->b.call(()->b.lobby.stream().filter(p->p.getType()==PacketType.ROOM_STATE)
-                .map(LobbyPacketCodec::decodeRoom).anyMatch(r->r.players().stream().anyMatch(p->p.state().equals("READY")))));
+                .map(p->roomView(b,p)).anyMatch(r->r.players().stream().anyMatch(p->p.state().equals("READY")))));
         a.command(PacketType.START_GAME,Map.of());
         waitFor(()->a.call(()->a.connection.movement()!=null&&a.connection.movement().isInputReady())
                 &&b.call(()->b.connection.movement()!=null&&b.connection.movement().isInputReady()));
         return room;
+    }
+    static LobbyPacketCodec.RoomView roomView(Client client,Packet packet){
+        if(!client.connection.isCurrentProtocol())return LobbyPacketCodec.decodeRoom(packet);
+        var r=MetadataV3Codec.decodeRoom(packet);return new LobbyPacketCodec.RoomView(r.roomId(),r.roomName(),r.hostId(),r.state(),r.maxPlayers(),r.mapSelection(),r.players().stream().map(p->new LobbyPacketCodec.Player(p.sessionId(),p.username(),p.state())).toList());
     }
     private interface Check {boolean test()throws Exception;}
     private static void waitFor(Check done)throws Exception {

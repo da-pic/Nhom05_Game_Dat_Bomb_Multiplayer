@@ -1,0 +1,709 @@
+--- before/report/chapters/08_KIEN_TRUC_HE_THONG.md
++++ after/report/chapters/08_KIEN_TRUC_HE_THONG.md
+@@ -9,6 +9,8 @@
+ Chương mô tả đường chạy lobby/gameplay mặc định, nối các yêu cầu FR/NFR ở
+ [mục 6](06_DINH_NGHIA_BAI_TOAN.md) với thành phần thực tế trong code.
+ Thuật toán đồng bộ đã được giới thiệu ở mục 5; schema message và định dạng byte sẽ được trình bày ở mục 9.
++Luồng Session Recovery nối session/transport với runtime và client owner theo giải pháp mục 7.8;
++phạm vi là cùng tiến trình server còn hoạt động, cùng active match và deadline hợp lệ.
+ 
+ > **Phân công: TV4 ghép sơ đồ tổng thể; TV1/TV2/TV3 xác nhận các thành phần thuộc module mình.**
+ 
+@@ -21,10 +23,13 @@
+     subgraph CLIENT["Một tiến trình client Swing"]
+         UI["LobbyWindow / MovementGameWindow / Results"]
+         APP["DemoClientConnection<br/>context và điều phối client"]
++        REC["Control worker / recovery watchdog<br/>epoch, deadline và input gate"]
+         MC["MovementClientController<br/>replica / prediction / interpolation"]
+         CN["ClientNetwork"]
+         UI <--> APP
+         APP --> MC
++        APP <--> REC
++        REC --> MC
+         MC --> UI
+         APP <--> CN
+         MC --> CN
+@@ -38,6 +43,8 @@
+         RB["Runtime phòng B<br/>GameLoop + state + gameplay"]
+         PUMP["Snapshot worker theo match<br/>codec + match envelope"]
+         IO --> LOBBY
++        IO -->|"RECONNECT trước router"| SERVICES
++        SERVICES -->|"Callback lifecycle ngoài khoá session"| LOBBY
+         LOBBY <--> SERVICES
+         LOBBY --> RM
+         RM --> RA
+@@ -60,6 +67,8 @@
+ [ServerApplication](../../src/main/java/com/bombit/server/app/ServerApplication.java) tạo `LobbyGameServer`,
+ và [ClientApplication](../../src/main/java/com/bombit/client/app/ClientApplication.java) mở `LobbyWindow`.
+ Các nhánh demo/headless là đường chạy phục vụ mục đích riêng; không được dùng để thay mô tả toàn bộ luồng sản phẩm.
++ServerApplication bật seamless recovery cho lobby; LobbyWindow bật auto reconnect.
++Constructor tổng quát còn có cấu hình mặc định khác, vì vậy không suy ra demo M1 cũng có resume trận.
+ 
+ Dữ liệu trận, phòng và session chủ yếu nằm trong RAM của tiến trình server.
+ Kiến trúc hiện hành chưa tích hợp database cho tài khoản, lịch sử hoặc khôi phục trận sau khi server dừng.
+@@ -75,11 +84,11 @@
+ 
+ | Thành phần | Trách nhiệm | Ranh giới với gameplay |
+ |---|---|---|
+-| `Server`, `ClientHandler`, `ConnectionManager` | Accept socket, tổ chức reader/writer, decode frame, theo dõi kết nối và lỗi I/O | Không trực tiếp tính movement, damage hoặc item |
+-| `SessionManager`, `Session` | Handshake/danh tính phiên, trạng thái phiên, heartbeat metadata và cleanup | Session không thay thế player state của một match |
++| `Server`, `ClientHandler`, `ConnectionManager` | Accept socket, tổ chức reader/writer, decode frame; chặn RECONNECT trước router, chuyển writer/socket về phiên cũ và cleanup theo captured socket | Không trực tiếp tính movement, damage hoặc item |
++| `SessionManager`, `Session` | Danh tính/token, trạng thái phiên, heartbeat, grace ticket, claim recovery và cleanup | Quản lý quyền giữ phiên; không thay thế player state của match |
+ | `RoomManager`, `Room` | Thành viên, host, ready, trạng thái chờ/đang chơi và cập nhật phòng | Room không tự chứa thuật toán game loop |
+ | `MessageRouter`, `SessionHandlers` | Tra handler theo message type; xử lý các message phiên | Router gọi handler trên luồng gọi, không phải một worker queue riêng |
+-| `LobbyGameServer` | Ghép room với runtime, kiểm tra quyền/scope, ánh xạ roster và tổ chức công bố snapshot/kết quả | Là tầng điều phối giữa hạ tầng và game runtime |
++| `LobbyGameServer` | Ghép room/runtime, kiểm tra quyền/scope, ánh xạ roster, suspend/recovery barrier, snapshot/kết quả | Chuyển callback phiên thành command lifecycle; không sửa world mutable từ reader |
+ | `ChatHandler`, `HeartbeatManager` | Worker chat theo phòng và sweep phát hiện timeout | Không tạo thread riêng cho từng thao tác gameplay |
+ 
+ Căn cứ: [Server](../../src/main/java/com/bombit/server/network/Server.java),
+@@ -92,6 +101,10 @@
+ Sau khi accept, `Server` đăng ký session và tạo writer cho socket; `ClientHandler` được đưa vào reader pool.
+ Handler đọc đủ frame, kiểm tra giới hạn, trạng thái handshake rồi gọi router bằng danh tính phiên server đang quản lý.
+ Các trường định danh mà client gửi không tự cấp quyền điều khiển một player khác.
++Một socket mới đang ở trạng thái pending có thể gửi CONNECT để tạo luồng phiên mới, hoặc RECONNECT để xin tiếp quản phiên cũ.
++Nhánh RECONNECT được ClientHandler nhận trước router: kiểm tra schema/token sơ bộ, gọi manager xác minh lại và claim,
++rồi mới bỏ session/writer tạm nhưng giữ socket để gắn writer của identity cũ.
++UUID người chơi trong request phải đi kèm token và kiểm tra manager; nó không tự cấp quyền bằng tên hoặc ID công khai.
+ 
+ `LobbyGameServer` kiểm tra thành viên phòng, quyền host, trạng thái trận và match envelope trước khi xử lý gameplay.
+ MOVE được đổi thành command qua `MovementHandler`; PLANT_BOMB cũng được đưa vào queue của runtime.
+@@ -109,9 +122,15 @@
+ Chi tiết ở [SessionWriter](../../src/main/java/com/bombit/server/network/SessionWriter.java) và
+ [ConnectionManager](../../src/main/java/com/bombit/server/network/ConnectionManager.java).
+ 
+-Reader pool, writer, heartbeat và session expiry cùng tham gia vòng đời kết nối, nhưng không tạo thành chức năng
+-resume trận. Với ứng dụng hiện tại, callback mất kết nối đi qua tầng điều phối để hủy lượt đang chơi và bỏ ghế;
+-metadata phiên còn tồn tại trong khoảng chờ dọn không đồng nghĩa world/roster được giữ để reconnect.
++Reader pool, writer, heartbeat và session expiry phối hợp qua SessionManager và callback lifecycle.
++Trong active match có recovery bật, unexpected disconnect giữ session/ghế/runtime, đưa PlayerDisconnectedCommand
++vào queue để dừng điều khiển, đồng thời chặn phát snapshot cho player suspended. Bom/item/timer vẫn chạy trên game thread.
++Grace hết hạn hoặc leave/hard drop đi theo nhánh dọn phiên, có thể ABORT cả lượt.
++
++SessionManager kiểm tra deadline và ownership dưới khoá session, nhưng gọi sink/lobby ngoài khoá đó.
++Mỗi lần ngắt có DisconnectWindow riêng; timer cũ và cleanup của socket cũ phải đối chiếu ticket/socket trước khi tác động.
++ConnectionManager tạo writer thay thế theo socket mới; late release không được xoá writer hiện tại chỉ dựa vào playerId.
++Chi tiết các owner và trạng thái phục hồi được tổng hợp ở mục 8.7.
+ 
+ > **Phân công: TV2 phụ trách model/core/runtime/movement; TV1/TV4 xác nhận API tích hợp theo room.**
+ 
+@@ -125,7 +144,7 @@
+ |---|---|---|
+ | Model giá trị | `Direction`, `TilePosition`, `TileType` | Enum/giá trị bất biến để thống nhất hướng, ô và loại nền |
+ | State đang mô phỏng | `GameState`, `GameMap`, `Player`, entity trong world | Mutable; sau khởi tạo được cập nhật bởi game thread của runtime |
+-| Input nghiệp vụ | `GameCommand`, `MoveCommand`, `StopMovingCommand`, `PlantBombCommand` | Handoff từ tầng tiếp nhận sang game thread; không mang tham chiếu UI/socket |
++| Input nghiệp vụ | `GameCommand`, movement/plant và `PlayerDisconnectedCommand`/`PlayerReconnectedCommand` | Handoff ý định và lifecycle sang game thread; không mang tham chiếu UI/socket |
+ | Snapshot/handoff | `GameStateUpdate`, `EntityData`, `BombFrame`, `MatchFrame`, `GameNotice` | Bản dữ liệu công bố để truyền trạng thái/diễn biến; không dùng state mutable làm payload chia sẻ |
+ 
+ `GameRuntimeManager` tạo map và state mới cho mỗi trận, kiểm tra spawn/định danh, tạo extension rồi khởi động runtime.
+@@ -154,6 +173,9 @@
+ Trạng thái ACK phản ánh input được áp dụng vào mô phỏng, không chỉ việc packet đã đến socket.
+ Các command cùng tick vẫn được xử lý theo chính sách FIFO; một mẫu movement mới thứ hai của cùng player
+ có thể làm phần command còn lại đợi tick sau.
++Core xử lý tập frozen từ command disconnect/reconnect, buộc player frozen dừng movement trước bước cập nhật vị trí.
++Extension vẫn nhận command lifecycle và tiếp tục update gameplay. Khi lobby không submit được freeze/unfreeze,
++nó kết thúc lượt theo policy thay vì giả định game thread đã áp thay đổi.
+ 
+ Mặc định loop có bước 50 ms, command queue 4096, outbound queue 1024 và giới hạn đọc 256 command/tick.
+ Các giá trị là cấu hình hiện tại, không phải kết quả chứng minh tải tối đa hoặc luôn đạt 20 Hz.
+@@ -171,6 +193,9 @@
+ và không thay thế việc đọc outbound FIFO. Nếu tầng gửi chỉ lấy ảnh mới nhất rồi bỏ các delta trung gian,
+ client có thể mất chuỗi baseline cần thiết.
+ Nhận vào queue cũng chưa phải ACK rằng từng client đã áp dụng dữ liệu.
++Sau reconnect, snapshot worker dùng suspended/recoveryFullAfter để bỏ delta/full cũ cho người đang khôi phục.
++Một full mới vượt barrier được enqueue thành công mới gỡ gate initialized phía server;
++client vẫn chờ full được áp thành công trước khi mở input. Baseline chung theo match nên full có thể đi tới cả roster.
+ Các ranh giới này được xác định trong
+ [StateDeltaBuilder](../../src/main/java/com/bombit/server/game/movement/StateDeltaBuilder.java)
+ và `GameLoop`.
+@@ -234,7 +259,7 @@
+ | Thành phần | Trách nhiệm |
+ |---|---|
+ | `LobbyWindow`, `MatchResultsPanel` | Giao diện kết nối/phòng/ready/chat và kết quả; giữ luồng chuyển giữa lobby và gameplay |
+-| `DemoClientConnection` | Owner của `ClientNetwork`, sessionId/MatchContext, heartbeat, control sender và listener ứng dụng xuyên các lượt |
++| `DemoClientConnection` | Owner transport/context/token; heartbeat/control sender, recovery state/epoch/deadline, watchdog riêng và listener xuyên các lượt |
+ | `ClientNetwork` | Kết nối TCP, encode/send có khóa, reader decode, phát listener và theo dõi byte; không tự cập nhật world/UI |
+ | `MovementClientController` | Nhận packet đúng match, ghép replica, điều phối prediction/reconciliation/interpolation, resync và worker gửi input |
+ | `InputController`, `PredictionController`, `ReconciliationController`, `InterpolationController` | Lấy mẫu thao tác và các bước xử lý movement tại client |
+@@ -247,9 +272,11 @@
+ và [ClientNetwork](../../src/main/java/com/bombit/client/network/ClientNetwork.java).
+ 
+ Listener ứng dụng được cài trước CONNECT. Nó chuyển packet sang UI executor tuần tự,
+-xử lý `GAME_STARTED` để tạo controller/context mới, sau đó chuyển snapshot/notices cho controller hiện hành.
++xử lý `GAME_STARTED` của lượt mới để tạo controller/context, sau đó chuyển snapshot/notices cho controller hiện hành.
+ Controller được tạo với `subscribe=false` trong luồng này, tránh đăng ký thêm listener làm áp dụng packet hai lần.
+ API controller vẫn hỗ trợ tự đăng ký typed listener cho kiểu tích hợp khác.
++Trong recovery, GAME_STARTED phải trùng context đang giữ; client giữ controller và cửa sổ hiện tại,
++không đi theo nhánh tạo lượt mới làm reset sequence/counter đặt bom.
+ 
+ ### 8.5.2. Phân biệt replica, prediction và dữ liệu render
+ 
+@@ -260,6 +287,9 @@
+ Khi áp dụng snapshot, controller kiểm tra kết quả ghép replica. Nếu hợp lệ, nó đồng bộ scene bom,
+ reset lịch sử khi respawn, cập nhật world cho prediction, reconcile rồi ghi mẫu nội suy.
+ Nếu thiếu/sai baseline, controller yêu cầu full và tạm không sinh input mới theo điều kiện input-ready.
++Khi phục hồi phiên, owner chủ động suspend input, tăng generation, bỏ sender task/pending prediction cũ,
++xoá interpolation và đánh dấu replica cần full. World cũ được giữ để vẽ trạng thái chờ;
++ACK phiên không đủ mở input. Full phải đúng match/epoch và áp thành công sau metadata hợp lệ.
+ Nguồn: [MovementClientController](../../src/main/java/com/bombit/client/game/movement/MovementClientController.java).
+ 
+ Client tái sử dụng `GameMap`, `Player` và movement/collision từ các package mang tên `server.game` để mô phỏng local.
+@@ -290,7 +320,9 @@
+ flowchart TB
+     subgraph READER["Luồng ClientHandler của kết nối"]
+         DECODE["PacketDecoder / kiểm tra phiên"] --> ROUTE["MessageRouter / LobbyGameServer<br/>kiểm tra room, match và quyền"]
++        DECODE -->|"RECONNECT trên socket pending"| CLAIM["SessionManager claim / attach<br/>writer mới, ACK và callback lobby"]
+     end
++    CLAIM -->|"Freeze hoặc unfreeze qua lobby"| CQ
+     ROUTE --> CQ["Command FIFO hữu hạn<br/>GameCommand"]
+     subgraph LOOP["Một game thread sở hữu state của room"]
+         READ["Đọc command theo chính sách FIFO"] --> MOVE["MovementSystem / CollisionSystem"]
+@@ -305,6 +337,10 @@
+     WRITE --> CNET["ClientNetwork reader<br/>decode và gọi listener"]
+     CNET --> DISPATCH["DemoClientConnection<br/>giới hạn pending rồi dispatch"]
+     DISPATCH --> EDT["EDT tuần tự<br/>apply replica → reconcile → interpolation → render"]
++    CNET -.->|"Mất transport"| CONTROL["Client control worker<br/>disconnect reader cũ, epoch mới, connect / RECONNECT"]
++    WATCH["Recovery watchdog riêng<br/>kiểm tra deadline tổng / pha"] -.-> CONTROL
++    CONTROL -.->|"Retry / trạng thái"| DISPATCH
++    CLAIM -.->|"Grace ticket, callback ngoài khoá session"| EXPIRY["Session expiry scheduler"]
+ ```
+ 
+ Sơ đồ tập trung đường gameplay mặc định. Queue writer chứa frame đã encode;
+@@ -317,12 +353,13 @@
+ | Miền thực thi | Công việc/dữ liệu | Bàn giao và giới hạn chính |
+ |---|---|---|
+ | Accept và reader pool của server | Socket, đọc frame và route | Pool/queue hữu hạn; `MessageRouter` gọi đồng bộ handler |
+-| Điều phối lobby/session/room | Thành viên, match context và vòng đời | Có synchronization; một số thao tác lobby dùng khóa chung |
++| Điều phối lobby/session/room | Thành viên, match context, suspended/recovery barrier và grace ticket | Claim dưới khoá session; callback ngoài khoá; lobby/pump có synchronization riêng |
+ | GameLoop của từng runtime | State mutable, movement, extension và builder | Nhận command FIFO; xuất snapshot bất biến qua outbound FIFO |
+ | Snapshot worker của từng match | Poll update, codec, envelope, snapshot/notices/result | Không đọc state mutable; enqueue writer của từng session |
+ | Session writer của từng socket | Ghi/flush frame đã encode | Queue 256 frame chờ, budget 4 MiB tính cả frame đang ghi; watchdog ghi kéo dài |
+ | Worker/scheduler phụ trợ server | Chat, heartbeat, session expiry, watchdog và connection cleanup | Tách vòng đời hạ tầng khỏi bước update gameplay |
+-| Reader/control/sender của client | Decode packet, gửi control/heartbeat/resync hoặc input | `ClientNetwork.send` khóa frame; control và movement có cơ chế giới hạn pending |
++| Reader/control/sender của client | Decode; control/heartbeat/resync/input; connect/retry recovery | Epoch và input generation chặn task cũ; connect/close không giữ monitor xuyên I/O |
++| Recovery watchdog client | Kiểm tra deadline tổng/từng pha trên scheduler riêng | Không đợi control worker đang connect; timeout dẫn retry hoặc close theo budget |
+ | Swing EDT | Replica, prediction/replay, buffer nội suy và UI | Dispatch tuần tự; input/render timer; giới hạn pending dispatch trước EDT |
+ 
+ Giới hạn pending dispatch của owner client không biến hàng đợi EDT toàn cục của Swing thành một queue hữu hạn.
+@@ -374,18 +411,23 @@
+ ### 8.6.3. Chính sách quá tải và lỗi
+ 
+ Command queue đầy làm submit thất bại, được tầng tích hợp trả lỗi thay vì chờ đến khi queue có chỗ.
++Với callback lifecycle recovery, không có request gameplay để trả INPUT_QUEUE_FULL theo cách thông thường:
++freeze/unfreeze không enqueue được thì lobby ABORT lượt; nhánh resume còn rollback/cleanup session.
+ Outbound runtime đầy giữ baseline chưa commit để lần tạo sau còn tham chiếu đúng dữ liệu đã enqueue.
+ Writer queue/budget đầy hoặc write deadline bị vượt có thể đóng kết nối và kích hoạt cleanup;
+ không tùy ý bỏ một delta rồi tiếp tục như thể client đã nhận đủ.
+ 
+ Ở client, hết budget dispatch hoặc queue gửi được xử lý bằng dừng controller/phiên và báo lỗi theo owner.
++Lỗi gửi transport có thể kích hoạt recovery nếu active context/token/cấu hình còn cho phép;
++lỗi decode/world không mặc nhiên được chuyển thành retry vô hạn.
+ Đối với sai baseline hợp lệ ở cấp đồng bộ, client yêu cầu full thay vì tự suy đoán phần thiếu.
+ Các cơ chế này giới hạn một số dạng backlog; hiệu quả dưới tải và các đường lỗi vẫn cần kiểm chứng trong Results.
+ 
+ ### 8.6.4. Cleanup và chuyển lượt
+ 
+ Kết thúc gameplay bình thường đi qua kết quả trong snapshot; snapshot worker đưa kết quả về tầng lobby để đóng match.
+-Kết thúc hành chính hoặc mất kết nối dùng chính sách ABORTED nếu lượt chưa có kết quả chốt.
++Kết thúc hành chính, hard drop hoặc grace hết hạn có thể dùng ABORTED nếu lượt chưa có kết quả chốt.
++Unexpected disconnect trong grace hợp lệ giữ runtime; không dọn match như một leave ngay lập tức.
+ Tầng điều phối đánh dấu match không còn active, dừng runtime, chuyển room về WAITING và công bố GAME_OVER/room state.
+ 
+ `GameLoop.stop` yêu cầu dừng, interrupt và chờ thread có thời hạn; `onStop` chạy trong phần cleanup của game thread
+@@ -396,10 +438,14 @@
+ `ConnectionManager` chuyển callback lỗi writer sang cleanup executor để tránh gọi trực tiếp logic lobby trong lúc producer
+ còn giữ khóa. Phía client dừng timer, đóng movement sender, bỏ context trận cũ; khi đóng phiên mới đóng cả reader/control/network.
+ Việc dọn tài nguyên là trách nhiệm theo từng owner, không chỉ gọi `dispose()` cho cửa sổ.
++Riêng recovery giữ controller và timer UI để biểu diễn trạng thái chờ, nhưng khoá input qua generation/readiness.
++Khi recovery thất bại/đóng phiên, owner còn dừng recovery watchdog và control worker;
++ở server, ticket expiry phải được huỷ hoặc xác minh thế hệ trước khi dọn session.
+ 
+ Một số frame đã vào writer có thể còn tới sau khi trận kết thúc. Match identity và context client giúp bỏ dữ liệu cũ;
+ lượt chơi lại tạo runtime/world/controller mới, đồng thời giữ TCP nếu phiên vẫn hợp lệ.
+-Các cơ chế chống dữ liệu cũ không tạo ra khả năng resume trận sau mất kết nối.
++Match identity lọc dữ liệu lượt cũ; connection epoch và input generation bổ sung để lọc tác vụ của lần nối cũ
++ngay trong cùng match. Resume chỉ thành công khi đầy đủ điều kiện session/lifecycle/full gate, không nhờ matchId riêng lẻ.
+ 
+ ### 8.6.5. Liên hệ yêu cầu và giới hạn kiến trúc
+ 
+@@ -411,9 +457,65 @@
+ | FR04–FR09 | Runtime riêng room, movement và gameplay extension/adapters | Isolation, collision, bom/item/damage và thứ tự cập nhật |
+ | FR10–FR11 | Builder/codec, snapshot pump, replica và client controllers | Baseline/resync, ACK/replay, respawn và biểu diễn |
+ | FR12–FR14 | Lobby lifecycle, session writer, cleanup và context theo match | Kết thúc/chơi lại, dữ liệu cũ, queue đầy và lỗi kết nối |
++| FR15 | SessionManager/ClientHandler/ConnectionManager; callback lobby/runtime; client recovery owner | Token/deadline/ownership, giữ runtime/controller, khoá input tới full, expiry và gameplay offline |
+ | NFR01–NFR08 | Các ranh giới owner/queue và công cụ đo/test | Tính đúng, nhịp/tải/byte, giải phóng tài nguyên và tái lập |
+ 
+ Mô tả kiến trúc giải thích cách các thành phần phối hợp, chưa xác nhận mọi thuộc tính chất lượng đã đạt.
+-Hồ sơ khảo sát hiện còn lỗi process smoke và khoảng trống GUI/LAN/soak;
+-không dùng sơ đồ này làm bằng chứng thay cho kiểm thử hoặc số liệu thực nghiệm.
+-Trạng thái bằng chứng được giữ tại [hồ sơ khảo sát](../01_HO_SO_KHAO_SAT.md).
++Lượt mới ngoài sandbox đạt 171/171 JUnit và TV2/TCP checks; các lượt sandbox có lỗi smoke ba tiến trình
++được giữ để chỉ rõ điều kiện chạy. Chưa nghiệm thu GUI thủ công/LAN/Wi-Fi/soak;
++không dùng sơ đồ làm bằng chứng thay cho kiểm thử hoặc số liệu thực nghiệm.
++Nguồn: [kết quả kiểm thử mới](../session-recovery/03_KET_QUA_KIEM_THU_THUC_TE.md).
++
++## 8.7. Quyền sở hữu và trạng thái trong Session Recovery
++
++### 8.7.1. Phân tách owner khi chuyển transport
++
++**Bảng 8.7. Dữ liệu recovery và thành phần được phép thay đổi.**
++
++| Dữ liệu | Owner/cơ chế | Ranh giới cần giữ |
++|---|---|---|
++| Session UUID/token, socket hiện tại, state trước disconnect | SessionManager/Session, khoá session | Session tồn tại qua nhiều socket; kiểm tra token không thay kiểm tra deadline/match |
++| DisconnectWindow và ScheduledFuture | SessionManager, ticket riêng mỗi lần ngắt | Deadline kiểm tra lại khi claim; timer huỷ/đến muộn không xoá thế hệ sau |
++| Writer và captured socket | ConnectionManager/SessionWriter | Bỏ writer tạm nhưng giữ socket để handoff; late cleanup không đóng writer mới |
++| Match context, suspended, initialized, recoveryFullAfter | LobbyGameServer và snapshot pump dưới điều phối lobby | Không phát delta/notice cho người còn suspended/chưa có full nền mới |
++| Player frozen, bom/item/damage/timer | GameLoop và gameplay extension | Chỉ game thread sửa world; lifecycle được queue nhận chưa có nghĩa đã áp ngay |
++| RecoveryState, connection epoch, deadline | DemoClientConnection; control worker/watchdog và UI dispatch | Watchdog độc lập kiểm tra timeout; callback UI phải thuộc epoch hiện hành |
++| Replica/prediction/interpolation và input generation | MovementClientController/InputController | Giữ world để vẽ; bỏ pending cũ; không mở input chỉ nhờ ACK |
++
++Trong handoff, session vẫn DISCONNECTED khi attach socket và dựng writer; sau khi enqueue ACK mới phục hồi
++state và gọi lobby. Nhánh lobby có thể từ chối do trận đã kết thúc, nên ACK không phải cam kết tiếp tục trận.
++SessionRecoveryRejectedException đánh dấu từ chối nghiệp vụ; lỗi writer/setup thực vẫn đi vào diagnostics.
++Không có enum ORPHAN_SESSION hoặc một service persistence/failover mới trong kiến trúc này.
++
++### 8.7.2. Trạng thái client và gate gameplay
++
++**Hình 8.4. State machine kết nối và recovery của client owner. Nhóm tự vẽ từ code đã xác minh.**
++
++```mermaid
++stateDiagram-v2
++    [*] --> CONNECTING
++    CONNECTING --> CONNECTED: ACK ban đầu hợp lệ
++    CONNECTED --> RECONNECTING: Mất transport và có context/token/auto recovery
++    RECONNECTING --> WAITING_ACK: Attempt mới, epoch mới và RECONNECT
++    WAITING_ACK --> WAITING_FULL: ACK đúng identity
++    WAITING_FULL --> CONNECTED: Metadata cùng match và full hợp lệ đã áp
++    WAITING_ACK --> RECONNECTING: Timeout pha hoặc transport ngắt
++    WAITING_FULL --> RECONNECTING: Timeout pha hoặc transport ngắt
++    CONNECTING --> CLOSED: Lỗi kết nối hoặc đóng
++    CONNECTED --> CLOSED: Đóng hoặc lỗi không có recovery
++    RECONNECTING --> CLOSED: Hết budget hoặc đóng
++    WAITING_ACK --> CLOSED: Hết budget, bị từ chối hoặc đóng
++    WAITING_FULL --> CLOSED: Hết budget, payload lỗi hoặc đóng
++    WAITING_FULL --> CONNECTED: GAME_OVER đúng match, bỏ context và không mở gameplay
++    CLOSED --> [*]
++```
++
++CONNECTED là enum kết nối, không đồng nghĩa luôn có gameplay sẵn sàng: sau ACK ban đầu còn chờ trận/full,
++và sau GAME_OVER context đã bị bỏ. Khi GAME_OVER đúng match còn được nhận trong recovery, owner kết thúc
++recovery và đóng controller; nhánh này áp dụng cả khi còn RECONNECTING/WAITING_ACK, hình chỉ vẽ đại diện từ WAITING_FULL.
++Nếu không nhận được kết quả trong lúc offline, server không có replay lịch sử GAME_OVER để bảo đảm bổ sung.
++Sơ đồ lược bớt callback trạng thái không đổi; UI readiness còn phụ thuộc controller/replica.
++
++Bản nguồn: [08_04_trang_thai_recovery.mmd](../figures/architecture/08_04_trang_thai_recovery.mmd).
++Các sequence có frame trên dây, nhánh sai token và hết hạn được trình bày tại mục 9.6.5–9.6.6;
++tham số budget ở mục 7.8.3, phần 9 bổ sung cách diễn giải timeout theo giao thức.
+--- before/report/chapters/09_THIET_KE_GIAO_TIEP_MANG.md
++++ after/report/chapters/09_THIET_KE_GIAO_TIEP_MANG.md
+@@ -5,6 +5,8 @@
+ không coi mọi message có tên trong đặc tả lịch sử là chức năng đã được bật.
+ Kiến trúc thread/queue được giải thích ở [mục 8](08_KIEN_TRUC_HE_THONG.md);
+ ở đây tập trung vào dữ liệu trên đường truyền, điều kiện xử lý và thứ tự trao đổi.
++Phần cập nhật phản ánh Session Recovery đã nối end-to-end trong active match:
++socket mới gửi RECONNECT trước router, tiếp quản phiên cũ rồi nhận metadata/full để tiếp tục delta.
+ 
+ Quy ước: `C→S` là client gửi server; `S→C` là server gửi một client; `S→Room` là phát tới các client thuộc phòng/trận.
+ `S`, `R`, `M` trong schema lần lượt biểu thị UUID session, room và match, không phải chuỗi literal gửi trên mạng.
+@@ -59,7 +61,7 @@
+ 
+ ### 9.1.3. Thương lượng phiên bản
+ 
+-Client mở TCP rồi gửi:
++Ở luồng kết nối phiên mới, client mở TCP rồi gửi:
+ 
+ ```json
+ {"playerName":"PlayerA","protocolVersion":2}
+@@ -70,6 +72,9 @@
+ CONNECT sai version được trả `UNSUPPORTED_VERSION`, sau đó kết nối bị dọn theo chính sách transport.
+ `protocolVersion` không phải `snapshotVersion`: trường thứ nhất quy định contract tích hợp,
+ trường thứ hai mô tả layout binary của snapshot.
++Ở luồng phục hồi, frame đầu có thể là RECONNECT theo mục 9.2.4 thay cho CONNECT.
++RECONNECT không có trường protocolVersion riêng; client/server phải dùng bộ phát hành tương thích,
++và client vẫn kiểm tra protocolVersion trong CONNECT_ACK nhận lại.
+ 
+ Thông tin ACK gồm `playerId` UUID phiên, token, `serverVersion`, protocol version và các giá trị heartbeat/grace.
+ `serverVersion` hiện là chuỗi `0.1.0`; đó không phải mã revision kiểm thử và không chứng minh tương thích với mọi binary snapshot.
+@@ -86,7 +91,8 @@
+ 
+ | Trường | Kiểu/phạm vi | Cách sử dụng |
+ |---|---|---|
+-| Session ID | UUID string server cấp | Field `playerId` trong CONNECT_ACK và roster phòng; danh tính kết nối đã handshake |
++| Session ID | UUID string server cấp | Field `playerId` trong CONNECT_ACK/RECONNECT và roster phòng; giữ nguyên khi socket mới tiếp quản phiên hợp lệ |
++| Reconnect token | UUID string bí mật theo phiên | Gửi cùng session playerId để xin resume; không phải matchId hoặc mật khẩu tài khoản; chưa rotation qua recovery |
+ | Room ID | UUID string | Membership và quyền thao tác phòng |
+ | Match ID | UUID mới cho mỗi runtime/lượt | Lọc lệnh và state thuộc lượt cũ, kể cả chơi lại cùng phòng |
+ | Gameplay player ID | int32 dương, trong match | Ánh xạ từ session qua MatchContext/runtime; không nhận từ MOVE |
+@@ -120,11 +126,12 @@
+ 
+ | Mã | Message/hướng | Body chính và ngữ nghĩa |
+ |---|---|---|
+-| `0x0001` | CONNECT, C→S | `playerName`, `protocolVersion:2`; phải hoàn tất trước yêu cầu lobby/gameplay |
++| `0x0001` | CONNECT, C→S | `playerName`, `protocolVersion:2`; frame đầu cho phiên mới trước yêu cầu lobby/gameplay |
+ | `0x0002` | CONNECT_ACK, S→C | `playerId:S`, `reconnectToken`, `serverVersion`, `protocolVersion:2`, `heartbeatIntervalMs:2000`, `heartbeatTimeoutMs:10000`, `reconnectGraceMs:15000` |
+ | `0x0040` | PING, C→S | `pingId:int32`; client mặc định gửi theo chu kỳ 2 giây |
+ | `0x0041` | PONG, S→C | Echo đúng JSON body PING đã qua kiểm tra |
+ | `0x0042` | DISCONNECT, C→S | `reason:"USER_QUIT"`; handler hỗ trợ đóng phiên chủ động |
++| `0x0043` | RECONNECT, C→S | `playerId:S,reconnectToken:UUID`; frame đầu trên socket mới, không bọc match envelope |
+ | `0x00FF` | ERROR, S→C | `errorCode`, `message`, `requestId` có thể null; cách xử lý tùy lớp lỗi |
+ 
+ Server sweep heartbeat mặc định mỗi 2 giây và timeout 10 giây; việc phát hiện không phải deadline chính xác tại giây thứ 10.
+@@ -133,22 +140,57 @@
+ không yêu cầu chỉ PONG mới được tính là hoạt động từ server.
+ 
+ Đường đóng client hiện tại có thể đóng socket trực tiếp, được server nhận qua EOF; không khẳng định mỗi lần người dùng
+-đóng cửa sổ đều phát DISCONNECT. Mất kết nối trong lượt chơi hiện kết thúc/hủy lượt và bỏ ghế;
+-metadata phiên có thể còn chờ dọn tối đa theo grace, không còn world để resume.
+-
+-### 9.2.4. Message có khai báo nhưng chưa thành luồng sản phẩm
+-
+-`RECONNECT=0x0043` và `NETWORK_LOST=0x0044` có trong PacketType/tài liệu, nhưng router sản phẩm chưa đăng ký handler.
+-Enum reason `RECONNECT` trong request resync cũng không chứng minh đã có reconnect end-to-end.
+-`PLAYER_DISCONNECTED=0x0032` còn dùng trong các API/nhánh hạ tầng; đường lobby hiện tại chủ yếu cập nhật bằng GAME_OVER
+-và ROOM_STATE, không có luồng thông báo player-disconnected trong trận giữ ghế để tiếp tục chơi.
+-
+-Không đưa các schema reconnect dự kiến thành sequence đã triển khai. Sau handshake, type chưa có handler có thể trả
+-UNKNOWN_MESSAGE; trước handshake còn chịu cổng kiểm tra CONNECT.
++đóng cửa sổ đều phát DISCONNECT. Vì vậy, thao tác đóng ở client và graceful DISCONNECT trên dây không luôn đồng nhất:
++server có thể giữ phiên theo grace nếu quan sát nó như unexpected disconnect trong active match.
++Client đóng chủ động dừng retry; server sẽ dọn theo policy/grace nếu không nhận được một yêu cầu leave/disconnect hợp lệ.
++
++### 9.2.4. RECONNECT, ACK và quyền tiếp tục phiên
++
++Body RECONNECT là control object phẳng, không có matchId, username, sequence hay protocolVersion:
++
++```json
++{"playerId":"11111111-1111-4111-8111-111111111111","reconnectToken":"22222222-2222-4222-8222-222222222222"}
++```
++
++Hai UUID trong ví dụ chỉ minh hoạ, không phải token thật hoặc thông tin đăng nhập để sử dụng.
++SessionPacketCodec kiểm tra đúng hai field, kiểu string/UUID và giới hạn object control;
++không tự suy ra quyền hợp lệ chỉ từ việc parse được UUID. Token phải trùng session server đang giữ,
++deadline admission chưa hết, không có handoff khác đang giữ quyền và lobby phải còn active match cho phiên.
++Token hiện không rotation khi nối lại; token hợp lệ cũng có thể tiếp quản TCP half-open.
++Kênh chưa có TLS, nên không mô tả cơ chế này như bằng chứng bảo mật token trên đường truyền.
++
++Server accept socket mới cùng session/writer tạm ở CONNECTED. ClientHandler cho phép RECONNECT ở cổng pending,
++decode/preflight rồi gọi SessionManager claim nguyên tử; nhánh này chạy **trước MessageRouter**.
++Chỉ sau claim, handler mới bỏ writer/session tạm nhưng giữ socket, mở writer cho identity cũ và enqueue ACK.
++Session phục hồi state, callback lobby enqueue GAME_STARTED cùng context, đặt full barrier và request full.
++Không cần đăng ký thêm router route RECONNECT để có luồng này. CONNECT/RECONNECT gửi lại trên socket đã handshake
++bị INVALID_PACKET, không được dùng để thay identity ngay giữa luồng request thường.
++
++ACK phục hồi có cùng schema CONNECT_ACK ở Bảng 9.3: playerId/token của phiên cũ, version và heartbeat/grace.
++Client kiểm tra identity và protocolVersion rồi chuyển WAITING_FULL, giữ input bị khoá.
++Chỉ sau GAME_STARTED trùng context và full hợp lệ đã áp vào replica mới tiếp tục gameplay;
++không có message ACK-full hay một mã RECOVERY_SUCCESS riêng trên dây.
++Session state trong grace là DISCONNECTED; không thêm enum ORPHAN_SESSION hoặc packet mang tên đó.
++
++Grace 15 giây tính từ server xử lý disconnect; manager kiểm tra lại elapsed khi claim dù expiry task chưa chạy.
++Claim hợp lệ huỷ ticket expiry để làm handoff; đây là deadline tiếp nhận, không phải cam kết full đã tới client
++trước đúng mốc 15 giây. Hết hạn hoặc hard drop gỡ phiên và có thể ABORT cả match.
++Nếu trận đã kết thúc trong grace, callback từ chối và dọn session, không tạo lại trận hoặc replay GAME_OVER.
++
++### 9.2.5. Mã khai báo không thay thế cơ chế phát hiện mất mạng
++
++NETWORK_LOST `0x0044` hiện có mã khai báo nhưng chưa có flow phát/nhận trong đường lobby khảo sát.
++PLAYER_DISCONNECTED `0x0032` được RoomCleanupSink dùng ở nhánh hạ tầng khác, không phải ACK hoàn tất recovery
++hoặc message client bắt buộc phải gửi trước khi mất kết nối.
++Không giả định một mạng đã đứt vẫn chuyển được thông báo cuối. Luồng phục hồi hiện dựa vào EOF/I/O/heartbeat,
++RECONNECT và snapshot; dữ liệu player/world sau freeze được phản ánh qua state gửi tới peer còn kết nối.
++Reason RECONNECT trong REQUEST_FULL_STATE là lý do resync trên một phiên đã được tiếp nhận,
++không thay thế handshake RECONNECT bằng token. Cấu hình recovery và khả năng resume phải xét theo profile lobby.
++
+ Căn cứ: [LobbyGameServer](../../src/main/java/com/bombit/server/app/LobbyGameServer.java),
+ [ClientHandler](../../src/main/java/com/bombit/server/network/ClientHandler.java),
+ [DemoClientConnection](../../src/main/java/com/bombit/client/app/DemoClientConnection.java)
+-và [đánh giá reconnect](../../docs/RECONNECT_ASSESSMENT.md).
++và [xác minh thiết kế recovery](../session-recovery/02_XAC_MINH_THIET_KE_VA_NGUON.md).
+ 
+ > **Phân công: TV1 phụ trách nội dung lobby/phòng; TV4 chuẩn hóa schema và hướng truyền.**
+ 
+@@ -179,6 +221,8 @@
+ GAME_STARTED hiện được `DemoPacketCodec` encode với `mapId:"demo"` ngay cả ở lobby mặc định dùng DefaultArenaMap.
+ Client không dùng chuỗi này để tự suy ra layout: map đầy đủ lấy từ full snapshot.
+ Đây là giá trị metadata hiện tại, không phải tuyên bố ứng dụng chỉ chạy profile movement demo.
++Trong recovery, GAME_STARTED được gửi riêng về kết nối đã tiếp quản với roomId/matchId/roster cũ;
++không phải broadcast một lượt mới hoặc đổi matchId. Client giữ controller/context nếu metadata đúng trận cần phục hồi.
+ Nguồn: [LobbyPacketCodec](../../src/main/java/com/bombit/common/protocol/LobbyPacketCodec.java),
+ [DemoPacketCodec](../../src/main/java/com/bombit/common/protocol/DemoPacketCodec.java)
+ và `LobbyGameServer`.
+@@ -202,6 +246,8 @@
+ không lớn hơn `lastProcessedInput` và có thể chấp nhận khoảng trống sequence. Một tick áp dụng tối đa
+ một mẫu movement mới mỗi player theo FIFO toàn cục. Với input có sequence, khi không có mẫu mới được áp dụng
+ thì movement không tự tiếp tục thêm một bước cho player đó.
++Nối lại cùng match giữ sequence và bộ đếm request bom, không khởi tạo lại như một lượt mới.
++Trong recovery client ngừng lấy/gửi input gameplay; sau full chỉ nhận input mới, bỏ pending cũ thay vì replay tất cả.
+ 
+ ACK nằm trong PlayerData của snapshot sau bước movement, không có MOVE_ACK riêng và không dùng ACK TCP thay nó.
+ Client bỏ input pending có sequence ≤ ACK, khôi phục state server rồi replay phần còn lại.
+@@ -311,6 +357,26 @@
+ Server giới hạn tối thiểu 1 giây giữa các request; client owner hiện lập lịch cách tối thiểu 1100 ms
+ và gộp request đang chờ. FULL_STATE_SYNC dùng cùng body version tương ứng update, bắt buộc full.
+ Không diễn giải resync như giao thức reconnect hoặc bảo đảm sửa được mọi payload hỏng.
++Recovery dùng lại cơ chế tạo full, nhưng yêu cầu full được callback resume phía server đặt chủ động.
++Trong lúc reconnecting, client owner không tiếp tục phát request full từ task resync cũ;
++epoch/context được kiểm tra để task của connection trước không gửi vào phiên mới.
++
++### 9.4.5. Full gate riêng cho Session Recovery
++
++Lobby đánh dấu player suspended khi ngắt, bỏ initialized và submit freeze. Khi resume được tiếp nhận,
++nó đặt recoveryFullAfter theo tick công bố gần nhất và request full; pump bỏ delta/full chưa vượt barrier cho player đó.
++Sau full mới enqueue thành công mới gỡ recoveryFullAfter và đánh dấu initialized.
++Gate này là ở phía server, khác gate phía client đang chờ metadata/full được áp.
++
++Client chỉ xử lý full phục hồi khi đúng epoch, đã ACK identity và nhận metadata cùng match.
++Sau decode/apply, replica phải không còn needsFullState và lastAppliedFullTick phải trùng tick full vừa nhận;
++lúc đó mới reset dữ liệu chuyển động phù hợp và mở input. Full stale/sai match, delta hoặc ACK riêng lẻ không đủ.
++Normal flow phát FULL_STATE_SYNC khi barrier được vượt; payload full hợp lệ dưới GAME_SNAPSHOT cũng có thể thoả gate,
++vì kiểu full/delta thực tế được kiểm tra trong snapshot, không chỉ theo tên packet.
++
++Sau full, delta kế tiếp phải tham chiếu baseline replica đúng như mục 9.4.3. Full có thể tới các peer đang online
++vì baseline dùng chung; không phải cơ chế replay event theo offset riêng từng người nhận.
++Snapshot full không phát lại pending MOVE/PLANT_BOMB, damage hoặc pickup đã xử lý trước đó.
+ Nguồn: [ResyncPacketCodec](../../src/main/java/com/bombit/common/protocol/ResyncPacketCodec.java),
+ [LobbyGameServer](../../src/main/java/com/bombit/server/app/LobbyGameServer.java)
+ và [DemoClientConnection](../../src/main/java/com/bombit/client/app/DemoClientConnection.java).
+@@ -327,6 +393,8 @@
+ Handler bỏ requestId cũ/trùng trước khi tính giới hạn riêng của đặt bom, nhưng frame đó vẫn được tính vào tổng rate limit kết nối.
+ Chỉ ghi nhận requestId sau khi submit command thành công; queue đầy có thể thử lại cùng ID theo contract.
+ Không suy ra client hiện đã tự động retry mọi yêu cầu bị từ chối.
++Khi recovery cùng match, client giữ controller và request counter để không quay lại ID đã dùng;
++server vẫn giữ dedupe state của match. Điều này không tạo bảo đảm exactly-once end-to-end cho mọi lệnh.
+ 
+ Submit thành công cũng chưa bảo đảm bom được tạo: game thread còn kiểm tra player sống, quota và ô đặt.
+ Trong cấu hình lobby hiện tại, callback `BombCommandResult` bên ngoài là no-op, chưa có message ACK riêng
+@@ -374,6 +442,9 @@
+ Hủy hành chính không giả tạo snapshot FINISHED; server dừng runtime và gửi GAME_OVER theo chính sách hủy
+ nếu chưa có kết quả chốt. Client bỏ context/controller cũ, hiển thị kết quả và giữ TCP để chơi lượt sau nếu kết nối còn hợp lệ.
+ GAME_OVER cũ/trùng không mở lại world đã đóng; match mới luôn có identity mới.
++Nếu match kết thúc khi player offline, các peer còn nối nhận kết quả nhưng người vắng mặt không được bảo đảm
++nhận lại GAME_OVER sau reconnect. Callback recovery từ chối khi không còn active match, kể cả ACK identity
++đã có thể được enqueue; client không mở input chỉ vì ACK đó.
+ 
+ > **Phân công: TV4 ghép sơ đồ; TV1 xác nhận kết nối/phòng, TV2 movement/resync, TV3 gameplay/kết quả.**
+ 
+@@ -517,10 +588,112 @@
+     S-->>C: Full snapshot lượt mới
+ ```
+ 
+-Nhánh host End/leave/disconnect bỏ phần full FINISHED nếu chưa có kết quả gameplay;
++Nhánh host End/leave/hard drop hoặc hết grace bỏ phần full FINISHED nếu chưa có kết quả gameplay;
+ nó dừng runtime và gửi ABORTED. Socket đã mất không được bảo đảm nhận thông báo cuối;
+ các thành viên còn kết nối được cập nhật theo khả năng gửi.
++Unexpected disconnect còn trong grace hợp lệ giữ runtime và đi theo Hình 9.5, không tự đi nhánh ABORT này.
+ Bản gốc: [09_04_ket_thuc_va_choi_lai.mmd](../figures/network/09_04_ket_thuc_va_choi_lai.mmd).
++
++### 9.6.5. Reconnect hợp lệ, full mới và tiếp tục delta
++
++**Hình 9.5. Phục hồi cùng phiên trận sau mất transport tạm thời. Nhóm tự vẽ từ code đã xác minh.**
++
++```mermaid
++sequenceDiagram
++    participant C as Client đang chơi
++    participant H as Handler / writer TCP
++    participant M as SessionManager
++    participant L as LobbyGameServer
++    participant R as Runtime / snapshot pump
++    participant O as Peer còn nối
++    Note over C,H: Transport cũ mất, hai phía phát hiện ở thời điểm riêng
++    H->>M: Unexpected disconnect với captured socket
++    M->>M: DISCONNECTED, tạo grace ticket 15 giây
++    M->>L: onPlayerDisconnected ngoài khoá session
++    L->>R: Submit PlayerDisconnectedCommand, giữ runtime
++    C->>C: Khoá input, bỏ pending cũ, giữ controller và counter
++    Note over R,O: Loop áp freeze, gameplay vẫn chạy và peer nhận update
++    C->>H: TCP mới, frame đầu RECONNECT playerId + token
++    H->>M: Preflight rồi reconnect claim nguyên tử
++    M->>M: Huỷ ticket, attach socket mới, giữ DISCONNECTED khi dựng writer
++    M->>H: beforeResume, bỏ provisional và dựng writer identity cũ
++    H-->>C: CONNECT_ACK cùng session UUID
++    C->>C: WAITING_FULL, input vẫn khoá
++    M->>L: Khôi phục state, gọi onPlayerReconnected
++    L->>R: Submit PlayerReconnectedCommand
++    L->>H: Enqueue GAME_STARTED cùng context
++    H-->>C: GAME_STARTED roomId / matchId / roster cũ
++    L->>L: Đặt recovery barrier
++    L->>R: requestFullState
++    R->>R: Tạo full mới vượt barrier, chặn update cũ cho C
++    R->>H: Enqueue snapshot full mới
++    H-->>C: FULL_STATE_SYNC có match envelope
++    opt Full chung baseline được gửi tới peer online
++        H-->>O: Full cùng match qua writer của O
++    end
++    C->>C: Apply full hợp lệ, reset lịch sử phù hợp rồi mở input
++    C->>H: MOVE mới, sequence tiếp tục
++    H->>R: Submit command theo session và match hiện tại
++    R->>H: Update tiếp theo với baseline hợp lệ
++    H-->>C: GAME_SNAPSHOT delta sau full
++```
++
++Hình gộp runtime/pump và handler/writer cho dễ đọc; đó không phải cùng một thread thực tế.
++GAME_STARTED và full được enqueue theo thứ tự trên writer của người trở lại; các mũi tên enqueue chưa chứng minh receipt/apply.
++Unfreeze đi qua command queue, không phải lobby sửa trực tiếp player. Dòng full cho peer là khả năng của baseline chung,
++không tạo writer của peer từ socket C. Các update xen giữa có thể làm baseTick tiến qua nhiều tick;
++client phải áp đủ chuỗi, không mặc định delta luôn tham chiếu tick full ban đầu.
++Reconnect thành công giữ runtime/controller/context; không CREATE_ROOM, JOIN_ROOM hoặc START_GAME lại.
++
++Bản nguồn: [09_05_reconnect_full_delta.mmd](../figures/network/09_05_reconnect_full_delta.mmd).
++
++### 9.6.6. Từ chối phục hồi, hết grace và match đã kết thúc
++
++**Hình 9.6. Các nhánh recovery không được tiếp tục trận. Nhóm tự vẽ từ code đã xác minh.**
++
++```mermaid
++sequenceDiagram
++    participant C as Client xin phục hồi
++    participant H as Handler / writer TCP
++    participant M as SessionManager
++    participant L as Lobby / runtime
++    participant O as Peer còn nối
++    alt Token sai, identity lạ hoặc claim không hợp lệ
++        C->>H: Socket mới, RECONNECT
++        H->>M: Preflight / claim
++        M-->>H: Từ chối, không nhận quyền handoff
++        H-->>C: ERROR RECONNECT_REJECTED nếu còn gửi được
++        Note over C,M: Dọn socket tạm, không phá owner hợp lệ chỉ vì token sai
++    else Grace đã hết và expiry dọn phiên
++        M->>M: Kiểm tra ticket và deadline
++        M->>L: Hard drop / leave
++        L->>L: Gỡ ghế, stop runtime nếu active, room WAITING
++        L-->>O: GAME_OVER ABORTED nếu chưa chốt, ROOM_STATE
++        C->>H: RECONNECT với token cũ
++        H->>M: Không còn phiên đủ điều kiện
++        H-->>C: ERROR RECONNECT_REJECTED nếu còn gửi được
++    else Trận kết thúc trong grace trước callback resume
++        L-->>O: Kết quả TIMEOUT hoặc LAST_ALIVE, stop runtime
++        C->>H: RECONNECT còn đúng token
++        H->>M: Claim phiên và dựng writer
++        H-->>C: CONNECT_ACK có thể đã enqueue
++        M->>L: onPlayerReconnected
++        L-->>M: SessionRecoveryRejectedException
++        M->>M: Rollback / hard drop captured socket
++        Note over C,M: Không tạo lại match/full, ACK không mở input, ERROR cuối là best effort
++    end
++```
++
++Ba nhánh là các trường hợp độc lập; không ngụ ý mọi lỗi đều xảy ra theo thứ tự đó trong một phiên.
++Deadline admission còn được kiểm tra trực tiếp khi claim, nên request tại/sau mốc hết grace bị từ chối
++kể cả scheduler chưa chạy cleanup. Request thiếu trường hoặc UUID không hợp lệ đi nhánh INVALID_PACKET trước preflight,
++khác token có cú pháp hợp lệ nhưng không được cấp quyền. ERROR sau handoff có thể không đến được client nếu socket đã đóng.
++
++Timeout ACK/full và ngắt lại giữa các pha được state machine Hình 8.4 biểu diễn: client tạo attempt/epoch mới trong budget,
++giữ input khoá và giữ deadline tổng; hết budget hoặc nhận từ chối thì đóng. Người đóng app không bị buộc tự nối lại.
++Không có event replay bù GAME_OVER cho người offline trong các nhánh trên.
++
++Bản nguồn: [09_06_reconnect_tu_choi_va_het_han.mmd](../figures/network/09_06_reconnect_tu_choi_va_het_han.mmd).
+ 
+ > **Phân công: TV1/TV4 phụ trách transport, timeout và validation; TV2 queue/baseline, TV3 kiểm tra tác động gameplay.**
+ 
+@@ -541,12 +714,16 @@
+ | Ghi socket | Watchdog mặc định 5 giây ở server/client | Đóng socket để thoát I/O chặn, báo/dọn theo owner |
+ | Writer server | Queue 256 frame chờ; byte budget 4 MiB tính cả frame đang ghi | Đóng kết nối khi đầy; không bỏ một delta rồi tiếp tục |
+ | Runtime | Command 4096, outbound 1024 | Submit thất bại hoặc giữ baseline chưa commit như mục 9.4 |
++| Recovery admission server | Grace 15.000 ms từ lúc xử lý disconnect | Tại/sau deadline từ chối claim; expiry dẫn hard drop/leave, có thể ABORT match |
++| Recovery client | Tổng 14.000 ms; ACK 2.500 ms, full 4.000 ms/attempt; connect tối đa 1.500 ms | Timeout pha retry trong budget tổng; hết budget đóng; retry delay 200 ms × attempt, trần 500 ms |
+ | Pending phía client | Pull queue tùy chọn 1024 packet; UI dispatch count hữu hạn, budget 4 MiB | Overflow gây lỗi/dừng; owner mặc định tắt pull queue không dùng |
+ 
+ Các rate limit là cửa sổ/điều kiện trong handler, không phải bảo đảm throughput thực đạt.
+ MOVE/PLANT/resync còn chịu giới hạn tổng kết nối. Control và input sender của client có giới hạn pending riêng;
+ UI owner hiện cho tối đa 256 dispatch đang chờ, không có nghĩa toàn bộ EDT được biến thành queue hữu hạn.
+ Watchdog/scheduler có chu kỳ kiểm tra nên các thời gian trên là cấu hình phát hiện, không phải SLA ngắt chính xác.
++Recovery watchdog client kiểm tra mỗi 50 ms trên scheduler riêng; deadline full tính cả metadata và UI apply.
++Connect timeout không tự bao trọn DNS trước connect; grace server và budget client không có chung mốc bắt đầu.
+ Nguồn: [InboundRateLimiter](../../src/main/java/com/bombit/server/network/InboundRateLimiter.java),
+ [ClientHandler](../../src/main/java/com/bombit/server/network/ClientHandler.java),
+ [SessionWriter](../../src/main/java/com/bombit/server/network/SessionWriter.java)
+@@ -559,14 +736,19 @@
+ | Tình huống | Phản hồi/hành động server hoặc client | Lưu ý |
+ |---|---|---|
+ | Length/UTF-8 không hợp lệ | Server đóng kết nối có kiểm soát | Không cố tìm biên frame tiếp theo, không bảo đảm gửi ERROR |
+-| EOF, frame thiếu byte hoặc timeout I/O | Dọn captured connection; phiên đã handshake đi qua chính sách disconnect | Nếu đang chơi, lobby có thể hủy lượt |
+-| Request trước handshake hoặc version không hỗ trợ | NOT_CONNECTED/UNSUPPORTED_VERSION rồi đóng theo transport | CONNECT lặp sau handshake là INVALID_PACKET |
++| EOF, frame thiếu byte hoặc timeout I/O | Dọn captured connection; active match có recovery bật giữ phiên/grace và freeze qua queue | Hard drop, hết grace hoặc lifecycle queue lỗi có thể ABORT lượt |
++| Request trước handshake hoặc version không hỗ trợ | Pending chỉ nhận CONNECT/RECONNECT; loại khác NOT_CONNECTED; CONNECT sai version UNSUPPORTED_VERSION | CONNECT/RECONNECT lặp sau handshake là INVALID_PACKET |
++| RECONNECT sai field/UUID | INVALID_PACKET rồi đóng socket tạm theo transport | Không phá owner đang chờ recovery chỉ vì request bên ngoài sai schema |
++| Token/identity không hợp lệ, hết hạn hoặc claim chồng nhau | Từ chối RECONNECT; ERROR RECONNECT_REJECTED khi writer còn gửi được, rồi dọn captured connection | Nếu handoff đã đổi ownership hoặc socket lỗi, không bảo đảm phản hồi cuối |
++| Match đã kết thúc trong grace | Callback từ chối nghiệp vụ, rollback/hard drop phiên; không tạo lại runtime/full | ACK identity có thể đã enqueue; không hứa client luôn nhận ERROR hoặc replay GAME_OVER |
+ | JSON/field sai sau handshake | INVALID_PACKET; thông thường tiếp tục phiên | Codec, handler và trạng thái quyết định đường lỗi cụ thể |
+ | Sai phòng/quyền/trạng thái | NOT_IN_ROOM, NOT_HOST, NOT_READY, NOT_PLAYING hoặc lỗi lobby tương ứng | Không được sửa world để chấp nhận yêu cầu |
+ | Sai/mất match envelope | Handler gameplay trả STALE_MATCH; client bỏ packet sai match | UUID đúng chưa thay cho kiểm tra session/socket/membership |
+ | Command queue không nhận | INPUT_QUEUE_FULL | Chưa bảo đảm command đã được xử lý; không có replay tự động mọi request |
+-| Writer đầy/ghi quá hạn | Đóng client đó và cleanup | Theo chính sách lobby, một disconnect có thể làm hủy cả lượt của phòng |
++| Queue không nhận freeze/unfreeze | Lobby ABORT theo policy; nhánh handoff lỗi dọn/rollback phiên | Không giả vờ lifecycle thành công và không trả ACK nghiệp vụ cho command nội bộ |
++| Writer đầy/ghi quá hạn | Đóng captured socket và gọi policy disconnect | Có thể vào grace nếu còn điều kiện; không coi mọi lỗi writer đều lập tức hủy trận |
+ | Replica không ghép được baseline | Giữ world cũ, xin full, tạm chặn input mới theo input-ready | Payload decode hỏng có thể gây fail controller thay vì đi qua resync |
++| Client đang recovery thiếu ACK/full hoặc transport ngắt lại | Retry attempt với epoch mới trong deadline tổng; hết budget đóng owner | RATE_LIMITED/NOT_READY không mở input, không reset deadline; lỗi từ chối khác kết thúc recovery |
+ | RuntimeException ngoài validation trong handler | SERVER_ERROR, ghi diagnostics rồi đóng kết nối | Lỗi runtime/pump được xử lý qua failure và endMatch; không hứa luôn phát MATCH_FAILED |
+ 
+ Các lỗi lobby còn gồm ROOM_NOT_FOUND, ROOM_FULL, ROOM_PLAYING, ALREADY_IN_ROOM,
+@@ -583,15 +765,21 @@
+ cho từng MOVE/PLANT_BOMB. Nếu writer/socket đã hỏng thì phản hồi cuối có thể không gửi được.
+ Ở lobby client, ERROR nghiệp vụ được chuyển lên UI để người dùng xử lý, không mặc định ngắt phiên;
+ codec/listener hoặc I/O failure có thể đóng owner để tránh tiếp tục với state không an toàn.
++Khi đang recovery, ERROR được owner xử lý trước listener lobby: RATE_LIMITED/NOT_READY giữ trạng thái chờ
++trong budget, các lỗi từ chối khác làm fail. Việc có listener lobby không được nuốt lỗi recovery.
+ 
+ ### 9.7.3. Thứ tự, dữ liệu cũ và giới hạn kết luận
+ 
+ Mỗi kết nối server có writer riêng; snapshot, notice và kết quả được enqueue theo thứ tự của luồng công bố.
+ Client dùng listener ứng dụng thường trực và UI executor tuần tự để xử lý metadata/state/kết quả.
+ Match identity ngăn dữ liệu lượt trước ảnh hưởng lượt mới; tick và baseline kiểm tra thứ tự state trong cùng match.
++Connection epoch phía client loại packet/UI action cũ của socket trước trong cùng match;
++input generation loại task/phím giữ cũ. Server kiểm tra captured socket để callback cũ không đóng kết nối thay thế.
+ Không thay các tầng kiểm tra này bằng giả định “TCP tin cậy nên ứng dụng luôn đồng bộ”.
+ 
+-Protocol hiện không có receipt ACK riêng cho snapshot, không có ACK nghiệp vụ riêng cho mọi lệnh và chưa có reconnect resume.
++Protocol có reconnect resume theo điều kiện đã mô tả, nhưng không có receipt ACK riêng cho snapshot
++hoặc ACK nghiệp vụ cho mọi lệnh. Giữ session/full state không tương đương replay mọi message hoặc exactly-once.
+ Mức đúng/ổn định dưới phân mảnh, quá tải, lỗi, nhiều client hoặc nhiều process cần minh chứng test/đo tương ứng.
+-Thiết kế trên không được dùng để kết luận đã đạt GUI/LAN/soak hoặc để bỏ qua process smoke failure đã ghi ở
+-[hồ sơ khảo sát](../01_HO_SO_KHAO_SAT.md).
++Lượt mới ngoài sandbox đạt 171/171; các attempt sandbox có lỗi smoke được giữ riêng.
++Thiết kế không được dùng để suy ra đã nghiệm thu GUI/LAN/Wi-Fi/soak, đạt SLA recovery
++hoặc tiếp tục trận sau server restart. Nguồn: [kết quả thực chạy](../session-recovery/03_KET_QUA_KIEM_THU_THUC_TE.md).
+--- before/report/figures/architecture/08_01_tong_the.mmd
++++ after/report/figures/architecture/08_01_tong_the.mmd
+@@ -2,10 +2,13 @@
+     subgraph CLIENT["Một tiến trình client Swing"]
+         UI["LobbyWindow / MovementGameWindow / Results"]
+         APP["DemoClientConnection<br/>context và điều phối client"]
++        REC["Control worker / recovery watchdog<br/>epoch, deadline và input gate"]
+         MC["MovementClientController<br/>replica / prediction / interpolation"]
+         CN["ClientNetwork"]
+         UI <--> APP
+         APP --> MC
++        APP <--> REC
++        REC --> MC
+         MC --> UI
+         APP <--> CN
+         MC --> CN
+@@ -19,6 +22,8 @@
+         RB["Runtime phòng B<br/>GameLoop + state + gameplay"]
+         PUMP["Snapshot worker theo match<br/>codec + match envelope"]
+         IO --> LOBBY
++        IO -->|"RECONNECT trước router"| SERVICES
++        SERVICES -->|"Callback lifecycle ngoài khoá session"| LOBBY
+         LOBBY <--> SERVICES
+         LOBBY --> RM
+         RM --> RA
+--- before/report/figures/architecture/08_02_thread_va_queue.mmd
++++ after/report/figures/architecture/08_02_thread_va_queue.mmd
+@@ -1,7 +1,9 @@
+ flowchart TB
+     subgraph READER["Luồng ClientHandler của kết nối"]
+         DECODE["PacketDecoder / kiểm tra phiên"] --> ROUTE["MessageRouter / LobbyGameServer<br/>kiểm tra room, match và quyền"]
++        DECODE -->|"RECONNECT trên socket pending"| CLAIM["SessionManager claim / attach<br/>writer mới, ACK và callback lobby"]
+     end
++    CLAIM -->|"Freeze hoặc unfreeze qua lobby"| CQ
+     ROUTE --> CQ["Command FIFO hữu hạn<br/>GameCommand"]
+     subgraph LOOP["Một game thread sở hữu state của room"]
+         READ["Đọc command theo chính sách FIFO"] --> MOVE["MovementSystem / CollisionSystem"]
+@@ -16,3 +18,7 @@
+     WRITE --> CNET["ClientNetwork reader<br/>decode và gọi listener"]
+     CNET --> DISPATCH["DemoClientConnection<br/>giới hạn pending rồi dispatch"]
+     DISPATCH --> EDT["EDT tuần tự<br/>apply replica → reconcile → interpolation → render"]
++    CNET -.->|"Mất transport"| CONTROL["Client control worker<br/>disconnect reader cũ, epoch mới, connect / RECONNECT"]
++    WATCH["Recovery watchdog riêng<br/>kiểm tra deadline tổng / pha"] -.-> CONTROL
++    CONTROL -.->|"Retry / trạng thái"| DISPATCH
++    CLAIM -.->|"Grace ticket, callback ngoài khoá session"| EXPIRY["Session expiry scheduler"]

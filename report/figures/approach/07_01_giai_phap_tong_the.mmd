@@ -1,0 +1,16 @@
+flowchart LR
+    INPUT["Input gameplay đã có context"] --> GATE["Kiểm tra session / room / match / quyền"]
+    GATE --> QUEUE["Command FIFO của runtime"]
+    QUEUE --> UPDATE["Một game thread<br/>movement → gameplay"]
+    UPDATE --> CAPTURE["Chụp state và tạo full/delta"]
+    CAPTURE --> OUT["Outbound FIFO<br/>commit khi enqueue thành công"]
+    OUT --> SEND["Codec / match envelope / writer TCP"]
+    SEND --> APPLY["Client kiểm tra match, tick và baseline"]
+    APPLY --> LOCAL["Local: reconcile và replay input"]
+    APPLY --> REMOTE["Remote: buffer và interpolation"]
+    LOCAL --> VIEW["Swing / Java2D render"]
+    REMOTE --> VIEW
+    INPUT -.-> PRED["Prediction local ngay khi lấy mẫu"]
+    PRED -.-> VIEW
+    APPLY -.->|"Cần baseline mới"| RESYNC["REQUEST_FULL_STATE"]
+    RESYNC -.-> CAPTURE

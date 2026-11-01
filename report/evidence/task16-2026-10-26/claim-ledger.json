@@ -1,0 +1,37 @@
+﻿{
+    "d0":  {
+               "full_bytes":  110076,
+               "reduction_percent":  85.09,
+               "delta_bytes":  16411
+           },
+    "latency_from_chapter12":  {
+                                   "median_run_mean_rtt_ms_range":  [
+                                                                        1.66,
+                                                                        1.94
+                                                                    ],
+                                   "median_run_mean_move_ack_ms_range":  [
+                                                                             26.11,
+                                                                             27.22
+                                                                         ]
+                               },
+    "date":  "2026-10-26",
+    "claims":  {
+                   "d1_equality_checks":  18000,
+                   "d1_reduction_percent_max":  97.539971448965019,
+                   "network_scenario_runs":  45,
+                   "reliability_test_executions":  84,
+                   "junit_failures":  0,
+                   "junit_tests":  133,
+                   "reliability_failures":  0,
+                   "d1_reduction_percent_min":  35.977872947894362,
+                   "network_peer_rows":  125
+               },
+    "status":  {
+                   "future_work":  "proposed, not executed",
+                   "reconnect_resume":  "not implemented in application",
+                   "cpu_ram_metadata":  "incomplete",
+                   "old_smoke_failure_root_cause":  "not verified",
+                   "gui_lan":  "not accepted/measured"
+               },
+    "task":  16
+}

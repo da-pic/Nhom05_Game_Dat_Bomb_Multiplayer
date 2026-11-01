@@ -1,0 +1,111 @@
+{
+  "records": [
+    {
+      "kind": "RECOVERY_CASE",
+      "scenario": "auto_client",
+      "fields": {
+        "cycles": 3,
+        "same_controller": true,
+        "bomb_request_counter_continued": true
+      },
+      "source_log": "recovery-complete-full-tests.log"
+    },
+    {
+      "kind": "RECOVERY_CASE",
+      "scenario": "ended_during_grace",
+      "fields": {
+        "reason": "TIMEOUT",
+        "resurrected": false
+      },
+      "source_log": "recovery-complete-full-tests.log"
+    },
+    {
+      "kind": "RECOVERY_CASE",
+      "scenario": "ended_during_grace",
+      "fields": {
+        "reason": "LAST_ALIVE",
+        "resurrected": false
+      },
+      "source_log": "recovery-complete-full-tests.log"
+    },
+    {
+      "kind": "RECOVERY_CASE",
+      "scenario": "all_orphan",
+      "fields": {
+        "recovered_players": 2,
+        "same_runtime": true
+      },
+      "source_log": "recovery-complete-full-tests.log"
+    },
+    {
+      "kind": "RECOVERY_CASE",
+      "scenario": "real_grace",
+      "fields": {
+        "configured_seconds": 15,
+        "observed_wait_ms": 15002,
+        "late_token_rejected": true
+      },
+      "source_log": "recovery-complete-full-tests.log"
+    },
+    {
+      "kind": "RECOVERY_CASE",
+      "scenario": "multi_input_bomb",
+      "fields": {
+        "cycles": 3,
+        "full_replica_equal": 3,
+        "delta_after_full": 3,
+        "bombs": 5
+      },
+      "source_log": "recovery-complete-full-tests.log"
+    },
+    {
+      "kind": "RECOVERY_CASE",
+      "scenario": "offline_gameplay",
+      "fields": {
+        "lives": 2,
+        "respawns": 1,
+        "item_pickups": 1,
+        "speed": 88,
+        "timer_seconds": 29
+      },
+      "source_log": "recovery-complete-full-tests.log"
+    },
+    {
+      "kind": "RECOVERY_CASE",
+      "scenario": "invalid_handshakes",
+      "fields": {
+        "rejected": 3,
+        "valid_owner_resumed": true
+      },
+      "source_log": "recovery-complete-full-tests.log"
+    },
+    {
+      "kind": "RECOVERY_BOUNDARY",
+      "scenario": "grace_boundary",
+      "fields": {
+        "elapsed_nanos": 14999999999,
+        "admitted": true
+      },
+      "source_log": "recovery-complete-full-tests.log"
+    },
+    {
+      "kind": "RECOVERY_BOUNDARY",
+      "scenario": "grace_boundary",
+      "fields": {
+        "elapsed_nanos": 15000000000,
+        "admitted": false
+      },
+      "source_log": "recovery-complete-full-tests.log"
+    },
+    {
+      "kind": "RECOVERY_BOUNDARY",
+      "scenario": "grace_boundary",
+      "fields": {
+        "elapsed_nanos": 15000000001,
+        "admitted": false
+      },
+      "source_log": "recovery-complete-full-tests.log"
+    }
+  ],
+  "note": "8 integration cases and 3 controlled-clock cases, not network benchmarks"
+}

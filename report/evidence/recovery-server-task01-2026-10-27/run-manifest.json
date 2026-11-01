@@ -1,0 +1,70 @@
+{
+  "date": "2026-10-27T17:12:28.779015+07:00",
+  "base_commit": "492c03127f15a25f4fc685fd004eafe424d53f9f",
+  "branch": "integration/session-recovery",
+  "working_tree_status": "M src/main/java/com/bombit/server/app/LobbyGameServer.java\n M src/main/java/com/bombit/server/heartbeat/HeartbeatManager.java\n M src/main/java/com/bombit/server/network/ClientHandler.java\n M src/main/java/com/bombit/server/network/ConnectionManager.java\n M src/main/java/com/bombit/server/network/Server.java\n M src/main/java/com/bombit/server/session/Session.java\n M src/main/java/com/bombit/server/session/SessionManager.java\n M src/test/java/com/bombit/integration/LobbyLifecycleTest.java\n?? docs/SESSION_RECOVERY_SERVER.md\n?? src/test/java/com/bombit/server/network/RecoveryWriterTest.java\n?? src/test/java/com/bombit/server/session/SessionRecoveryTest.java",
+  "source_and_doc_files": [
+    {
+      "path": "docs/SESSION_RECOVERY_SERVER.md",
+      "sha256": "3edda758e91784a85709213e1df3058a4d0b5e4a661d35b08a27f403d700f341"
+    },
+    {
+      "path": "src/main/java/com/bombit/server/app/LobbyGameServer.java",
+      "sha256": "a291f892119be24f9acd97d29f957cdb6f508356e3e4fba1b6146322ad364a4b"
+    },
+    {
+      "path": "src/main/java/com/bombit/server/heartbeat/HeartbeatManager.java",
+      "sha256": "68ad88f58176655e08d4ddbcb00aec278f6bdd6028f7beaf8e5b87422e2e4c33"
+    },
+    {
+      "path": "src/main/java/com/bombit/server/network/ClientHandler.java",
+      "sha256": "057dd799296d98560ee5cff0515ac893deb526d0b432d8d0a0ad25a58f467107"
+    },
+    {
+      "path": "src/main/java/com/bombit/server/network/ConnectionManager.java",
+      "sha256": "734954e3bc2404c628718372252d270f0ce46e0d1cad8877cfc80de46f3b97cb"
+    },
+    {
+      "path": "src/main/java/com/bombit/server/network/Server.java",
+      "sha256": "dfaba741d111cedffcfeb2944353542d609e603704aae4ce1400ea6f8c82b9fe"
+    },
+    {
+      "path": "src/main/java/com/bombit/server/session/Session.java",
+      "sha256": "d12d90aa1b1bdbd43b576bbf2f72a85ecf9e11a215f4ac553c524117cb176125"
+    },
+    {
+      "path": "src/main/java/com/bombit/server/session/SessionManager.java",
+      "sha256": "2047c2cd997cd0f47b7f960f5ceaf351e7d613a211ba39ac40e5ed0c72a5a485"
+    },
+    {
+      "path": "src/test/java/com/bombit/integration/LobbyLifecycleTest.java",
+      "sha256": "780ce998b9f9992c81a06809b8ca08ab89782e79865e3f9041345406484bebea"
+    },
+    {
+      "path": "src/test/java/com/bombit/server/network/RecoveryWriterTest.java",
+      "sha256": "b76ac2c385a1e0c32ed8e0a80c849afea8193b3e74a9401cebb23b01bb9a37da"
+    },
+    {
+      "path": "src/test/java/com/bombit/server/session/SessionRecoveryTest.java",
+      "sha256": "972859415682313dc1109b2011f7df1652435bba5a2ec7e2411e082ddfa77906"
+    }
+  ],
+  "new_test_cases": 12,
+  "full_suite": {
+    "tests": 147,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "full_suite_classes": 40,
+  "tv2_check_exit_code": 0,
+  "network_main_exit_code": 0,
+  "gameplay_policy_changed": false,
+  "client_code_changed": false,
+  "report_chapters_preserved": 19,
+  "final_report_files_preserved": 4,
+  "maven": "3.9.12 offline",
+  "java_home": "D:/JavaJDK",
+  "gui_lan_executed": false,
+  "commit_created": false
+}

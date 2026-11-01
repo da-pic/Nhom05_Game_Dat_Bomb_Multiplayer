@@ -1,0 +1,259 @@
+{
+  "schema_version": 1,
+  "status": "verified_staging_not_merged_into_canonical_references",
+  "citation_policy": "Keep stable IDs; assign numeric order by first appearance only when chapters are merged.",
+  "verified_on": "2026-10-27",
+  "sources": [
+    {
+      "id": "R01",
+      "new_source": false,
+      "authors": [
+        "W. Eddy (editor)"
+      ],
+      "title": "Transmission Control Protocol (TCP)",
+      "publisher": "IETF / RFC Editor",
+      "publication_date": "2022-08",
+      "url": "https://www.rfc-editor.org/rfc/rfc9293.html",
+      "verified_on": "2026-10-27",
+      "verification": "opened_primary_content_with_web_tool",
+      "locators": [
+        "2.2",
+        "3.5.1",
+        "3.8.4"
+      ],
+      "reviewer_note": "Byte stream and half-open connections; application session recovery is separate.",
+      "planned_report_sections": [
+        "5",
+        "7",
+        "9"
+      ],
+      "old_final_number": 1,
+      "final_number": null
+    },
+    {
+      "id": "R02",
+      "new_source": false,
+      "authors": [
+        "Oracle"
+      ],
+      "title": "Class Socket",
+      "publisher": "Java SE 25 API",
+      "publication_date": null,
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/net/Socket.html",
+      "verified_on": "2026-10-27",
+      "verification": "opened_primary_content_with_web_tool",
+      "locators": [
+        "connect(SocketAddress,int)",
+        "setSoTimeout(int)",
+        "close()"
+      ],
+      "reviewer_note": "Connect/read timeout semantics; a closed socket needs replacement.",
+      "planned_report_sections": [
+        "9",
+        "10"
+      ],
+      "old_final_number": 6,
+      "final_number": null
+    },
+    {
+      "id": "R10",
+      "new_source": false,
+      "authors": [
+        "G. Fiedler"
+      ],
+      "title": "Snapshot Compression",
+      "publisher": "Gaffer On Games",
+      "publication_date": "2015-01-04",
+      "url": "https://gafferongames.com/post/snapshot_compression/",
+      "verified_on": "2026-10-27",
+      "verification": "opened_primary_content_with_web_tool",
+      "locators": [
+        "Delta Compression"
+      ],
+      "reviewer_note": "Delta decoding requires a usable baseline; project mechanism differs from article ACK protocol.",
+      "planned_report_sections": [
+        "5",
+        "7",
+        "13"
+      ],
+      "old_final_number": 3,
+      "final_number": null
+    },
+    {
+      "id": "R12",
+      "new_source": false,
+      "authors": [
+        "Oracle"
+      ],
+      "title": "Package javax.swing",
+      "publisher": "Java SE 25 API",
+      "publication_date": null,
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.desktop/javax/swing/package-summary.html",
+      "verified_on": "2026-10-27",
+      "verification": "opened_primary_content_with_web_tool",
+      "locators": [
+        "Swing's Threading Policy"
+      ],
+      "reviewer_note": "Swing access normally belongs on the EDT.",
+      "planned_report_sections": [
+        "8",
+        "10"
+      ],
+      "old_final_number": 11,
+      "final_number": null
+    },
+    {
+      "id": "R14",
+      "new_source": false,
+      "authors": [
+        "Oracle"
+      ],
+      "title": "Class System",
+      "publisher": "Java SE 25 API",
+      "publication_date": null,
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/System.html",
+      "verified_on": "2026-10-27",
+      "verification": "opened_primary_content_with_web_tool",
+      "locators": [
+        "nanoTime()"
+      ],
+      "reviewer_note": "Elapsed time within one JVM; not a cross-host timestamp; subtraction avoids overflow.",
+      "planned_report_sections": [
+        "10",
+        "11"
+      ],
+      "old_final_number": 14,
+      "final_number": null
+    },
+    {
+      "id": "R15",
+      "new_source": true,
+      "authors": [
+        "Socket.IO"
+      ],
+      "title": "Connection state recovery",
+      "publisher": "Socket.IO Documentation 4.x",
+      "publication_date": null,
+      "url": "https://socket.io/docs/v4/connection-state-recovery/",
+      "verified_on": "2026-10-27",
+      "verification": "opened_primary_content_with_web_tool",
+      "locators": [
+        "Disclaimer",
+        "Usage",
+        "How it works under the hood"
+      ],
+      "reviewer_note": "Related implementation with bounded session retention and missed-packet replay; not a project dependency.",
+      "planned_report_sections": [
+        "5",
+        "13",
+        "14"
+      ],
+      "old_final_number": null,
+      "final_number": null
+    },
+    {
+      "id": "R16",
+      "new_source": true,
+      "authors": [
+        "Socket.IO"
+      ],
+      "title": "Delivery guarantees",
+      "publisher": "Socket.IO Documentation 4.x",
+      "publication_date": null,
+      "url": "https://socket.io/docs/v4/delivery-guarantees/",
+      "verified_on": "2026-10-27",
+      "verification": "opened_primary_content_with_web_tool",
+      "locators": [
+        "Message ordering",
+        "Message arrival",
+        "At most once",
+        "At least once"
+      ],
+      "reviewer_note": "Ordering differs from arrival guarantees; application retry/persistence adds guarantees. Last-update date is not original publication.",
+      "planned_report_sections": [
+        "5",
+        "9",
+        "13",
+        "15"
+      ],
+      "old_final_number": null,
+      "final_number": null
+    },
+    {
+      "id": "R17",
+      "new_source": true,
+      "authors": [
+        "OWASP Foundation"
+      ],
+      "title": "Session Management Cheat Sheet",
+      "publisher": "OWASP Cheat Sheet Series",
+      "publication_date": null,
+      "url": "https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html",
+      "verified_on": "2026-10-27",
+      "verification": "opened_primary_content_with_web_tool",
+      "locators": [
+        "Session ID Properties",
+        "Transport Layer Security",
+        "Manage Session ID as Any Other User Input",
+        "Session Expiration"
+      ],
+      "reviewer_note": "Validate and expire on server; protect secret in transit. Web-specific advice requires explicit adaptation to TCP game.",
+      "planned_report_sections": [
+        "13",
+        "15",
+        "16"
+      ],
+      "old_final_number": null,
+      "final_number": null
+    },
+    {
+      "id": "R18",
+      "new_source": true,
+      "authors": [
+        "Oracle"
+      ],
+      "title": "Interface ScheduledExecutorService",
+      "publisher": "Java SE 25 API",
+      "publication_date": null,
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ScheduledExecutorService.html",
+      "verified_on": "2026-10-27",
+      "verification": "opened_primary_content_with_web_tool",
+      "locators": [
+        "Interface description",
+        "schedule",
+        "scheduleAtFixedRate"
+      ],
+      "reviewer_note": "Relative scheduling, futures and cancellation; not an end-to-end recovery deadline guarantee.",
+      "planned_report_sections": [
+        "8",
+        "10"
+      ],
+      "old_final_number": null,
+      "final_number": null
+    },
+    {
+      "id": "R19",
+      "new_source": true,
+      "authors": [
+        "Oracle"
+      ],
+      "title": "Class ScheduledThreadPoolExecutor",
+      "publisher": "Java SE 25 API",
+      "publication_date": null,
+      "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ScheduledThreadPoolExecutor.html",
+      "verified_on": "2026-10-27",
+      "verification": "opened_primary_content_with_web_tool",
+      "locators": [
+        "Class description",
+        "setRemoveOnCancelPolicy"
+      ],
+      "reviewer_note": "Enabled delayed tasks have no exact real-time start guarantee; cancellation retention policy.",
+      "planned_report_sections": [
+        "10",
+        "13"
+      ],
+      "old_final_number": null,
+      "final_number": null
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+﻿Task 08 report verification - 2026-10-26
+PASS: chapter 10 headings 10.1-10.8 preserved; task 08 written subsections present.
+PASS: TV2/TV3 pending sections are explicitly marked; chapter not claimed complete.
+PASS: six draft tables and eight ownership notes.
+PASS: POM release=25, JUnit=5.11.4 test-only dependency, compiler=3.13.0, Surefire=3.5.2.
+PASS: 61 local links resolve; table columns consistent.
+PASS: 32 linked Java/POM/script files recorded with SHA256.
+PASS: no Unicode replacement characters.
+Manual review: actual vs legacy API routes, captured socket ownership, client dispatch/pull queue, metrics scope and script behavior.
+No production source/test/script edits; no build/test/package/GUI/LAN/benchmark runs.
+Chapter SHA256: 7D89C88465E0ADDD418BB78B47D66A624A471785EE69BC91A76A8C8693613072

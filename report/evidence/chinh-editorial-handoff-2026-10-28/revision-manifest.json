@@ -1,0 +1,30 @@
+{
+  "date": "2026-10-28",
+  "status": "PASS",
+  "deliverable": "report/revisions/CHINH_CHINH_SUA_BAO_CAO_2026-10-28.docx",
+  "docx_sha256": "71aca9d1f93fd4afadb4900a5aa34d52e966b78a1c86334a4a9f0d1c5796d61c",
+  "markdown": "report/revisions/CHINH_CHINH_SUA_BAO_CAO_2026-10-28.md",
+  "markdown_sha256": "6aee035077d1bf348abdfbf7fe78ad08563f0a48ef2ecaf49bb2eb8d1a666c5a",
+  "handoff_sections": 12,
+  "tables": 7,
+  "figures": 1,
+  "retained_citation_numbers": [
+    2,
+    3,
+    4,
+    5,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13
+  ],
+  "local_links_checked": 19,
+  "source_and_canonical_report_files_preserved": 244,
+  "tests_rerun": false,
+  "original_chapters_rewritten": false,
+  "full_report_reexported": false,
+  "portable_relative_paths": true,
+  "validation": "PASS: DOCX ZIP/XML, scope markers, selected XML counts, hashes, delta CSV, reference mapping and local links"
+}

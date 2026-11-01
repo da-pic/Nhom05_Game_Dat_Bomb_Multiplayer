@@ -1,0 +1,71 @@
+﻿[INFO] Scanning for projects...
+[INFO] 
+[INFO] -------------------< com.bombit:bomb-it-multiplayer >-------------------
+[INFO] Building bomb-it-multiplayer 0.1.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ bomb-it-multiplayer ---
+[INFO] skip non existing resourceDirectory D:\LTM\BombItMultiplayer-Structure\src\main\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ bomb-it-multiplayer ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ bomb-it-multiplayer ---
+[INFO] skip non existing resourceDirectory D:\LTM\BombItMultiplayer-Structure\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:testCompile (default-testCompile) @ bomb-it-multiplayer ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- surefire:3.5.2:test (default-test) @ bomb-it-multiplayer ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.bombit.integration.MovementDemoProcessTest
+[ERROR] Tests run: 1, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 4.269 s <<< FAILURE! -- in com.bombit.integration.MovementDemoProcessTest
+[ERROR] com.bombit.integration.MovementDemoProcessTest.launchersWorkInThreeSeparateJavaProcesses -- Time elapsed: 4.251 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: 
+Exception in thread "main" java.lang.IllegalStateException: No full snapshot before smoke deadline
+	at com.bombit.client.app.ClientApplication.headless(ClientApplication.java:80)
+	at com.bombit.client.app.ClientApplication.main(ClientApplication.java:19)
+ ==> expected: <0> but was: <1>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
+	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:150)
+	at org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:563)
+	at com.bombit.integration.MovementDemoProcessTest.launchersWorkInThreeSeparateJavaProcesses(MovementDemoProcessTest.java:30)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+
+[INFO] 
+[INFO] Results:
+[INFO] 
+[ERROR] Failures: 
+[ERROR]   MovementDemoProcessTest.launchersWorkInThreeSeparateJavaProcesses:30 Exception in thread "main" java.lang.IllegalStateException: No full snapshot before smoke deadline
+	at com.bombit.client.app.ClientApplication.headless(ClientApplication.java:80)
+	at com.bombit.client.app.ClientApplication.main(ClientApplication.java:19)
+ ==> expected: <0> but was: <1>
+[INFO] 
+[ERROR] Tests run: 1, Failures: 1, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  13.358 s
+[INFO] Finished at: 2026-10-26T15:49:25+07:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.5.2:test (default-test) on project bomb-it-multiplayer: There are test failures.
+[ERROR] 
+[ERROR] See D:\LTM\BombItMultiplayer-Structure\target\surefire-reports for the individual test results.
+[ERROR] See dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

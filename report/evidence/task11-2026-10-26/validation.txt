@@ -1,0 +1,9 @@
+﻿Sections 11.1-11.6 checked; 7 sequential tables; table columns checked.
+Local chapter/index/evidence links checked.
+Directly linked code/config/requirement/evidence sources hashed: 13
+experiment-plan.json parsed; status planned_not_executed.
+Network plan arithmetic: 45 scenario-runs, 125 peer CSV rows if fully executed.
+Planned durations within runner Config limits; D1 marked as planned harness.
+CPU model/RAM remain unverified; CIM queries returned Access denied. No hardware values invented.
+No build/test/benchmark/GUI/LAN/package commands executed; no results dataset generated.
+Errors: 0

@@ -1,0 +1,410 @@
+--- before/11_THIET_LAP_THUC_NGHIEM.md
++++ after/11_THIET_LAP_THUC_NGHIEM.md
+@@ -4,13 +4,15 @@
+ 
+ Theo [Instruction, mục 8.11 và mục 9](../../phancong/Instruction.md), thực nghiệm cần mô tả phần cứng,
+ OS, ngôn ngữ/thư viện, cấu hình mạng, dữ liệu và kịch bản; kết quả phải có số liệu thực tế.
+-Thiết kế này đánh giá ba câu hỏi: hệ thống thực hiện đúng contract gameplay hay không;
++Thiết kế này đánh giá bốn câu hỏi: hệ thống thực hiện đúng contract gameplay hay không;
+ State Delta Compression giảm bao nhiêu byte trên cùng chuỗi trạng thái;
+-latency, ACK và lượng message thay đổi thế nào với workload và số client.
+-Các bảng kịch bản, thời lượng và số lần lặp dưới đây là **kế hoạch thu thập**, chưa phải kết quả đã chạy.
+-Kết quả khảo sát và CSV lịch sử được giữ riêng, không đổi nhãn thành thực nghiệm mới.
+-Kết quả thực hiện nhóm codec D0/D1, T1 và ba lượt reliability được báo cáo tại
+-[mục 12.4–12.6](12_KET_QUA.md); các nhóm nhiều JVM/LAN có điều kiện không được tính là đã đo.
++latency, ACK và lượng message thay đổi thế nào với workload và số client;
++Session Recovery có giữ đúng phiên/trận, thiết lập lại baseline và xử lý lỗi/lifecycle theo contract không.
++Các mục 11.1–11.6 giữ thiết kế và phạm vi benchmark ở baseline cũ; trạng thái đã chạy được ghi riêng theo nhóm.
++Mục 11.7 bổ sung thiết lập recovery của phiên bản tích hợp mới. Không đổi nhãn CSV cũ thành số đo recovery.
++Kết quả D0/D1, T1 và ba lượt reliability nằm tại [mục 12.4–12.6](12_KET_QUA.md);
++kết quả recovery và các attempt ngày 27/10/2026 nằm tại mục 12.8.
++Benchmark nhiều JVM/LAN có điều kiện vẫn không được tính là đã đo chỉ vì có process smoke hoặc test TCP cục bộ.
+ 
+ ## 11.1. Revision, phần cứng, OS/JDK và cấu hình
+ 
+@@ -20,7 +22,7 @@
+ 
+ | Thuộc tính | Thông tin đã xác minh | Phạm vi sử dụng |
+ |---|---|---|
+-| Revision khảo sát | `e333050997c5dbf78ec4b9b42a9bc9a73ce6a0d5` | Mốc source, không thay hash artifact và trạng thái working tree |
++| Revision baseline | `e333050997c5dbf78ec4b9b42a9bc9a73ce6a0d5` | Nguồn của các phép đo D0/D1/network/reliability cũ; recovery dùng mốc riêng tại 11.7 |
+ | Hệ điều hành | Windows 11, build 10.0.22631, AMD64 | Máy khảo sát nhiệm vụ 1 |
+ | Bộ xử lý logic | 16 theo manifest khảo sát | Không suy thành 16 lõi vật lý hoặc 16 người chơi đạt tải |
+ | Tên CPU, lõi vật lý, RAM | Chưa có dữ liệu được xác minh trong hồ sơ | Phải bổ sung cho từng máy trước khi công bố kết quả hiệu năng |
+@@ -61,9 +63,10 @@
+ | T2 | Server JVM riêng, runner JVM riêng trên cùng máy | Kiểm tra ảnh hưởng phân process và process smoke | Vẫn dùng tài nguyên máy chung, vẫn là loopback |
+ | T3 | Server và client/runner ở nhiều máy qua LAN | Nhóm bổ sung khi có máy và biên bản thực tế | Phải ghi loại mạng, IP/port, Wi-Fi/Ethernet và bố trí máy |
+ 
+-T1 dùng ephemeral port khi runner tự tạo server. T2/T3 dùng port cố định được ghi trong manifest;
++T1 dùng ephemeral port khi runner tự tạo server. Benchmark T2/T3 thủ công dùng port được ghi trong manifest;
+ ví dụ lệnh bên dưới dùng 8888. Runner dùng TCP thật và luồng lobby/match hiện tại,
+ không thay world qua một đường debug để tạo số liệu mạng.
++Process smoke và fixture recovery có thể dùng port 0 rồi đọc cổng được cấp; không gán port 8888 cho các lượt đó.
+ Không bật giả lập delay/loss trong nhóm chính. Nếu làm nhóm bổ sung có impairment,
+ ghi công cụ, cấu hình và tách label; runner chưa có tùy chọn tự tạo packet loss/delay.
+ 
+@@ -130,19 +133,21 @@
+ | F08 | Frame sai/cắt dở, timeout, client chậm và disconnect | Bị từ chối/cleanup theo contract; không treo vô hạn hoặc làm hỏng phòng khác | TV1/TV4; transport/writer/lifecycle test |
+ | F09 | Start/stop lặp và kết thúc trận | Runtime/reader/writer/worker được giải phóng theo timeout test | TV2/TV4; thread/cleanup assertion |
+ | F10 | GUI hai/bốn người, mất focus, bom/item/HUD và trở lại phòng | Input/render theo snapshot, kết quả khớp server | Cả nhóm; biên bản người kiểm tra, ảnh/video và log cùng run |
++| F11 | Phục hồi phiên active match trong grace và full→delta | Đúng token/context, giữ runtime/controller, input chỉ mở sau full, cleanup/từ chối đúng policy | TV1/TV2/TV3/TV4; nhóm recovery riêng ở 11.7 |
+ 
+ Các mã F là nhóm kịch bản, không thay số lượng JUnit test. Tên test/API cụ thể đã được truy vết ở
+ [hồ sơ khảo sát](../01_HO_SO_KHAO_SAT.md) và chương 10.
+ Không lấy việc lớp test tồn tại làm kết quả pass.
+ Bỏ update ở fixture F04 là fault injection tại tầng replica, không phải bằng chứng TCP tự làm mất message.
+-Reconnect resume trận không nằm trong tiêu chí nghiệm thu vì đường sản phẩm chưa bật tính năng đó;
+-disconnect/leave có thể kết thúc lượt ABORTED như contract hiện tại.
++Baseline cũ không có tiêu chí recovery end-to-end; bản tích hợp bổ sung F11 theo FR15/NFR07 ở mục 6.
++Soft disconnect còn trong grace giữ match; leave/hard drop/expiry hoặc lỗi queue lifecycle vẫn có thể ABORT lượt.
+ 
+ Kế hoạch chạy full suite một lần và từng check/main riêng một lần để ghi nhận tổng quan.
+ Các nhóm concurrency/lifecycle/fault có tính thời gian được chạy thêm ba lần độc lập với log riêng;
+ báo cả ba kết quả, không chỉ chọn lần đạt. Nếu full suite dừng khiến các bước check/main phía sau không chạy,
+ chạy riêng để thu bằng chứng và giữ trạng thái full suite thất bại.
+-Lỗi process smoke đã ghi nhận ở nhiệm vụ 1 cần hiện diện trong Results nếu chưa có lượt xác minh mới giải quyết nó.
++Lỗi process smoke lịch sử phải được giữ cùng các lượt xác minh mới; mốc recovery có cả attempt sandbox lỗi
++và lượt ngoài sandbox đạt, không quy mọi failure này thành lỗi handshake recovery hoặc tự nhận đã sửa nguyên nhân.
+ Không tự tăng timeout, sửa test hoặc đổi source trong một đợt đo để làm kết quả đẹp hơn.
+ 
+ ## 11.5. Đối chứng full mỗi tick so với delta + full định kỳ
+@@ -224,22 +229,24 @@
+ 
+ ### 11.6.2. Số lần chạy và quy tắc tổng hợp
+ 
+-**Bảng 11.7. Kế hoạch số lần chạy, chưa phải số lần đã hoàn thành.**
+-
+-| Nhóm | Cấu hình | Lặp độc lập | Cửa sổ/chú ý |
++**Bảng 11.7. Thiết kế số lần chạy và trạng thái theo từng mốc bằng chứng.**
++
++| Nhóm | Cấu hình | Thiết kế số lặp | Cửa sổ/chú ý và trạng thái |
+ |---|---|---:|---|
+-| TCP T1 | 9 ô: transport 1/2/4; idle/movement/bombs 2/4 | 5/ô | Warm-up 2 s; đo 10 s; process runner mới cho mỗi vòng suite |
+-| TCP T2 | Cùng 9 ô, khi đủ thời gian triển khai server process riêng | 5/ô | 2 s + 10 s; tách label với T1 |
+-| LAN T3 | Ưu tiên movement/bombs 2/4; thêm transport nếu thực hiện | 5/ô thực sự đo | Ghi số máy và runner/peer ở mỗi máy |
+-| D0 | Fixture 200 tick hiện có | 5 | Kiểm tra byte lặp lại; không coi là năm thử nghiệm latency |
+-| D1 | 2/4 player × idle/movement/bomb-block-item | 5/trace sau khi có harness | 600 tick; trace xác định, full mỗi 100 tick |
+-| F01–F09 | Suite/check tổng và nhóm concurrency/fault/lifecycle | 1 tổng; 3 lần nhóm nhạy thời gian | Ghi từng attempt, lỗi và exit code |
+-| F10 | GUI hai người và bốn người nếu thực hiện | 3 lượt/kịch bản | Biên bản người kiểm tra, không chỉ ảnh màn hình |
++| TCP T1 | 9 ô: transport 1/2/4; idle/movement/bombs 2/4 | 5/ô | Warm-up 2 s; đo 10 s; đã có 45 scenario-run ở baseline cũ |
++| TCP T2 | Cùng 9 ô với server process riêng | 5/ô nếu đo | Chưa thực hiện benchmark này; process smoke không thay thế |
++| LAN T3 | Ưu tiên movement/bombs 2/4 | 5/ô thực sự đo | Chưa thực hiện; cần bố trí máy/mạng và log tương ứng |
++| D0 | Fixture 200 tick | 5 | Đã có năm lượt xác định ở mốc delta cũ; không phải năm mẫu latency |
++| D1 | 2/4 player × idle/movement/bomb-block-item | 5/trace | Đã có 30 lượt ở mốc delta cũ, 600 tick/trace, full mỗi 100 tick |
++| F01–F09 | Suite/check và concurrency/fault/lifecycle baseline | 1 tổng; 3 lần nhóm nhạy thời gian | Đã có suite 133 và 84 execution reliability theo revision cũ |
++| F10 | GUI hai/bốn người | 3 lượt/kịch bản nếu nghiệm thu | Chưa có biên bản người thao tác; không nhận là đã chạy |
++| F11 / recovery | Suite và nhóm recovery trên working tree đã sửa | Một lượt full cuối; giữ tất cả attempt chẩn đoán | Đã chạy tại nhiệm vụ recovery 3; không thiết kế thành năm benchmark latency, xem 11.7/12.8 |
+ 
+ T1 chính có 45 scenario-run; vì CSV có một hàng cho mỗi client, năm vòng suite đầy đủ dự kiến 125 hàng,
+ không phải 125 lần chạy độc lập. Một suite gồm 9 scenario tuần tự, mỗi scenario local tạo server/client mới;
+ chúng không phải 9 scenario chạy song song. Thứ tự suite cố định là một hạn chế cần ghi nhận.
+-Các nhóm T2/T3/D1 là bổ sung có điều kiện; không tính số dự kiến vào Results nếu chưa chạy.
++T2/T3 và F10 là nhóm còn có điều kiện; D1 đã được đo trong đợt delta ở baseline riêng.
++Không tính số dự kiến vào Results và không chuyển số lặp của nhóm cũ sang số lặp recovery.
+ Năm lần lặp là lựa chọn thiết kế của nhóm để quan sát độ ổn định, không phải con số bắt buộc do giảng viên đưa ra.
+ 
+ Cho mỗi ô, báo số attempt, số thành công/thất bại và cleanup trước khi tổng hợp latency/byte.
+@@ -339,5 +346,108 @@
+ 
+ Hồ sơ nhiệm vụ 1 ghi nhận 133 JUnit test với 132 pass, 1 process smoke failure,
+ các check/main được chạy riêng; CSV ngày 22/10 thuộc revision lịch sử khác.
+-Những dữ liệu đó có thể được trình bày với đúng ngày/revision ở Results, nhưng chưa đáp ứng số lần lặp mới trong bảng 11.7.
++Đó là mốc khảo sát ban đầu, không thay cho các lượt đo/thử đã lưu riêng theo nhóm trong Bảng 11.7.
+ Chương 12 sẽ tách dữ liệu đã thu, lỗi còn tồn tại và nhóm chưa thực hiện khỏi thiết kế thực nghiệm này.
++
++## 11.7. Thiết lập kiểm thử Session Recovery trên phiên bản tích hợp
++
++### 11.7.1. Phiên bản, môi trường và loại bằng chứng
++
++**Bảng 11.8. Môi trường của lượt kiểm thử recovery mới.**
++
++| Thuộc tính | Giá trị đã lưu | Cách sử dụng |
++|---|---|---|
++| HEAD / nhánh | `492c03127f15a25f4fc685fd004eafe424d53f9f`, integration/session-recovery | Phải đọc cùng working tree và inventory, không gán 171 ca cho riêng HEAD |
++| Source thực tế | 219 file Java main/test trùng inventory lượt test, có snapshot và tracked diff | Có cả file mới chưa commit; số file không phải số test |
++| Hệ điều hành | Windows 11, build 10.0.22631, AMD64 | Máy cục bộ, không dùng thông số này để gán ngược cho mọi benchmark cũ |
++| CPU đọc được | 16 logical CPU; processor identifier AMD64 Family 25 Model 116 Stepping 1, AuthenticAMD | Không suy tên thương mại/lõi vật lý/RAM; CIM bị từ chối |
++| Runtime/build | Oracle JDK 25.0.1, Maven 3.9.12 offline; JUnit 5.11.4, Surefire 3.5.2 | Dùng cache dependency sẵn có; không thêm framework |
++| Network | TCP loopback 127.0.0.1, port động | Socket/codec/reader/writer thật; không phải rút cáp hoặc LAN nhiều máy |
++| Điều kiện thực thi cuối | Ngoài sandbox, đã được cho phép | Các attempt trong sandbox được giữ riêng, không xoá failure |
++| Profile recovery | LobbyGameServer bật seamless recovery; auto client bật auto reconnect trong fixture tương ứng | Không gán recovery cho demo M1 hoặc mọi constructor mặc định |
++
++Nguồn: [run-manifest](../evidence/recovery-report-task03-20261027-200413/run-manifest.json),
++[source inventory](../evidence/recovery-report-task03-20261027-200413/source-inventory.json)
++và [snapshot source](../evidence/recovery-report-task03-20261027-200413/source/).
++Đây là thiết lập lượt mới ngày 27/10/2026, khác các run ngày 26/10/2026 ở phần trước.
++
++### 11.7.2. Fixture và cách gây gián đoạn
++
++RecoveryGameplayIntegrationTest tạo server thật với hai peer ClientNetwork/ClientWorldState,
++map 17×15 tile 32, tường biên và một block tại (2,1). BombRules dùng fuse 1000 ms, range 1, quota 5;
++MatchRules dùng trần quota/range/speed 5/8/144, speed increment 8, max lives 99 và initial lives 3 hoặc 1 theo case.
++Thời lượng trận fixture là 30 s hoặc 5 s; policy drop trả SPEED_UP cố định để tái lập.
++Đây không phải map/luật mặc định 180 s và fuse 3000 ms của sản phẩm.
++
++Peer chủ động đóng transport để tạo unexpected disconnect rồi mở socket mới gửi RECONNECT;
++không gửi LEAVE_ROOM/DISCONNECT như một yêu cầu rời trận có chủ ý.
++Fixture chờ server quan sát DISCONNECTED trước bước kiểm chứng offline; PING 500 ms giữ peer còn nối sống
++trong case chờ grace thực, khác nhịp heartbeat 2000 ms của client ứng dụng mặc định.
++Ca auto-client riêng dùng DemoClientConnection và controller thực để kiểm tra ba lần tự phục hồi,
++không thay mọi peer raw của fixture bằng một thao tác GUI thủ công.
++
++Clock monotonic của gameplay được điều khiển bằng AtomicLong để gây nổ/timeout khi player đang offline.
++Clock session trong case TCP expiry vẫn chạy thật với grace mặc định 15 s; chỉ unit test biên manager
++tiêm clock/scheduler để kiểm tra 15 s−1 ns, đúng 15 s và 15 s+1 ns.
++Không chờ thực 30 s để gọi đây là một trận đầy đủ 30 s wall-clock, và không nói mọi test timeout đều dùng 15 s thật.
++
++### 11.7.3. Kịch bản, metric và tiêu chí chấp nhận
++
++**Bảng 11.9. Ma trận recovery được dùng trong lượt kiểm thử mới.**
++
++| Nhóm | Tác động thử | Tiêu chí chấp nhận | Yêu cầu liên quan |
++|---|---|---|---|
++| R01–R03 | Nhiều MOVE, 4 bom trước ngắt, 3 reconnect; peer khác vẫn gửi input | Giữ identity/runtime, player offline dừng movement; full bằng peer cùng tick rồi delta; thêm được bom 5, request trùng không lặp | FR05/06/10/15 |
++| R04–R06 | Bom nổ và block/item/respawn/timer đổi khi offline; resume rồi pickup/thêm full | Full phản ánh world hiện tại; damage/pickup không áp lặp | FR07–FR11/15 |
++| R07–R08 | Token sai/ID lạ/thiếu trường; cả hai player offline rồi về | Request sai không phá owner hợp lệ; cùng runtime, không ghost session/timer | FR14/15, NFR07 |
++| R09–R10 | TIMEOUT hoặc LAST_ALIVE trong grace | Peer nhận kết quả, runtime dừng; reconnect không tạo lại trận/player | FR12/13/15 |
++| R11–R12 | Hết grace 15 s thật; ba biên clock điều khiển | Từ chối đúng deadline; ABORT/ghế/host/WAITING/cleanup đúng policy | FR13–FR15, NFR07 |
++| R13–R14 | App client auto recovery 3 vòng và teardown từng fixture | Cùng controller/counter/listener; dừng thread/worker/transport/timer thuộc fixture | FR11/15, NFR07 |
++| Client gate/fault | Thiếu ACK/full, ngắt nhiều pha, callback UI cũ, giữ phím, cancel connect | Không mở input sớm/ghi đè world mới, budget tổng không reset; close được | FR10/11/15, NFR03/07 |
++| Server race/fault | Timer/socket/heartbeat cũ, claim chồng, shutdown/writer fault, queue lifecycle đầy | Đúng ownership/ticket/rollback; lỗi thật được ghi; không giả freeze/unfreeze thành công | FR14/15, NFR06/07 |
++
++Các mã R là nhóm kịch bản theo [thiết kế test](../session-recovery/03_THIET_KE_KIEM_THU.md), không phải số execution độc lập.
++R01/R02/R03 cùng một test; R04/R05/R06 cùng một test; TIMEOUT/LAST_ALIVE là hai execution parameterized.
++Equality full so cùng tick gồm dimensions/tileSize/match state, map, toàn bộ PlayerData/ACK,
++entity, MatchFrame/HUD và BombFrame theo biểu diễn chuẩn hoá trong test. Không chỉ so vị trí hoặc số entity.
++
++Metric của đợt này là số execution pass/fail/error/skipped và các assertion nghiệp vụ/cleanup.
++`observed_wait_ms` của case expiry bắt đầu sau khi test đã quan sát DISCONNECTED và kết thúc khi nhận GAME_OVER;
++không bằng mốc tạo ticket server và không phải recovery latency. Time của JUnit/Maven gồm setup/chờ/teardown,
++không dùng làm P50/P95 thời gian phục hồi, throughput hoặc chi phí byte của full khi reconnect.
++
++### 11.7.4. Lượt chạy, tái lập và bảo toàn dữ liệu
++
++Đợt thực hiện có hai full suite trong sandbox đều có một failure process smoke M1,
++một smoke chạy riêng trong sandbox cũng lỗi; sau đó smoke riêng và full suite ngoài sandbox đạt.
++Đã biên dịch production lại từ cùng source giữa các attempt để loại trừ class cũ, không đổi source/assertion/timeout.
++Không thiết kế đây thành một loạt mẫu thống kê recovery: các attempt khác phạm vi và môi trường,
++các vòng reconnect lồng trong testcase cũng không phải các run độc lập.
++
++Lượt full cuối có log/XML của tất cả class; TV2 checks và NetworkTest main chạy riêng và lưu exit code riêng.
++Collector đối chiếu tổng XML với log full và tên suite, tách 11 marker stdout, lưu 171 dòng execution CSV,
++source snapshot/hash, manifest và checksum ngoài target. Log raw PowerShell có thể là UTF-16LE;
++CSV tổng hợp là UTF-8 có BOM. Không ghi đè các log thất bại trước khi chạy lại.
++
++Lệnh tái lập ở root, cấu hình đường Maven/JDK theo máy và lưu log/exit code vào thư mục run mới:
++
++```powershell
++$env:JAVA_HOME='D:/JavaJDK' # Giá trị của máy đã đo; thay theo máy tái lập.
++$recoveryMaven = if ($env:BOMBIT_MVN) { $env:BOMBIT_MVN } else { 'mvn.cmd' }
++& $recoveryMaven '-o' test
++# Ghi ngay $LASTEXITCODE; offline chỉ dùng được khi dependency đã có trong local repository.
++cmd /c scripts\check-tv2.cmd
++& (Join-Path $env:JAVA_HOME 'bin/java.exe') -cp 'target/classes;target/test-classes' `
++    com.bombit.integration.NetworkTest
++```
++
++Máy đã đo truyền thêm `-Dmaven.repo.local=C:/Users/Chinh/.m2/repository` và dùng Maven binary có trong wrapper cache.
++Muốn chạy riêng nhóm phục hồi, Surefire có thể chọn SessionRecoveryTest, RecoveryWriterTest,
++SessionRecoveryClientTest, RecoveryInputTest, ConnectCancellationTest, RecoveryGameplayIntegrationTest
++và các lớp tích hợp chung; kết quả chạy riêng phải mang run ID riêng, không ghép XML vào full suite cũ.
++Thông tin môi trường/attempt và lệnh cụ thể được lưu tại [evidence lượt mới](../evidence/recovery-report-task03-20261027-200413/README.md).
++
++Không có đối chứng recovery=true/false về latency/byte trong đợt này. Những fixture policy khác nhau kiểm tra
++luật tương ứng, không tự tạo một A/B benchmark chứng minh recovery cải thiện X%.
++Chưa thực hiện GUI thủ công, LAN/Wi-Fi vật lý, network impairment có kiểm soát, tải tối đa hoặc soak recovery.
++Các giới hạn này phải đi cùng kết quả ở mục 12.8.
+--- before/12_KET_QUA.md
++++ after/12_KET_QUA.md
+@@ -2,6 +2,11 @@
+ 
+ > **Phân công tổng hợp: TV4; TV1 xác nhận phòng/kết nối, TV2 xác nhận movement/runtime/đồng bộ, TV3 xác nhận gameplay. Mỗi thành viên chịu trách nhiệm giải thích assertion và log của phần mình.**
+ >
++Chương phân biệt **baseline cũ ở mục 12.1–12.6** với **Session Recovery ở mục 12.8**.
++Baseline dùng revision `e333050`; recovery dùng HEAD `492c031` cộng working tree đã sửa và inventory riêng.
++Mục 12.7 tổng hợp phần còn thiếu theo cả hai mốc. Không thay các tổng 133 test, 35 lượt delta,
++45 scenario-run mạng hoặc 84 execution reliability cũ thành kết quả của phiên bản recovery.
++
+ Ngày 26/10/2026, nhóm chạy lại bộ test từ source tại revision
+ `e333050997c5dbf78ec4b9b42a9bc9a73ce6a0d5`, không thay production code, test, luật game hoặc timeout.
+ Maven dùng JDK 25 tại máy khảo sát và dependency cache offline.
+@@ -30,6 +35,9 @@
+ Một dòng có thể gom nhiều assertion; số test của một lớp không phải số tính năng độc lập.
+ Các lớp tích hợp có thể xuất hiện ở nhiều bảng vì kiểm tra nhiều phần của cùng luồng;
+ không cộng lại số của các bảng để tính tổng suite.
++“Lượt mới” trong mục 12.1–12.6 là lượt của đợt baseline 26/10/2026, không phải lượt recovery 27/10/2026.
++Link source trong các mục lịch sử giúp tìm module; số execution/assertion của mốc cũ phải đối chiếu XML/hash
++được lưu theo revision, vì các lớp như LobbyLifecycleTest/BombClientIntegrationTest đã được bổ sung về sau.
+ 
+ > **Phân công: TV1; TV4 phối hợp contract và đối chiếu log TCP.**
+ 
+@@ -56,7 +64,8 @@
+ `independentRoomsChatMovementResyncAndCleanup` kiểm tra nhiều chức năng cùng ranh giới phòng;
+ `realClientControllersReturnToRoomAndReplayOnSameTcpConnections` dùng controller ứng dụng để kiểm tra vòng đời.
+ Những kết quả này hỗ trợ kết luận lobby/room đã tích hợp qua TCP trong các fixture đã chạy.
+-Chúng chưa chứng minh bốn người ở bốn máy thao tác giao diện thành công, hoặc reconnect khôi phục trận đang chơi.
++Riêng các fixture baseline này chưa chứng minh bốn người ở bốn máy thao tác GUI hoặc reconnect khôi phục trận.
++Bằng chứng recovery trên phiên bản tích hợp được trình bày riêng ở mục 12.8; nghiệm thu GUI/LAN nhiều máy vẫn chưa có.
+ 
+ > **Phân công: TV2; TV4 phối hợp packet và các kiểm tra tích hợp.**
+ 
+@@ -221,7 +230,9 @@
+ Smoke ba process đạt cả ba lần lặp mới, ngoài một lần đạt ở nhiệm vụ 12.
+ Tuy nhiên lỗi `No full snapshot before smoke deadline` của nhiệm vụ 1 vẫn chưa có nguyên nhân được xác minh;
+ không có bản sửa source/assertion/timeout để gán kết quả PASS mới cho một fix cụ thể.
+-Kết luận giới hạn là lỗi không tái hiện trong bốn lần chạy mới đã lưu, không phải xác suất lỗi bằng không.
++Kết luận tại đợt baseline 26/10/2026 là lỗi không tái hiện trong bốn lần đạt đã lưu, không phải xác suất lỗi bằng không.
++Ở đợt recovery sau đó, lỗi smoke lại xuất hiện trong sandbox và đạt ngoài sandbox với cùng source;
++các attempt mới được trình bày ở 12.8, không sửa ngược kết quả baseline này.
+ 
+ Lần đầu gọi script reliability bị policy chặn trước khi script chạy.
+ Lần gọi PowerShell tiếp theo truyền sai JAVA_HOME nên ba invocation Maven đều dừng ở bước môi trường,
+@@ -507,7 +518,7 @@
+ 
+ | Nội dung | Hiện trạng | Log/ảnh/biên bản cần thêm | Phụ trách |
+ |---|---|---|---|
+-| Lỗi smoke lịch sử | Đạt một lượt nhiệm vụ 12 và ba lượt nhiệm vụ 14; lỗi cũ chưa có nguyên nhân được xác minh | Giữ log fail/pass; cần điều tra nguyên nhân nếu muốn kết luận đã xử lý flakiness | TV2/TV4 |
++| Lỗi smoke lịch sử/môi trường | Baseline có lượt đạt; đợt recovery smoke lỗi trong sandbox, đạt ngoài sandbox cùng source | Đã giữ cả attempt lỗi/đạt ở 12.8; chưa kết luận chính xác policy môi trường gây khác biệt | TV2/TV4 |
+ | GUI phòng hai/bốn người | Test controller/TCP đạt; chưa có biên bản người thao tác | Ảnh roster/ready/start/chat; ghi run/match, tên máy, người kiểm tra và kết quả từng bước | TV1/TV4 |
+ | Movement và mất focus | Logic/state test đạt; chưa nghiệm thu điều khiển GUI | Video/phân đoạn log nhấn/thả/mất focus, chạm tường/block/biên và STOP; không suy từ ảnh tĩnh | TV2 |
+ | Bom, item, shield/respawn và HUD | Fixture/integration đạt; chưa có ảnh trận mạng nghiệm thu | Ảnh trước/sau placement, block/item, lives/shield/respawn và HUD cùng match; log server/client tương ứng | TV3/TV2 |
+@@ -515,10 +526,139 @@
+ | LAN nhiều máy | Chưa thực hiện trong lượt này | Topology/hardware/IP/port, lệnh, CSV từng process, log và ảnh hai đầu | Cả nhóm |
+ | Lặp timing/concurrency/fault | Đã hoàn thành ba lượt, 84/84 lần thực thi test đạt | Đã lưu XML/log từng attempt; bổ sung soak hoặc tải khác nếu mở rộng kết luận | TV4 và owner module |
+ | Hiệu năng full/delta và mạng | Đã đo codec D0/D1 và 45 scenario-run TCP loopback; chưa đo LAN hoặc tải dày đặc | Đã lưu CSV/sample/pending/cleanup; cần LAN/trace thực tế nếu mở rộng | TV2/TV4 |
++| Recovery correctness | Đã kiểm tra token/expiry/full→delta, reconnect lặp, input/GUI state, gameplay offline và cleanup trong fixture cục bộ | Evidence 171/171 ngoài sandbox ở 12.8; bổ sung nghiệm thu thao tác GUI/mạng thật nếu mở rộng kết luận | TV1/TV2/TV3/TV4 |
++| Recovery latency/overhead | Chưa có benchmark latency P50/P95/P99 hoặc tổng byte full khi reconnect | Cần workload/metric/mốc đo riêng; 15001 ms chờ expiry và thời gian suite không thay được | TV1/TV2/TV4 |
+ 
+ Không có failure ở suite nhiệm vụ 12 hoặc các lượt test nhiệm vụ 14; điều đó không xóa lịch sử fail hoặc các nhóm chưa nghiệm thu.
++Mốc recovery cũng có cả full attempt lỗi trong sandbox và full cuối đạt; không bỏ failure khỏi hồ sơ.
+ Lỗi Maven repository, execution policy và JAVA_HOME ở bước chuẩn bị được lưu như lỗi môi trường/cách gọi lệnh,
+ không trộn vào thống kê test case.
+ Không sửa test/source để đổi kết quả và không tạo ảnh giả cho kịch bản chưa chạy.
+ Các ảnh/video sẽ gắn caption gồm thời điểm, topology, run/match ID và điều kiện quan sát;
+ ảnh thiếu log đối chiếu chỉ minh họa giao diện, chưa chứng minh đồng bộ hay cleanup.
++
++> **Phân công: TV1 giải thích session/token/expiry và ownership; TV2 runtime/snapshot/input; TV3 gameplay offline; TV4 tổng hợp log, môi trường và giới hạn kết luận.**
++
++## 12.8. Kết quả Session Recovery trên phiên bản tích hợp
++
++### 12.8.1. Phiên bản và các attempt thực tế
++
++Đợt ngày **27/10/2026** chạy trên nhánh integration/session-recovery, HEAD
++`492c03127f15a25f4fc685fd004eafe424d53f9f` cộng các sửa server/client trong working tree.
++219 source Java được snapshot/hash; không gọi riêng HEAD là phiên bản đã có toàn bộ bản sửa và 171 test đạt.
++Thiết lập đầy đủ tại 11.7; đây là kiểm thử tính đúng qua fixture/TCP loopback, không đo recovery latency.
++
++**Bảng 12.14. Các attempt của đợt recovery và kết quả hồi quy.**
++
++| Lượt | Điều kiện/phạm vi | Kết quả đã lưu | Diễn giải |
++|---|---|---|---|
++| A1 | Full suite trong sandbox | 171 execution, 170 pass, 1 failure, 0 error/skipped | MovementDemoProcessTest: No full snapshot before smoke deadline |
++| A2 | Chạy riêng smoke ba process trong sandbox | 1 execution, 1 failure | Cùng hiện tượng, không phải một full suite khác |
++| A3 | Full suite trong sandbox sau javac production tường minh | 171 execution, 170 pass, 1 failure, 0 error/skipped | Cùng smoke vẫn lỗi, javac exit 0; không thay source/timeout |
++| A4 | Smoke riêng ngoài sandbox | 1/1 pass | Cùng source/assertion/timeout; không ghép XML này vào tổng A5 |
++| A5 | Full suite ngoài sandbox | **171/171 pass, 44 class, 0 failure/error/skipped** | BUILD SUCCESS; kết thúc 19:58:23+07:00, Maven total 01:10 min |
++| Kiểm tra riêng | Check TV2 và NetworkTest main ngoài sandbox | Cả hai exit 0/PASS | Không cộng vào số JUnit hoặc số case recovery |
++
++Nguồn: [A1](../evidence/recovery-report-task03-attempt01-2026-10-27/),
++[A2](../evidence/recovery-report-task03-smoke-recheck-2026-10-27/),
++[A3](../evidence/recovery-report-task03-attempt02-2026-10-27/),
++[A4](../evidence/recovery-report-task03-smoke-unrestricted-2026-10-27/)
++và [A5](../evidence/recovery-report-task03-20261027-200413/README.md).
++Tổng suite A5 đối chiếu từ [junit-summary.json](../evidence/recovery-report-task03-20261027-200413/junit-summary.json)
++và [log Maven full](../evidence/recovery-report-task03-20261027-200413/report-recovery-task03-full.log).
++
++Failure A1/A2/A3 là smoke **demo M1 ba tiến trình Java**, không phải testcase handshake recovery của lobby.
++Hai full attempt lỗi vẫn có các nhóm recovery đạt. A4/A5 đạt ngoài sandbox cho thấy sự phụ thuộc điều kiện chạy,
++nhưng chưa chỉ ra chính xác thành phần sandbox gây khác biệt; không nhận đã sửa một lỗi production hoặc firewall cụ thể.
++Không cộng các attempt khác phạm vi thành một tỷ lệ thành công recovery và không coi 01:10 min là latency phục hồi.
++
++### 12.8.2. Các lớp kiểm thử recovery và phạm vi đếm
++
++**Bảng 12.15. Execution của các lớp liên quan trong lượt A5.**
++
++| Test class | Pass/tổng | Assertion chính |
++|---|---:|---|
++| SessionRecoveryClientTest | 9/9 | ACK/full gate, timeout từng pha/tổng, retry, identity, EDT, UI packet cũ, close |
++| RecoveryInputTest | 2/2 | Clear input khi paused và đổi generation giữa hai mẫu |
++| ConnectCancellationTest | 1/1 | Đóng candidate socket khi connect đang chờ |
++| RecoveryGameplayIntegrationTest | 8/8 | Full→delta, nhiều input/bom, token sai, gameplay offline, hai player offline, expiry/GAME_OVER, auto client |
++| RecoveryWriterTest | 1/1 | Thay writer và bỏ late release của socket cũ |
++| SessionRecoveryTest | 10/10 | Ba biên grace, timer/heartbeat/socket cũ, claim chồng, writer fault và shutdown |
++| BombClientIntegrationTest | 3/3 | Lớp tích hợp chung có thêm recovery giữ controller/counter |
++| LobbyLifecycleTest | 13/13 | Lớp lifecycle chung gồm recovery, queue đầy và readiness barrier |
++
++Sáu lớp đầu có 31 execution; hai lớp dùng chung có 16 execution, không gọi mọi ca của chúng là recovery riêng.
++Tổng tám lớp là 47 trong 171, không cộng thêm vào 171. Mỗi hàng có 0 failure/error/skipped.
++Marker stdout 11 dòng cũng không thay tổng testcase JUnit.
++
++Nguồn chi tiết: [class-results.csv](../evidence/recovery-report-task03-20261027-200413/class-results.csv),
++[test-executions.csv](../evidence/recovery-report-task03-20261027-200413/test-executions.csv)
++và [44 XML Surefire](../evidence/recovery-report-task03-20261027-200413/surefire/).
++Source assertion tương ứng nằm trong snapshot cùng evidence, ví dụ
++[RecoveryGameplayIntegrationTest](../evidence/recovery-report-task03-20261027-200413/source/src/test/java/com/bombit/integration/RecoveryGameplayIntegrationTest.java).
++Lớp hiện tại đã có thêm ca so với baseline 133; không sửa các bảng 12.2–12.7 thành số của A5.
++
++### 12.8.3. Kết quả nghiệp vụ, full→delta và gameplay offline
++
++**Bảng 12.16. Kết quả kiểm chứng theo nhóm kịch bản recovery.**
++
++| Mã | Kết quả quan sát/assertion | Kết luận trong phạm vi fixture |
++|---|---|---|
++| R01 | 4 bom trước ngắt; 3 recovery; 3 full bằng peer cùng tick và 3 lần ghép delta sau full | Identity/match/runtime và baseline được giữ/phục hồi đúng trong ba vòng |
++| R02 | Request bom cũ không tạo thêm command; request mới đưa tổng bom lên 5, sequence tiếp tục | Không reset counter/đặt lặp theo ID cũ; không suy exactly-once cho mọi lệnh |
++| R03 | Player offline còn trong world, moving=false và vị trí ổn định qua snapshot quan sát | Freeze dừng movement; peer online vẫn nhận update |
++| R04 | Lives 3→2, respawns=1; block (2,1) bị phá, item sinh; timer 30→29 s | Bom/damage/respawn/item/timer tiếp tục khi offline |
++| R05 | Full cùng tick bằng peer về dimensions, tileSize, match state, tiles, PlayerData/ACK, entities, MatchFrame và BombFrame | Full khôi phục ảnh world hiện tại, không chỉ vị trí nhân vật |
++| R06 | SPEED_UP nhặt một lần, speed 80→88; full tiếp theo không cộng lại; lives vẫn 2 | State authoritative không bị lặp effect vì resync |
++| R07 | Ba request sai bị từ chối; valid_owner_resumed=true | Token sai, identity lạ, thiếu field không phá phiên chủ hợp lệ |
++| R08 | recovered_players=2, same_runtime=true; không timer thừa | Cả hai có thể offline rồi về cùng runtime trong fixture |
++| R09 | TIMEOUT, resurrected=false; runtime/worker dừng | Resume không tạo lại match đã kết thúc |
++| R10 | LAST_ALIVE, player offline hết mạng; resurrected=false | Kết quả gameplay không bị reconnect đảo ngược |
++| R11 | Grace configured=15 s; token muộn bị từ chối; ABORTED, gỡ ghế/chuyển host, WAITING, runtime/timer dọn | Hết grace theo hard drop/leave, không hứa peer luôn chơi tiếp |
++| R12 | Trước biên nhận, tại/sau biên từ chối theo Bảng 12.17 | Admission kiểm tra deadline kể cả timer chưa chạy |
++| R13 | Auto client 3 vòng, same_controller=true, bomb_request_counter_continued=true | Giữ controller/context/listener và bộ đếm qua tự nối lại |
++| R14 | Mỗi fixture kiểm tra accept/runtime/snapshot/transport/executor đã dừng và map/session/timer được dọn theo phạm vi | Cleanup đạt assertion trong các ca, không thay cho soak hoặc chứng minh mọi memory leak |
++
++R01/R02/R03 dùng chung một testcase; R04/R05/R06 dùng chung một testcase; các hàng R không được cộng thành số execution.
++Các giá trị in từ lượt A5 nằm trong [case-results.csv](../evidence/recovery-report-task03-20261027-200413/case-results.csv)
++và [case-results.json](../evidence/recovery-report-task03-20261027-200413/case-results.json).
++CSV có 8 record integration (TIMEOUT/LAST_ALIVE riêng) và 3 record boundary;
++những assertion chi tiết không in thành marker vẫn cần đối chiếu source/XML, không tự suy ra chỉ từ tên scenario.
++
++Các test client/server khác còn xác nhận ACK/delta/full cũ chưa mở input, thiếu ACK/full không chờ vô hạn,
++packet chờ UI của attempt cũ không ghi đè world mới, giữ phím không phát lại sau recovery,
++old socket/timer/heartbeat không đóng nhầm lần nối mới và freeze/unfreeze queue đầy không bị coi thành công.
++Writer setup fault thực vẫn được ghi trong failure; từ chối do trận đã kết thúc được phân loại nghiệp vụ và cleanup,
++không gắn thành server crash chỉ vì không còn match để phục hồi.
++
++### 12.8.4. Biên grace và ý nghĩa số đo chờ hết hạn
++
++**Bảng 12.17. Admission quanh biên 15 giây với clock điều khiển.**
++
++| elapsed_nanos | So với grace 15 s | admitted | Kết quả assertion |
++|---:|---|---|---|
++| 14.999.999.999 | Trước 1 ns | true | PASS |
++| 15.000.000.000 | Đúng biên | false | PASS |
++| 15.000.000.001 | Sau 1 ns | false | PASS |
++
++Đây là unit test clock/scheduler được tiêm, không phải ba phép đo khả năng lập lịch OS ở độ phân giải nanosecond.
++Case TCP expiry riêng dùng **15 giây thực**, ghi `observed_wait_ms=15001` trong A5.
++Thời gian này tính sau khi test đã quan sát state DISCONNECTED tới khi nhận GAME_OVER;
++không trùng thời điểm tạo ticket server và không đo từ lúc Wi-Fi/cáp vật lý mất.
++Không kết luận recovery mất 15001 ms, không lấy nó làm độ trễ P95 hoặc chứng minh timer chính xác ±1 ms.
++
++### 12.8.5. Kết luận và giới hạn phép kiểm chứng
++
++Kết quả hỗ trợ nhận định Session Recovery đã được tích hợp và đạt các assertion cục bộ đã thiết kế,
++gồm giữ phiên/runtime/controller, khoá input tới full được áp, tiếp tục delta, xử lý token/grace/lifecycle
++và phản ánh gameplay xảy ra trong thời gian offline. Nó bổ sung bằng chứng cho FR15/NFR07,
++không thay đổi ý nghĩa các benchmark baseline cũ.
++
++Chưa đo tỷ lệ thành công ngoài thực tế, recovery latency P50/P95/P99, throughput/byte overhead của recovery,
++GUI thủ công/LAN/Wi-Fi vật lý, tải tối đa, soak hoặc khôi phục sau server restart.
++Không có phép đo A/B recovery bật/tắt mới; số tiết kiệm byte ở 12.5 và RTT ở 12.6 không được dùng
++để tuyên bố recovery cải thiện tương ứng. Tên “liền mạch” không có nghĩa không gián đoạn input hoặc không mất lệnh.
++Các failure sandbox và khác biệt môi trường phải được giữ khi diễn giải reliability.
++
++Toàn bộ evidence dùng cho phần mới được kiểm tra checksum và inventory source;
++biên tập chương này không chạy test mới, không đổi source/assertion/timeout hoặc tạo ảnh GUI cho kịch bản chưa thực hiện.

@@ -1,0 +1,924 @@
+﻿{
+    "totals":  {
+                   "skipped":  0,
+                   "errors":  0,
+                   "tests":  133,
+                   "failures":  0
+               },
+    "test_classes":  38,
+    "suites":  [
+                   {
+                       "name":  "com.bombit.client.game.bomb.BombPresentationStateTest",
+                       "tests":  1,
+                       "failures":  0,
+                       "errors":  0,
+                       "skipped":  0,
+                       "time_seconds":  0.038,
+                       "cases":  [
+                                     {
+                                         "name":  "replacesBombWithTemporaryExplosion",
+                                         "status":  "PASS"
+                                     }
+                                 ]
+                   },
+                   {
+                       "name":  "com.bombit.client.game.bomb.BombSceneTest",
+                       "tests":  2,
+                       "failures":  0,
+                       "errors":  0,
+                       "skipped":  0,
+                       "time_seconds":  0.28,
+                       "cases":  [
+                                     {
+                                         "name":  "restoredSceneUsesServerRemainingTimeAndMonotonicAnimationAndTv3Renderers",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "controllerIgnoresDuplicateOldAndFutureEventsAndResyncRestoresEffectsWithoutDamage",
+                                         "status":  "PASS"
+                                     }
+                                 ]
+                   },
+                   {
+                       "name":  "com.bombit.client.game.bomb.Java2DRendererTest",
+                       "tests":  2,
+                       "failures":  0,
+                       "errors":  0,
+                       "skipped":  0,
+                       "time_seconds":  0.025,
+                       "cases":  [
+                                     {
+                                         "name":  "rendersBombExplosionAndItemToImage",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "fiveBasicItemIconsAreVisibleAndDistinct",
+                                         "status":  "PASS"
+                                     }
+                                 ]
+                   },
+                   {
+                       "name":  "com.bombit.client.game.item.ItemClientStateTest",
+                       "tests":  1,
+                       "failures":  0,
+                       "errors":  0,
+                       "skipped":  0,
+                       "time_seconds":  0.008,
+                       "cases":  [
+                                     {
+                                         "name":  "duplicatePickupAndDeathEventsNeverApplyStatsDamageOrRemoveItemsAndFullResyncDoesNotStack",
+                                         "status":  "PASS"
+                                     }
+                                 ]
+                   },
+                   {
+                       "name":  "com.bombit.client.game.movement.RespawnPredictionTest",
+                       "tests":  2,
+                       "failures":  0,
+                       "errors":  0,
+                       "skipped":  0,
+                       "time_seconds":  0.006,
+                       "cases":  [
+                                     {
+                                         "name":  "remoteRespawnTeleportsInsteadOfInterpolatingThroughMap",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "respawnDiscardsOldPredictedMovementWithoutReusingSequence",
+                                         "status":  "PASS"
+                                     }
+                                 ]
+                   },
+                   {
+                       "name":  "com.bombit.client.game.movement.TileGridRendererTest",
+                       "tests":  1,
+                       "failures":  0,
+                       "errors":  0,
+                       "skipped":  0,
+                       "time_seconds":  0.026,
+                       "cases":  [
+                                     {
+                                         "name":  "boardHasVisibleGridAndMarksTheSameCellAsServer",
+                                         "status":  "PASS"
+                                     }
+                                 ]
+                   },
+                   {
+                       "name":  "com.bombit.client.lobby.MatchResultsPanelTest",
+                       "tests":  1,
+                       "failures":  0,
+                       "errors":  0,
+                       "skipped":  0,
+                       "time_seconds":  0.091,
+                       "cases":  [
+                                     {
+                                         "name":  "showsAuthoritativeWinnerDrawAbortAndClearsForReplay",
+                                         "status":  "PASS"
+                                     }
+                                 ]
+                   },
+                   {
+                       "name":  "com.bombit.client.network.ClientStabilityTest",
+                       "tests":  7,
+                       "failures":  0,
+                       "errors":  0,
+                       "skipped":  0,
+                       "time_seconds":  0.358,
+                       "cases":  [
+                                     {
+                                         "name":  "displayByteBudgetClosesBeforeUiSlotLimitOnLargeFrames",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "listenerFailureIsReportedAndCloseRemovesAllRegistrations",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "stalledUiHasBoundedDispatchAndFailsOnceThenReleasesNetworkAndTimer",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "pullByteBudgetClosesBeforeCountLimitOnLargeFrames",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "fullPullQueueDisconnectsInsteadOfSilentlyDroppingSnapshotData",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "clientWriteDeadlineUnblocksSenderWhenServerNeverReads",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "standaloneMovementControllerAlsoBoundsItsUiQueueAndReportsOnlyOneFailure",
+                                         "status":  "PASS"
+                                     }
+                                 ]
+                   },
+                   {
+                       "name":  "com.bombit.common.protocol.BombProtocolTest",
+                       "tests":  4,
+                       "failures":  0,
+                       "errors":  0,
+                       "skipped":  0,
+                       "time_seconds":  0.017,
+                       "cases":  [
+                                     {
+                                         "name":  "effectExpiryPublishesEvenWithoutOtherWorldChangesAndQueueRetryKeepsNotices",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "snapshotV3RoundTripsEffectsAndV2RemainsSupported",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "noticesHaveStableBombIdentityAndStrictPayloads",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "plantHasOnlyRequestIdAndMatchEnvelopeRejectsPreviousMatch",
+                                         "status":  "PASS"
+                                     }
+                                 ]
+                   },
+                   {
+                       "name":  "com.bombit.common.protocol.GameplayProtocolTest",
+                       "tests":  3,
+                       "failures":  0,
+                       "errors":  0,
+                       "skipped":  0,
+                       "time_seconds":  0.009,
+                       "cases":  [
+                                     {
+                                         "name":  "legacyV4StatsStillDecodeWithOneLifeAndNoShield",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "officialItemAndDeathNoticesUseSingleEventSequenceAndNumericPlayerMapping",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "resultAndV5SnapshotRoundTripAndRejectMalformedRankings",
+                                         "status":  "PASS"
+                                     }
+                                 ]
+                   },
+                   {
+                       "name":  "com.bombit.common.protocol.IntegrationContractTest",
+                       "tests":  8,
+                       "failures":  0,
+                       "errors":  0,
+                       "skipped":  0,
+                       "time_seconds":  0.027,
+                       "cases":  [
+                                     {
+                                         "name":  "framingGoldenBytesAndFragmentedFrames",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "malformedOrWrongScopeAndOversizedFramesAreRejected",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "runtimeReplayGetsNewEpochWithoutChangingOldApi",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "readySetsStateIdempotentlyAndChecksMembership",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "scopedMovePreservesLegacyCodecAndRejectsPreviousMatch",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "mappingIsImmutableAndCannotAliasPlayers",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "resyncHasTypedReasonAndBaselineAndUniquePacketCode",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "snapshotGoldenBodyUnchangedAndFullSyncUsesSameBody",
+                                         "status":  "PASS"
+                                     }
+                                 ]
+                   },
+                   {
+                       "name":  "com.bombit.common.protocol.LobbyContractTest",
+                       "tests":  4,
+                       "failures":  0,
+                       "errors":  0,
+                       "skipped":  0,
+                       "time_seconds":  0.009,
+                       "cases":  [
+                                     {
+                                         "name":  "roomAndChatRoundTripThroughTcpFrameIncludingEscapesAndUnicode",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "endCommandIsScopedAndPacketCodesAreUnique",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "boundedJsonRejectsDuplicateKeysInvalidEscapesAndTrailingOrOversizedInput",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "requestsRejectWrongTypesUnknownFieldsAndForgedIdentifiers",
+                                         "status":  "PASS"
+                                     }
+                                 ]
+                   },
+                   {
+                       "name":  "com.bombit.integration.BombClientIntegrationTest",
+                       "tests":  2,
+                       "failures":  0,
+                       "errors":  0,
+                       "skipped":  0,
+                       "time_seconds":  1.083,
+                       "cases":  [
+                                     {
+                                         "name":  "realApplicationControllersShareBombsFlamesAndMapThenResyncAndDeduplicateRequests",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "defaultLobbyBootstrapEnablesBombsWithoutAnInjectedRuntime",
+                                         "status":  "PASS"
+                                     }
+                                 ]
+                   },
+                   {
+                       "name":  "com.bombit.integration.LobbyLifecycleTest",
+                       "tests":  7,
+                       "failures":  0,
+                       "errors":  0,
+                       "skipped":  0,
+                       "time_seconds":  6.448,
+                       "cases":  [
+                                     {
+                                         "name":  "fourPlayerRoomRejectsFifthAndCanonicalRequestsWork",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "waitingHostLeaveAndRuntimeStartFailureKeepRoomUsable",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "concurrentStartCreatesOneMatchAndReplayReplacesEpoch",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "permissionsCapacityValidationAndReadyAreAuthoritative",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "independentRoomsChatMovementResyncAndCleanup",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "disconnectAbortsMatchTransfersHostAndAllowsFreshPlayer",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "realClientControllersReturnToRoomAndReplayOnSameTcpConnections",
+                                         "status":  "PASS"
+                                     }
+                                 ]
+                   },
+                   {
+                       "name":  "com.bombit.integration.MatchLifecycleIntegrationTest",
+                       "tests":  5,
+                       "failures":  0,
+                       "errors":  0,
+                       "skipped":  0,
+                       "time_seconds":  6.145,
+                       "cases":  [
+                                     {
+                                         "name":  "pickupStatsWinnerFinalSnapshotReplayAndDisconnectAreAuthoritative",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "simultaneousDeathsProduceOneDrawForBothClients",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "slowerMovementAndSmallShoeUpgradeAreSharedByTwoClientsAndSurviveFullResync",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "applicationAppliesFinalSnapshotBeforeClosingControllerAndClearsResultOnReplay",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "twoTcpClientsAgreeOnShieldRespawnFullResyncAndFreshReplay",
+                                         "status":  "PASS"
+                                     }
+                                 ]
+                   },
+                   {
+                       "name":  "com.bombit.integration.MovementDemoProcessTest",
+                       "tests":  1,
+                       "failures":  0,
+                       "errors":  0,
+                       "skipped":  0,
+                       "time_seconds":  4.243,
+                       "cases":  [
+                                     {
+                                         "name":  "launchersWorkInThreeSeparateJavaProcesses",
+                                         "status":  "PASS"
+                                     }
+                                 ]
+                   },
+                   {
+                       "name":  "com.bombit.integration.MovementDemoTest",
+                       "tests":  8,
+                       "failures":  0,
+                       "errors":  0,
+                       "skipped":  0,
+                       "time_seconds":  4.582,
+                       "cases":  [
+                                     {
+                                         "name":  "twoIndependentTcpClientsMoveStopAndCollideWithBoundary",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "fourClientsRejectFifthAndContinueAfterOneDisconnects",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "serverMapBlocksSoftBlocksAndInteriorWallsOverTcp",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "realClientControllerGetsFirstFullPredictsAndAutomaticallyResyncs",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "productionHandlersGateMatchAndResyncRateLimits",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "threePlayerProfileStartsWithThreeUniqueIdentities",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "emptyRoomCleansRuntimeAndNextRosterUsesNewMatchId",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "serverShutdownClosesRealClientControllersAndReportsDisconnect",
+                                         "status":  "PASS"
+                                     }
+                                 ]
+                   },
+                   {
+                       "name":  "com.bombit.integration.StabilityLifecycleTest",
+                       "tests":  3,
+                       "failures":  0,
+                       "errors":  0,
+                       "skipped":  0,
+                       "time_seconds":  5.542,
+                       "cases":  [
+                                     {
+                                         "name":  "runtimeFailureAbortsAndCleansMatchThenSameConnectionsCanStartAgain",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "twentyRoundsReleaseGameThreadsSendersAndWorldWhileConnectionListenersStayConstant",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "tenServerStartStopCyclesUnblockPartialReadersAndJoinEveryOwnedWorker",
+                                         "status":  "PASS"
+                                     }
+                                 ]
+                   },
+                   {
+                       "name":  "com.bombit.server.chat.ChatFaultTest",
+                       "tests":  1,
+                       "failures":  0,
+                       "errors":  0,
+                       "skipped":  0,
+                       "time_seconds":  0.002,
+                       "cases":  [
+                                     {
+                                         "name":  "failingRecipientDoesNotKillWorkerOrStarveHealthyRecipient",
+                                         "status":  "PASS"
+                                     }
+                                 ]
+                   },
+                   {
+                       "name":  "com.bombit.server.game.bomb.BombGameplayTest",
+                       "tests":  10,
+                       "failures":  0,
+                       "errors":  0,
+                       "skipped":  0,
+                       "time_seconds":  0.009,
+                       "cases":  [
+                                     {
+                                         "name":  "chainTriggersNewerBombsExactlyOnceAndStopsAtHardWalls",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "deadlineIsMonotonicNeverEarlyAndExplosionReturnsQuota",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "validatesAliveCellQuotaAndUsesServerHitboxCenter",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "adapterGuardsReadsAndWritesAndShutdownClearsProjection",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "disconnectedFinishedAndForeignThreadCommandsCannotChangeWorld",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "damageUsesHitboxOverlapAndExcludesTouchingEdge",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "destroyedBlockRemainsBarrierForChainAndIndependentRootsInSameTick",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "rulesRequireExplicitValidParametersAndResultCollectionsAreImmutable",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "placementChangesCellOnlyWhenServerPlayerCenterCrossesGridEdge",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "bombBlocksOtherPlayersOwnerCanExitButCannotReenter",
+                                         "status":  "PASS"
+                                     }
+                                 ]
+                   },
+                   {
+                       "name":  "com.bombit.server.game.bomb.BombSchedulerTest",
+                       "tests":  1,
+                       "failures":  0,
+                       "errors":  0,
+                       "skipped":  0,
+                       "time_seconds":  0.023,
+                       "cases":  [
+                                     {
+                                         "name":  "schedulerOnlyQueuesBombId",
+                                         "status":  "PASS"
+                                     }
+                                 ]
+                   },
+                   {
+                       "name":  "com.bombit.server.game.bomb.BombSystemTest",
+                       "tests":  4,
+                       "failures":  0,
+                       "errors":  0,
+                       "skipped":  0,
+                       "time_seconds":  0.004,
+                       "cases":  [
+                                     {
+                                         "name":  "chainReactionExplodesEachBombOnce",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "plantsOnlyOneBombPerCell",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "explosionDestroysBreakableBlockAndStopsBehindIt",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "killsPlayerAndPublishesOneDeathEvent",
+                                         "status":  "PASS"
+                                     }
+                                 ]
+                   },
+                   {
+                       "name":  "com.bombit.server.game.item.ItemSystemTest",
+                       "tests":  2,
+                       "failures":  0,
+                       "errors":  0,
+                       "skipped":  0,
+                       "time_seconds":  0.002,
+                       "cases":  [
+                                     {
+                                         "name":  "spawnsAndPicksUpItemOnlyOnce",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "doesNotSpawnOverExistingItem",
+                                         "status":  "PASS"
+                                     }
+                                 ]
+                   },
+                   {
+                       "name":  "com.bombit.server.game.map.DefaultArenaMapTest",
+                       "tests":  3,
+                       "failures":  0,
+                       "errors":  0,
+                       "skipped":  0,
+                       "time_seconds":  0.021,
+                       "cases":  [
+                                     {
+                                         "name":  "arenaIsSymmetricWithPermanentBorderPillarsAndDistributedCrates",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "everySpawnHasTwoEscapeArmsAndEveryInitialFloorCellIsReachable",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "destroyedCratesAreLocalToOneMatchAndRenderPreviewShowsActualLayout",
+                                         "status":  "PASS"
+                                     }
+                                 ]
+                   },
+                   {
+                       "name":  "com.bombit.server.game.movement.DeltaCompressionTest",
+                       "tests":  1,
+                       "failures":  0,
+                       "errors":  0,
+                       "skipped":  0,
+                       "time_seconds":  0.011,
+                       "cases":  [
+                                     {
+                                         "name":  "replicaRecoveryAndBandwidthRegression",
+                                         "status":  "PASS"
+                                     }
+                                 ]
+                   },
+                   {
+                       "name":  "com.bombit.server.game.movement.MovementFeatureTest",
+                       "tests":  1,
+                       "failures":  0,
+                       "errors":  0,
+                       "skipped":  0,
+                       "time_seconds":  0.105,
+                       "cases":  [
+                                     {
+                                         "name":  "movementFeaturesAndTcp",
+                                         "status":  "PASS"
+                                     }
+                                 ]
+                   },
+                   {
+                       "name":  "com.bombit.server.game.runtime.BombRuntimeIntegrationTest",
+                       "tests":  4,
+                       "failures":  0,
+                       "errors":  0,
+                       "skipped":  0,
+                       "time_seconds":  1.121,
+                       "cases":  [
+                                     {
+                                         "name":  "realLoopPlacesBlocksMovementExplodesAndPublishesMapAliveAndEntityChanges",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "twoTcpClientsPlantThroughOfficialProtocolAndObserveBombExplosionAndResync",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "roomsHaveIndependentBombStorageAndReplayGetsFreshIdsAndCleanup",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "callbackFailureStillCleansBombsOnGameThreadAndStopsRuntime",
+                                         "status":  "PASS"
+                                     }
+                                 ]
+                   },
+                   {
+                       "name":  "com.bombit.server.game.runtime.ExtendedItemsTest",
+                       "tests":  6,
+                       "failures":  0,
+                       "errors":  0,
+                       "skipped":  0,
+                       "time_seconds":  0.011,
+                       "cases":  [
+                                     {
+                                         "name":  "simultaneousHeartPickupHasExactlyOneWinnerAndCannotReviveEliminatedPlayer",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "respawnKeepsUpgradesAndOneLifeIsLostAcrossSeveralOverlappingBlasts",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "onlyDestroyedBlocksDropItemsAndEveryBasicTypeCanBePickedUp",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "shieldCannotStackAndOverlappingChainHitsConsumeOnlyOneDamageOpportunity",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "seededHighDropRateCoversAllFiveTypesAndZeroDropPolicyNeverSpawns",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "defaultRangeMakesFiveCellCrossAndEnergyExtendsAllFourArms",
+                                         "status":  "PASS"
+                                     }
+                                 ]
+                   },
+                   {
+                       "name":  "com.bombit.server.game.runtime.MatchGameplayTest",
+                       "tests":  5,
+                       "failures":  0,
+                       "errors":  0,
+                       "skipped":  0,
+                       "time_seconds":  0.009,
+                       "cases":  [
+                                     {
+                                         "name":  "blockSpawnsOnceAndSimultaneousPickupHasOneWinnerAndUpgradedQuotaIsUsedByBombs",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "itemAdapterCapsAllStatsRejectsForeignThreadsAndDoesNotReviveDeadPlayers",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "lastAliveWinsAndEarlierDeathsRankLower",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "timeoutUsesMonotonicDeadlineAndSurvivorsTie",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "sameTickDeathsDrawAndNeverProduceAnIntermediateWinner",
+                                         "status":  "PASS"
+                                     }
+                                 ]
+                   },
+                   {
+                       "name":  "com.bombit.server.game.runtime.MovementBalanceTest",
+                       "tests":  4,
+                       "failures":  0,
+                       "errors":  0,
+                       "skipped":  0,
+                       "time_seconds":  0.004,
+                       "cases":  [
+                                     {
+                                         "name":  "slowerServerAndPredictionTakeTheSameCornersWithoutChangingGridGeometry",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "bombPlacementAtCellEdgesDependsOnCenterAndTileSizeAtTheNewHitboxAndSpeed",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "centeredSpawnsLeaveClearanceAndKeepTheCorrectCellForDifferentTileSizes",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "shoePickupsAddEightRespectTheCapAndPredictionUsesTheAuthoritativeSpeed",
+                                         "status":  "PASS"
+                                     }
+                                 ]
+                   },
+                   {
+                       "name":  "com.bombit.server.game.runtime.RuntimeContractTest",
+                       "tests":  1,
+                       "failures":  0,
+                       "errors":  0,
+                       "skipped":  0,
+                       "time_seconds":  0.62,
+                       "cases":  [
+                                     {
+                                         "name":  "runtimeContract",
+                                         "status":  "PASS"
+                                     }
+                                 ]
+                   },
+                   {
+                       "name":  "com.bombit.server.network.ServerTransportTest",
+                       "tests":  10,
+                       "failures":  0,
+                       "errors":  0,
+                       "skipped":  0,
+                       "time_seconds":  0.272,
+                       "cases":  [
+                                     {
+                                         "name":  "missingHandshakeAndUnsupportedVersionReturnErrorAndCleanup",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "truncatedFrameEofAndGracefulDisconnectHaveDifferentSessionLifecycles",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "invalidConnectObjectsNeverBecomeAuthenticated",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "coalescedFramesPreserveWriterOrderAndDecodedNames",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "unfinishedFrameHasBoundedDeadlineAndNoSessionLeak",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "invalidLengthsAndUtf8CloseAndReleaseProvisionalConnections",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "invalidPacketsAndUnknownTypesDoNotKillConnectionOrRefreshHeartbeat",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "fragmentedHandshakeWaitsForCompleteFrame",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "concurrentSendsNeverInterleaveFrames",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "shutdownUnblocksPartialReadersAndJoinsTheirWriters",
+                                         "status":  "PASS"
+                                     }
+                                 ]
+                   },
+                   {
+                       "name":  "com.bombit.server.network.SessionWriterTest",
+                       "tests":  3,
+                       "failures":  0,
+                       "errors":  0,
+                       "skipped":  0,
+                       "time_seconds":  0.008,
+                       "cases":  [
+                                     {
+                                         "name":  "byteBudgetClosesConnectionEvenWhenFrameCountHasSpace",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "writerValidatesUtf8SizeAndSessionBeforeQueueing",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "queueFullClosesBlockedSocketAndReportsOneFailure",
+                                         "status":  "PASS"
+                                     }
+                                 ]
+                   },
+                   {
+                       "name":  "com.bombit.server.network.TransportStabilityTest",
+                       "tests":  6,
+                       "failures":  0,
+                       "errors":  0,
+                       "skipped":  0,
+                       "time_seconds":  0.834,
+                       "cases":  [
+                                     {
+                                         "name":  "chatLimitAndTotalFloodAreEnforcedBeforeHandlers",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "heartbeatExpiresPendingAndSilentPeersButValidPingsKeepSessionAlive",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "blockedWriterTimesOutWhilePeerStillSendsPingsAndOtherClientsRemainUsable",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "handlerFailureClosesOnlyTheCapturedConnectionAndIsReported",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "continuousPartialFrameCannotExtendItsAbsoluteDeadline",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "fixedWindowIncludesInvalidTrafficAndResetsAtExactBoundary",
+                                         "status":  "PASS"
+                                     }
+                                 ]
+                   },
+                   {
+                       "name":  "com.bombit.server.room.RoomManagerTest",
+                       "tests":  1,
+                       "failures":  0,
+                       "errors":  0,
+                       "skipped":  0,
+                       "time_seconds":  0.001,
+                       "cases":  [
+                                     {
+                                         "name":  "createsJoinsAndReturnsSafeSnapshot",
+                                         "status":  "PASS"
+                                     }
+                                 ]
+                   },
+                   {
+                       "name":  "com.bombit.server.session.SessionFaultTest",
+                       "tests":  1,
+                       "failures":  0,
+                       "errors":  0,
+                       "skipped":  0,
+                       "time_seconds":  1.062,
+                       "cases":  [
+                                     {
+                                         "name":  "throwingLifecycleCallbacksCannotCancelSweepsOrLeakGraceTimers",
+                                         "status":  "PASS"
+                                     }
+                                 ]
+                   },
+                   {
+                       "name":  "com.bombit.server.session.SessionManagerTest",
+                       "tests":  3,
+                       "failures":  0,
+                       "errors":  0,
+                       "skipped":  0,
+                       "time_seconds":  0.009,
+                       "cases":  [
+                                     {
+                                         "name":  "disconnectRacingShutdownDoesNotScheduleAfterExecutorClose",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "reconnectsBeforeGracePeriodAndRejectsWrongToken",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "restoresPreDisconnectStateWhenPlaying",
+                                         "status":  "PASS"
+                                     }
+                                 ]
+                   },
+                   {
+                       "name":  "com.bombit.tools.NetworkBenchmarkTest",
+                       "tests":  4,
+                       "failures":  0,
+                       "errors":  0,
+                       "skipped":  0,
+                       "time_seconds":  5.104,
+                       "cases":  [
+                                     {
+                                         "name":  "realFourClientBombWorkloadMeasuresEverySharedExplosionAndMovementAck",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "csvPreservesUnicodeQuotesAndNewlinesAndRefusesMismatchedAppend",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "configurationSeparatesOneClientTransportFromMultiplayerAndRejectsAmbiguousOptions",
+                                         "status":  "PASS"
+                                     },
+                                     {
+                                         "name":  "realOneClientTransportMeasurementWritesSuccessfulMeasuredCountersAndCleansUp",
+                                         "status":  "PASS"
+                                     }
+                                 ]
+                   }
+               ],
+    "started_at":  "2026-10-26T17:33:20.6702634+07:00"
+}

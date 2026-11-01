@@ -1,0 +1,37 @@
+sequenceDiagram
+    participant C as Client đang chơi
+    participant H as Handler / writer TCP
+    participant M as SessionManager
+    participant L as LobbyGameServer
+    participant R as Runtime / snapshot pump
+    participant O as Peer còn nối
+    Note over C,H: Transport cũ mất, hai phía phát hiện ở thời điểm riêng
+    H->>M: Unexpected disconnect với captured socket
+    M->>M: DISCONNECTED, tạo grace ticket 15 giây
+    M->>L: onPlayerDisconnected ngoài khoá session
+    L->>R: Submit PlayerDisconnectedCommand, giữ runtime
+    C->>C: Khoá input, bỏ pending cũ, giữ controller và counter
+    Note over R,O: Loop áp freeze, gameplay vẫn chạy và peer nhận update
+    C->>H: TCP mới, frame đầu RECONNECT playerId + token
+    H->>M: Preflight rồi reconnect claim nguyên tử
+    M->>M: Huỷ ticket, attach socket mới, giữ DISCONNECTED khi dựng writer
+    M->>H: beforeResume, bỏ provisional và dựng writer identity cũ
+    H-->>C: CONNECT_ACK cùng session UUID
+    C->>C: WAITING_FULL, input vẫn khoá
+    M->>L: Khôi phục state, gọi onPlayerReconnected
+    L->>R: Submit PlayerReconnectedCommand
+    L->>H: Enqueue GAME_STARTED cùng context
+    H-->>C: GAME_STARTED roomId / matchId / roster cũ
+    L->>L: Đặt recovery barrier
+    L->>R: requestFullState
+    R->>R: Tạo full mới vượt barrier, chặn update cũ cho C
+    R->>H: Enqueue snapshot full mới
+    H-->>C: FULL_STATE_SYNC có match envelope
+    opt Full chung baseline được gửi tới peer online
+        H-->>O: Full cùng match qua writer của O
+    end
+    C->>C: Apply full hợp lệ, reset lịch sử phù hợp rồi mở input
+    C->>H: MOVE mới, sequence tiếp tục
+    H->>R: Submit command theo session và match hiện tại
+    R->>H: Update tiếp theo với baseline hợp lệ
+    H-->>C: GAME_SNAPSHOT delta sau full

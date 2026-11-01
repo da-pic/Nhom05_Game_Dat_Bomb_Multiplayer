@@ -1,0 +1,54 @@
+﻿[
+    {
+        "sha256":  "adbce38b42ae40ab3f75bf39dab319f5d3d5fb6d01b1f294ca3f788dc784aa08",
+        "path":  "phancong/Instruction.md"
+    },
+    {
+        "sha256":  "49737b6deca6edb806d9a235785cdfc0939a6de18e504e070f72bc03d7d7941e",
+        "path":  "pom.xml"
+    },
+    {
+        "sha256":  "719161c0f243b1e346e4fa9907d3691f7f58f8b273fea655024707075f70ae3e",
+        "path":  "report/01_HO_SO_KHAO_SAT.md"
+    },
+    {
+        "sha256":  "4827bd336c61927afd5fe1a1aab734c9ab72b3d4d48116d030e8489abf1fd338",
+        "path":  "report/evidence/task01-2026-10-26/manifest.json"
+    },
+    {
+        "sha256":  "f56956afdcf3cc4194c2358a0aaa16eca97b094d1116c17bc2da6b68cb978fa8",
+        "path":  "report/evidence/task01-2026-10-26/README.md"
+    },
+    {
+        "sha256":  "cf3f5dc7573424ebfaa987263e779cedd9a4baf4648a435e470be7b8194e0675",
+        "path":  "scripts/check-tv2.cmd"
+    },
+    {
+        "sha256":  "af4cd7b107f9515b0e70eaa2d3394bfdae2597f7897171b791cd2b1418254048",
+        "path":  "scripts/classpath.cmd"
+    },
+    {
+        "sha256":  "55773b3e2fb85abe855949aa4b7c1cc7c486b935ea5baae3e75c32a8066d6544",
+        "path":  "scripts/run-benchmark.cmd"
+    },
+    {
+        "sha256":  "8741c33eb32a50a18965834d983a5757dccaba53c1a3ffdc5650489d3614deea",
+        "path":  "scripts/test.cmd"
+    },
+    {
+        "sha256":  "e3fd7ad2dd2300c975fda243d2fe2e17f12214b903838ad042ef31a23e1addb7",
+        "path":  "src/main/java/com/bombit/server/game/map/DefaultArenaMap.java"
+    },
+    {
+        "sha256":  "604519245f60ac6727a135f515f6a17d09624cebae403be28246b5114d12e6cc",
+        "path":  "src/main/java/com/bombit/tools/BenchmarkCsv.java"
+    },
+    {
+        "sha256":  "e433ab57a7ed03c916ffb0243bcc66e3987cecab487520b326086d19e7843613",
+        "path":  "src/main/java/com/bombit/tools/NetworkBenchmark.java"
+    },
+    {
+        "sha256":  "1f68ab508ff4b36632c69c4af4d48dfe57d4962b1d057dc875584895457c7b99",
+        "path":  "src/test/java/com/bombit/server/game/movement/DeltaCompressionCheck.java"
+    }
+]

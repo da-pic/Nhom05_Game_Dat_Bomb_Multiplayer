@@ -1,0 +1,14 @@
+flowchart TB
+    START["Chụp frame, player và entity tại tick t"] --> FULL{"Force full, chưa có baseline<br/>hoặc map dimensions đổi?"}
+    FULL -->|"Có"| MAKEFULL["Tạo full có baseTick = -1"]
+    FULL -->|"Không"| DIFF["So tile / player / entity với baseline<br/>tìm upsert và khóa xóa"]
+    DIFF --> CHANGE{"Có thay đổi state, ACK,<br/>notices, stats hoặc effects?"}
+    CHANGE -->|"Không"| SKIP["Không tạo update<br/>giữ baseline và publishedTick"]
+    CHANGE -->|"Có"| MAKEDELTA["Tạo delta có baseTick = publishedTick"]
+    MAKEFULL --> PENDING["Lưu pending frame và pending update"]
+    MAKEDELTA --> PENDING
+    PENDING --> OFFER{"Outbound queue nhận update?"}
+    OFFER -->|"Có"| COMMIT["Commit đúng pending update<br/>clear notices đã bàn giao, đặt latest"]
+    OFFER -->|"Không"| KEEP["Giữ baseline cũ và notices<br/>ghi counter; nếu full thì yêu cầu lại"]
+    COMMIT --> PUMP["Worker gửi FIFO đến các writer"]
+    KEEP --> RETRY["Tick sau chụp lại state hiện tại<br/>so với baseline cũ"]

@@ -1,0 +1,125 @@
+{
+  "task": "session-recovery-report-update-1",
+  "client_date": "2026-10-27",
+  "timezone": "Asia/Saigon",
+  "baseline_report_revision": "e333050997c5dbf78ec4b9b42a9bc9a73ce6a0d5",
+  "feature_commit": "90e4c95de2292a7fd8caef3d73129dc02bea6448",
+  "surveyed_revision": "492c03127f15a25f4fc685fd004eafe424d53f9f",
+  "branch": "integration/session-recovery",
+  "parents": [
+    "811af81faa4a20ce69dc2e4eea3c6513a8b07cd7",
+    "90e4c95de2292a7fd8caef3d73129dc02bea6448"
+  ],
+  "origin_main_local_ref": "e333050997c5dbf78ec4b9b42a9bc9a73ce6a0d5",
+  "remote_ref_not_fetched_by_this_task": true,
+  "feature_is_ancestor_of_HEAD": true,
+  "working_tree_status_before": "",
+  "changed_source_files": 10,
+  "diff_numstat": "98\t10\tsrc/main/java/com/bombit/client/app/DemoClientConnection.java\n16\t0\tsrc/main/java/com/bombit/common/protocol/SessionPacketCodec.java\n46\t3\tsrc/main/java/com/bombit/server/app/LobbyGameServer.java\n1\t0\tsrc/main/java/com/bombit/server/app/ServerApplication.java\n31\t4\tsrc/main/java/com/bombit/server/network/ClientHandler.java\n7\t0\tsrc/main/java/com/bombit/server/network/ConnectionManager.java\n7\t2\tsrc/main/java/com/bombit/server/network/SessionWriter.java\n7\t0\tsrc/main/java/com/bombit/server/session/Session.java\n57\t12\tsrc/main/java/com/bombit/server/session/SessionManager.java\n122\t2\tsrc/test/java/com/bombit/integration/LobbyLifecycleTest.java",
+  "source_inventory_count": 32,
+  "report_candidate_lines": 147,
+  "preserved_chapters": [
+    {
+      "path": "report/chapters/01_TEN_DE_TAI.md",
+      "sha256": "94a6c9f672564c802a517b5ebc381b1ae0e2566b0fa0b298caa6f49c9e1465ed"
+    },
+    {
+      "path": "report/chapters/02_TOM_TAT.md",
+      "sha256": "ae5bbdccae3a24f28eb95edb299d486f4c3250c2ca5f16944fd0ad30e76f764d"
+    },
+    {
+      "path": "report/chapters/03_TU_KHOA.md",
+      "sha256": "072a82de9a275833b01825ed89811068192247cdcdb41b8bc484ecc768bf4daf"
+    },
+    {
+      "path": "report/chapters/04_GIOI_THIEU.md",
+      "sha256": "5a6ba3df631c847c10b8aae5946b6bc434692a287c832d87267aee431b52b9b0"
+    },
+    {
+      "path": "report/chapters/05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "sha256": "4bd92d7a245f0a57870e9343f589598eb2498be70150116d4c1c4959e9de67d5"
+    },
+    {
+      "path": "report/chapters/06_DINH_NGHIA_BAI_TOAN.md",
+      "sha256": "0ba5a14cee32859f2bdd102551362a68d370a9b610f2edfe8d7a44e4d9df8cc9"
+    },
+    {
+      "path": "report/chapters/07_GIAI_PHAP_DE_XUAT.md",
+      "sha256": "b09e2d7760533756be8f634bb9c3960876ae20324fc67b66e7a786552e3a6378"
+    },
+    {
+      "path": "report/chapters/08_KIEN_TRUC_HE_THONG.md",
+      "sha256": "c1a56e63b61d00c6649d3d98f000d722e9468e272b6607de348b0d882aa3d684"
+    },
+    {
+      "path": "report/chapters/09_THIET_KE_GIAO_TIEP_MANG.md",
+      "sha256": "be15780cf283a685f45ce839670358e454040ec9901a82cf56c2611f8539324c"
+    },
+    {
+      "path": "report/chapters/10_TRIEN_KHAI_HE_THONG.md",
+      "sha256": "203f5db010462edd6a39e39c331291733029068b7fb8d56fd47d235d11e61340"
+    },
+    {
+      "path": "report/chapters/11_THIET_LAP_THUC_NGHIEM.md",
+      "sha256": "c6eca168ca05fc8343c099eaa99df3048e006794fd0e3d758a83d592a1821bb2"
+    },
+    {
+      "path": "report/chapters/12_KET_QUA.md",
+      "sha256": "b043b33c9fd41ecdddbbec072e7a1ef025a1ee3dbabefd3f697b0ab4e5eac588"
+    },
+    {
+      "path": "report/chapters/13_THAO_LUAN.md",
+      "sha256": "79a4bde4fbd83e77b5929889ce9d66f7ba89d189c324df745311f56d43ca501c"
+    },
+    {
+      "path": "report/chapters/14_DIEM_MOI_VA_DONG_GOP.md",
+      "sha256": "4f02c0deec0380d6e2170308d6fce1473f0770fb2ad307ad65239295fab6510b"
+    },
+    {
+      "path": "report/chapters/15_HAN_CHE.md",
+      "sha256": "a036a9ee81857739fa8f7537b92d18b7cab399cfee236916b36d962239c93449"
+    },
+    {
+      "path": "report/chapters/16_HUONG_PHAT_TRIEN.md",
+      "sha256": "c187aeac028233d49f0f286fe17d817594b83bb6a9553305f7249b6ac00e3250"
+    },
+    {
+      "path": "report/chapters/17_KET_LUAN.md",
+      "sha256": "65d510a5e0a16e004e8e166a37eb8a2152cdd208e8a7b62633c02f20b850ac77"
+    },
+    {
+      "path": "report/chapters/18_TAI_LIEU_THAM_KHAO.md",
+      "sha256": "31af2d671b3b2b106dbfadf32a38fd8dc955b348bfc3e7c7e80d7b077a4b79a4"
+    },
+    {
+      "path": "report/chapters/19_PHU_LUC.md",
+      "sha256": "7727c5d5215a01b2da602eecd830f0d53710041df4858d9f122e23a880072183"
+    }
+  ],
+  "preserved_final_artifacts": [
+    {
+      "path": "report/final/BAO_CAO_DA_GHEP.md",
+      "sha256": "84523b182539fed9735d048591ddc645692b20f8bab3501316b62b18d1d500d1"
+    },
+    {
+      "path": "report/final/CAN_XAC_NHAN_TRUOC_KHI_NOP.md",
+      "sha256": "6826966e94bfff6a5c93d13d850d1edef050233efda80cf28fc204265a274cdf"
+    },
+    {
+      "path": "report/final/NhomXX_BombItMultiplayer_Report.docx",
+      "sha256": "9cd0cfced68db9f34de08b47d5b40a3a4730f80874caf578a282b32c89483311"
+    },
+    {
+      "path": "report/final/NhomXX_BombItMultiplayer_Report.pdf",
+      "sha256": "ccf56877d69de6b8f9d8e6148ed1826e7d7464fb9360e1b6af3ff4ae2e621006"
+    }
+  ],
+  "tests_executed_in_this_task": false,
+  "new_external_sources_verified": false,
+  "inherited_test_totals": {
+    "tests": 135,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  }
+}

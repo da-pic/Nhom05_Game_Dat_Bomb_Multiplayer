@@ -1,0 +1,317 @@
+[
+  {
+    "id": "NV01",
+    "title": "Xác minh baseline và lưu bằng chứng",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "Không",
+    "owner": "Giang + Chinh"
+  },
+  {
+    "id": "NV02",
+    "title": "Chốt luật, phạm vi và tiêu chí sản phẩm",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "01",
+    "owner": "Cả nhóm, Duy tổng hợp"
+  },
+  {
+    "id": "NV03",
+    "title": "Chốt contract đa mode và version",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "02",
+    "owner": "Giang + Chinh"
+  },
+  {
+    "id": "NV04",
+    "title": "Model cấu hình và registry mode",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "03",
+    "owner": "Chinh"
+  },
+  {
+    "id": "NV05",
+    "title": "Tách Classic qua mode factory",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "04",
+    "owner": "Chinh + Duy"
+  },
+  {
+    "id": "NV06",
+    "title": "Lobby, protocol và UI chọn mode",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "03–05",
+    "owner": "Mai + Giang + Duy"
+  },
+  {
+    "id": "NV07",
+    "title": "Team, layout và cấu hình Shadow",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "06",
+    "owner": "Mai + Duy"
+  },
+  {
+    "id": "NV08",
+    "title": "WorldFrame và đầu ra mô phỏng bất biến",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "05,07",
+    "owner": "Chinh"
+  },
+  {
+    "id": "NV09",
+    "title": "Quy tắc visibility và phân loại thông tin",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "07,08",
+    "owner": "Chinh + Giang"
+  },
+  {
+    "id": "NV10",
+    "title": "Protocol và delta theo recipient",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "03,08,09",
+    "owner": "Chinh + Giang"
+  },
+  {
+    "id": "NV11",
+    "title": "Trạm, điểm và kết quả đội",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "07,08",
+    "owner": "Duy"
+  },
+  {
+    "id": "NV12",
+    "title": "Bom quét, quota/cooldown và dedupe",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "07,09,11",
+    "owner": "Duy + Giang"
+  },
+  {
+    "id": "NV13",
+    "title": "Replica và chuyển trạng thái visibility",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "09,10,12",
+    "owner": "Chinh"
+  },
+  {
+    "id": "NV14",
+    "title": "HUD, render và điều khiển Shadow",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "11–13",
+    "owner": "Duy + Chinh"
+  },
+  {
+    "id": "NV15",
+    "title": "Recovery theo view, team và mode",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "10,13,14",
+    "owner": "Mai + Chinh"
+  },
+  {
+    "id": "NV16",
+    "title": "Tính đúng và giới hạn lộ thông tin",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "09–15",
+    "owner": "Giang + Chinh"
+  },
+  {
+    "id": "NV17",
+    "title": "Backpressure, concurrency và cách ly mode",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "10–16",
+    "owner": "Chinh + Mai"
+  },
+  {
+    "id": "NV18",
+    "title": "Ghép và nghiệm thu Classic + Shadow",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "06–17",
+    "owner": "Cả nhóm"
+  },
+  {
+    "id": "NV19",
+    "title": "Harness workload và metric tái lập",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "18",
+    "owner": "Giang"
+  },
+  {
+    "id": "NV20",
+    "title": "Đối chứng full, view và delta",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "19",
+    "owner": "Chinh + Giang"
+  },
+  {
+    "id": "NV21",
+    "title": "Mạng và recovery trên nhiều máy",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "18,19",
+    "owner": "Mai + Giang"
+  },
+  {
+    "id": "NV22",
+    "title": "Playtest và cân bằng Shadow",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "18–21",
+    "owner": "Duy + cả nhóm"
+  },
+  {
+    "id": "NV23",
+    "title": "Phân tích đóng góp và giới hạn",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "20–22",
+    "owner": "Giang + Chinh"
+  },
+  {
+    "id": "NV24",
+    "title": "Bản demo Classic + Shadow",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "23",
+    "owner": "Cả nhóm"
+  },
+  {
+    "id": "NV25",
+    "title": "Chốt luật và contract Circuit",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "24; mở M3",
+    "owner": "Duy + Giang"
+  },
+  {
+    "id": "NV26",
+    "title": "Mô hình mạch và truyền sóng",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "25",
+    "owner": "Duy + Chinh"
+  },
+  {
+    "id": "NV27",
+    "title": "Command, event và snapshot Circuit",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "26",
+    "owner": "Giang + Chinh"
+  },
+  {
+    "id": "NV28",
+    "title": "Giao diện và recovery Circuit",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "27",
+    "owner": "Duy + Mai"
+  },
+  {
+    "id": "NV29",
+    "title": "Kiểm chứng, đo và ghép Circuit",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "28",
+    "owner": "Cả nhóm"
+  },
+  {
+    "id": "NV30",
+    "title": "Thiết kế checkpoint và timeline",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "24; mở M4",
+    "owner": "Chinh + Duy"
+  },
+  {
+    "id": "NV31",
+    "title": "Clock, RNG và checkpoint mô phỏng",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "30",
+    "owner": "Chinh + Duy"
+  },
+  {
+    "id": "NV32",
+    "title": "Rewind authoritative trên server",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "31",
+    "owner": "Chinh"
+  },
+  {
+    "id": "NV33",
+    "title": "Protocol/client qua timeline mới",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "32",
+    "owner": "Giang + Chinh"
+  },
+  {
+    "id": "NV34",
+    "title": "UI và recovery Paradox",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "33",
+    "owner": "Duy + Mai"
+  },
+  {
+    "id": "NV35",
+    "title": "Kiểm chứng, đo và ghép Paradox",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "34",
+    "owner": "Cả nhóm"
+  },
+  {
+    "id": "NV36",
+    "title": "Phạm vi HA và failure model",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "24; 35 nếu hỗ trợ Paradox",
+    "owner": "Mai + Chinh"
+  },
+  {
+    "id": "NV37",
+    "title": "Checkpoint và log cho failover",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "36",
+    "owner": "Chinh + Duy"
+  },
+  {
+    "id": "NV38",
+    "title": "Gateway, worker và epoch ownership",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "37",
+    "owner": "Mai + Giang"
+  },
+  {
+    "id": "NV39",
+    "title": "Chuyển worker và phục hồi stream",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "38",
+    "owner": "Mai + Chinh"
+  },
+  {
+    "id": "NV40",
+    "title": "Fault injection và thực nghiệm HA",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "39",
+    "owner": "Giang + Mai"
+  },
+  {
+    "id": "NV41",
+    "title": "Ghép HA với các mode hỗ trợ",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "40",
+    "owner": "Cả nhóm"
+  },
+  {
+    "id": "NV42",
+    "title": "Kiểm tra tổng thể bản phát hành",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "24 và các nhánh mở rộng được chọn",
+    "owner": "Giang + cả nhóm"
+  },
+  {
+    "id": "NV43",
+    "title": "Launcher, đóng gói và môi trường chạy",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "42",
+    "owner": "Mai + Duy"
+  },
+  {
+    "id": "NV44",
+    "title": "Cập nhật báo cáo và hồ sơ kỹ thuật",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "23,42,43",
+    "owner": "Cả nhóm"
+  },
+  {
+    "id": "NV45",
+    "title": "Diễn tập, nghiệm thu và chốt bàn giao",
+    "status": "CHƯA THỰC HIỆN",
+    "dependencies": "43,44",
+    "owner": "Cả nhóm"
+  }
+]

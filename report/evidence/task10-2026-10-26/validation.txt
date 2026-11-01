@@ -1,0 +1,8 @@
+﻿Source links hashed: 83
+Checked 10.1-10.8, 10.6.1-10.6.6 and 10.7.2.
+Checked 10 sequential table captions and Markdown table column counts.
+Ownership notes: 8
+Local links checked in chapter, report index and task10 evidence.
+No draft placeholders or future task10 writing promises expected in chapter.
+No tests, GUI, LAN, benchmark or packaging run. Production code unchanged.
+Errors: 0

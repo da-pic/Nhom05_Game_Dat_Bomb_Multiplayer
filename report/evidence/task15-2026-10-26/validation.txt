@@ -1,0 +1,8 @@
+﻿Chapter 13 headings 13.1-13.5 and chapter 14 headings 14.1-14.4 checked; 3 + 2 tables, sequential and consistent columns.
+Local links checked; 16 directly linked sources/evidence hashed.
+Citations use existing catalogue numbers 1-14; sources R01/R07/R08/R10 rechecked, no new reference added.
+Claims checked: 133 JUnit, 84 repeated reliability test executions, 18000 normalized D1 equality checks, D1 reduction 35.98-97.54%, 45 network runs and 125 peer rows.
+B0 explicitly a harness policy; no historical-code baseline, algorithm invention, TCP latency A/B improvement, pooled p95 or profiler claim.
+Idle-without-input distinguished from GUI stationary sampled input; bottleneck hypotheses and missing measurements labeled.
+No source/test/script/POM changes; no new build, test, benchmark, raw data modification or DOCX export.
+Errors: 0

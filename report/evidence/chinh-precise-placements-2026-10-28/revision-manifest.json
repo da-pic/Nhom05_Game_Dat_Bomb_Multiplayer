@@ -1,0 +1,27 @@
+{
+  "status": "PASS",
+  "date": "2026-10-28",
+  "docx": "report/revisions/CHINH_VI_TRI_VA_NOI_DUNG_THAY_THE_2026-10-28.docx",
+  "docx_sha256": "5d61f759ebd681f94048cac8280fa7cde7622b4f028f3c7450de9e15e38b59f1",
+  "markdown": "report/revisions/CHINH_VI_TRI_VA_NOI_DUNG_THAY_THE_2026-10-28.md",
+  "markdown_sha256": "b77bae241a0d0d4e301d789af0a89381d60905447a02da4e6e8255ecaa1c7a59",
+  "operations": 40,
+  "paste_blocks": 34,
+  "operation_counts": {
+    "REPLACE_SECTION": 15,
+    "REPLACE_PARAGRAPH": 4,
+    "REPLACE_ROWS": 4,
+    "REPLACE_HEADER_CELL": 2,
+    "INSERT_PARAGRAPH": 6,
+    "INSERT_SECTION": 3,
+    "DELETE_PARAGRAPH": 1,
+    "KEEP": 5
+  },
+  "precise_source_anchors_verified": true,
+  "virtual_application_verified": true,
+  "notes_outside_paste_blocks": true,
+  "original_chapters_preserved": true,
+  "full_report_reexported": false,
+  "java_tests_rerun": false,
+  "protected_files": 244
+}

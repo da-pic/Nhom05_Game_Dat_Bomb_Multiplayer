@@ -1,0 +1,15 @@
+﻿{
+    "repetitions":  5,
+    "cli":  "NetworkBenchmark --local --mode suite --seconds 10 --warmup 2 --label task14-single-jvm-loopback --revision HEAD --run-id T1-rNN --csv per-run.csv",
+    "verified_class_files":  297,
+    "code_status":  "clean",
+    "revision":  "e333050997c5dbf78ec4b9b42a9bc9a73ce6a0d5",
+    "warmup_seconds":  2,
+    "topology":  "single_jvm_loopback",
+    "started_at":  "2026-10-26T17:59:47.1392141+07:00",
+    "java":  "java.exe : java version \"25.0.1\" 2025-10-21 LTS\r\nAt line:6 char:11\r\n+ $taskJava=\u0026 \u0027D:/JavaJDK/bin/java.exe\u0027 -version 2\u003e\u00261 | Out-String\r\n+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\r\n    + CategoryInfo          : NotSpecified: (java version \"25.0.1\" 2025-10-21 LTS:String) [], RemoteException\r\n    + FullyQualifiedErrorId : NativeCommandError\r\n \r\nJava(TM) SE Runtime Environment (build 25.0.1+8-LTS-27)\r\nJava HotSpot(TM) 64-Bit Server VM (build 25.0.1+8-LTS-27, mixed mode, sharing)",
+    "measurement_seconds":  10,
+    "class_mismatches":  0,
+    "cpu_ram_metadata":  "not verified; see task11",
+    "artifact_reference":  "task12-2026-10-26/run-manifest.json"
+}

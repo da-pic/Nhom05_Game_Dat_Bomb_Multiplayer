@@ -1,0 +1,884 @@
+[
+  {
+    "path": "report/chapters/02_TOM_TAT.md",
+    "line": 13,
+    "heading": "# 2. Tóm tắt — Abstract",
+    "text": "Lượt suite mới đạt 133/133 JUnit test; ba lượt reliability bổ sung đạt 84/84 lần thực thi test."
+  },
+  {
+    "path": "report/chapters/02_TOM_TAT.md",
+    "line": 16,
+    "heading": "# 2. Tóm tắt — Abstract",
+    "text": "Kết quả còn giới hạn ở fixture và loopback; chưa nghiệm thu GUI/LAN, soak dài hạn hoặc resume trận,"
+  },
+  {
+    "path": "report/chapters/04_GIOI_THIEU.md",
+    "line": 29,
+    "heading": "## 4.2. Vấn đề đồng bộ game nhiều người chơi",
+    "text": "phát hiện nền không khớp và phục hồi bằng full mà không áp lại effect gameplay."
+  },
+  {
+    "path": "report/chapters/04_GIOI_THIEU.md",
+    "line": 55,
+    "heading": "## 4.3. Mục tiêu và phạm vi",
+    "text": "Phạm vi kết quả hiện tại chưa gồm nghiệm thu GUI/LAN nhiều máy, tải tối đa, soak dài hạn hoặc resume trận."
+  },
+  {
+    "path": "report/chapters/04_GIOI_THIEU.md",
+    "line": 56,
+    "heading": "## 4.3. Mục tiêu và phạm vi",
+    "text": "Disconnect/leave được xử lý theo chính sách kết thúc lượt hiện hành."
+  },
+  {
+    "path": "report/chapters/05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+    "line": 48,
+    "heading": "### 5.1.2. Kết nối vật lý và trạng thái phiên ở mức ứng dụng",
+    "text": "Bản hiện hành chưa cung cấp chức năng reconnect để tiếp tục trận; có token hoặc API session"
+  },
+  {
+    "path": "report/chapters/05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+    "line": 209,
+    "heading": "### 5.3.4. Phân biệt mục tiêu các kỹ thuật",
+    "text": "| Full snapshot | Tái dựng nền đầy đủ | Dữ liệu lặp lại; không phụ thuộc baseline delta | Khởi tạo và phục hồi |"
+  },
+  {
+    "path": "report/chapters/06_DINH_NGHIA_BAI_TOAN.md",
+    "line": 43,
+    "heading": "### 6.1.2. Dữ liệu đầu vào",
+    "text": "| Phục hồi đồng bộ | Yêu cầu full state khi replica cần đồng bộ lại | Client | Đúng match; tuân theo giới hạn tần suất và chính sách server |"
+  },
+  {
+    "path": "report/chapters/06_DINH_NGHIA_BAI_TOAN.md",
+    "line": 184,
+    "heading": "### 6.2.6. Kết thúc lượt và chơi lại",
+    "text": "rời/mất kết nối khi lượt chưa có kết quả chốt dùng `ABORTED`, không coi như một chiến thắng gameplay."
+  },
+  {
+    "path": "report/chapters/06_DINH_NGHIA_BAI_TOAN.md",
+    "line": 212,
+    "heading": "## 6.3. Yêu cầu chức năng",
+    "text": "| FR10 | Đồng bộ full/delta và phục hồi | Có full khởi tạo; delta áp đúng baseline; sai baseline yêu cầu full; loại dữ liệu thuộc match cũ | TV2, TV4 |"
+  },
+  {
+    "path": "report/chapters/06_DINH_NGHIA_BAI_TOAN.md",
+    "line": 215,
+    "heading": "## 6.3. Yêu cầu chức năng",
+    "text": "| FR13 | Rời phòng, mất kết nối và dọn tài nguyên | Hủy lượt đang chơi theo chính sách; cập nhật phòng; dừng runtime/worker liên quan; phòng khác tiếp tục | TV1, TV2, TV4 |"
+  },
+  {
+    "path": "report/chapters/06_DINH_NGHIA_BAI_TOAN.md",
+    "line": 220,
+    "heading": "## 6.3. Yêu cầu chức năng",
+    "text": "Tương tự, có codec delta chưa đủ chứng minh FR10 khi chưa kiểm tra ghép replica và phục hồi."
+  },
+  {
+    "path": "report/chapters/06_DINH_NGHIA_BAI_TOAN.md",
+    "line": 238,
+    "heading": "### 6.4.1. Yêu cầu phi chức năng",
+    "text": "| NFR07 | Vòng đời và phục hồi lỗi | Stop runtime giải phóng thread/tài nguyên liên quan; client chậm/lỗi được xử lý có kiểm soát; resync không cộng lại item/damage |"
+  },
+  {
+    "path": "report/chapters/06_DINH_NGHIA_BAI_TOAN.md",
+    "line": 284,
+    "heading": "### 6.4.4. Giả định và hệ quả",
+    "text": "| A04 | Client có thể nhận dữ liệu muộn và chưa biết toàn bộ thay đổi mới nhất | Prediction có thể sai; kết quả server được ưu tiên; khi mất baseline phải phục hồi bằng full |"
+  },
+  {
+    "path": "report/chapters/06_DINH_NGHIA_BAI_TOAN.md",
+    "line": 291,
+    "heading": "### 6.4.4. Giả định và hệ quả",
+    "text": "> **Phân công: TV3 ghép mục 6.5; TV1 xác nhận reconnect/phòng, TV2 đồng bộ, TV4 phạm vi triển khai và bằng chứng.**"
+  },
+  {
+    "path": "report/chapters/06_DINH_NGHIA_BAI_TOAN.md",
+    "line": 299,
+    "heading": "## 6.5. Phạm vi chưa triển khai và giới hạn kết luận",
+    "text": "- **Reconnect để tiếp tục trận:** mất kết nối hiện kết thúc/hủy lượt theo chính sách, không giữ ghế và trạng thái để người chơi quay lại tiếp tục."
+  },
+  {
+    "path": "report/chapters/06_DINH_NGHIA_BAI_TOAN.md",
+    "line": 300,
+    "heading": "## 6.5. Phạm vi chưa triển khai và giới hạn kết luận",
+    "text": "  API/token hoặc đặc tả reconnect còn tồn tại không chứng minh đã có luồng end-to-end."
+  },
+  {
+    "path": "report/chapters/06_DINH_NGHIA_BAI_TOAN.md",
+    "line": 315,
+    "heading": "## 6.5. Phạm vi chưa triển khai và giới hạn kết luận",
+    "text": "[đánh giá reconnect](../../docs/RECONNECT_ASSESSMENT.md)."
+  },
+  {
+    "path": "report/chapters/07_GIAI_PHAP_DE_XUAT.md",
+    "line": 5,
+    "heading": "# 7. Giải pháp đề xuất",
+    "text": "dữ liệu trạng thái được truyền dưới dạng full/delta với cơ chế phục hồi baseline."
+  },
+  {
+    "path": "report/chapters/07_GIAI_PHAP_DE_XUAT.md",
+    "line": 64,
+    "heading": "### 7.1.2. Các mục tiêu và cơ chế tương ứng",
+    "text": "| Lặp lại dữ liệu map/entity không đổi | Delta theo baseline và full phục hồi | Dung lượng đồng bộ, phát sinh chi phí so sánh |"
+  },
+  {
+    "path": "report/chapters/07_GIAI_PHAP_DE_XUAT.md",
+    "line": 88,
+    "heading": "## 7.2. Quản lý connection, session và room",
+    "text": "Hiện tại mất kết nối khi đang chơi hủy lượt theo chính sách ABORTED nếu chưa có kết quả chốt;"
+  },
+  {
+    "path": "report/chapters/07_GIAI_PHAP_DE_XUAT.md",
+    "line": 89,
+    "heading": "## 7.2. Quản lý connection, session và room",
+    "text": "không đề xuất giả rằng token/grace đã tạo thành tính năng resume."
+  },
+  {
+    "path": "report/chapters/07_GIAI_PHAP_DE_XUAT.md",
+    "line": 92,
+    "heading": "## 7.2. Quản lý connection, session và room",
+    "text": "khi có thành viên rời/mất kết nối. Nếu bổ sung reconnect sau này, cần thiết kế lại chính sách giữ world/ghế,"
+  },
+  {
+    "path": "report/chapters/07_GIAI_PHAP_DE_XUAT.md",
+    "line": 144,
+    "heading": "### 7.3.2. Mã giả xử lý tick",
+    "text": "Nhánh lifecycle mô tả API core hiện có, không khẳng định route reconnect đã bật ở ứng dụng."
+  },
+  {
+    "path": "report/chapters/07_GIAI_PHAP_DE_XUAT.md",
+    "line": 205,
+    "heading": "## 7.5. State Delta Compression và phục hồi baseline",
+    "text": "## 7.5. State Delta Compression và phục hồi baseline"
+  },
+  {
+    "path": "report/chapters/07_GIAI_PHAP_DE_XUAT.md",
+    "line": 337,
+    "heading": "### 7.5.4. Commit sau enqueue và chính sách full",
+    "text": "Nếu writer một client thất bại, transport/lobby xử lý disconnect theo chính sách;"
+  },
+  {
+    "path": "report/chapters/07_GIAI_PHAP_DE_XUAT.md",
+    "line": 340,
+    "heading": "### 7.5.5. Ghép replica và phục hồi baseline",
+    "text": "### 7.5.5. Ghép replica và phục hồi baseline"
+  },
+  {
+    "path": "report/chapters/07_GIAI_PHAP_DE_XUAT.md",
+    "line": 421,
+    "heading": "### 7.5.7. Cách đánh giá cải tiến",
+    "text": "Tính cả full đầu/định kỳ/phục hồi của chế độ delta; nếu đo toàn luồng, phải tính các notice/control theo cùng quy tắc ở cả hai chế độ."
+  },
+  {
+    "path": "report/chapters/07_GIAI_PHAP_DE_XUAT.md",
+    "line": 465,
+    "heading": "### 7.7.1. Các quyết định thiết kế và đánh đổi",
+    "text": "| Full đầu/định kỳ/yêu cầu/FINISHED | Tạo và phục hồi nền đồng bộ theo policy | Chi phí full, chưa có tự chọn loại theo size |"
+  },
+  {
+    "path": "report/chapters/07_GIAI_PHAP_DE_XUAT.md",
+    "line": 469,
+    "heading": "### 7.7.1. Các quyết định thiết kế và đánh đổi",
+    "text": "| Queue/budget hữu hạn và đóng client lỗi | Giới hạn một số dạng backlog, không tiếp tục sai baseline | Disconnect có thể hủy lượt theo chính sách hiện hành |"
+  },
+  {
+    "path": "report/chapters/08_KIEN_TRUC_HE_THONG.md",
+    "line": 113,
+    "heading": "### 8.2.3. Gửi dữ liệu và lỗi kết nối",
+    "text": "resume trận. Với ứng dụng hiện tại, callback mất kết nối đi qua tầng điều phối để hủy lượt đang chơi và bỏ ghế;"
+  },
+  {
+    "path": "report/chapters/08_KIEN_TRUC_HE_THONG.md",
+    "line": 114,
+    "heading": "### 8.2.3. Gửi dữ liệu và lỗi kết nối",
+    "text": "metadata phiên còn tồn tại trong khoảng chờ dọn không đồng nghĩa world/roster được giữ để reconnect."
+  },
+  {
+    "path": "report/chapters/08_KIEN_TRUC_HE_THONG.md",
+    "line": 223,
+    "heading": "### 8.4.3. Domain event và thông điệp mạng",
+    "text": "như disconnect/hard drop. Chúng không phải một event bus chung và không chứng minh kiến trúc event sourcing."
+  },
+  {
+    "path": "report/chapters/08_KIEN_TRUC_HE_THONG.md",
+    "line": 388,
+    "heading": "### 8.6.4. Cleanup và chuyển lượt",
+    "text": "Kết thúc hành chính hoặc mất kết nối dùng chính sách ABORTED nếu lượt chưa có kết quả chốt."
+  },
+  {
+    "path": "report/chapters/08_KIEN_TRUC_HE_THONG.md",
+    "line": 402,
+    "heading": "### 8.6.4. Cleanup và chuyển lượt",
+    "text": "Các cơ chế chống dữ liệu cũ không tạo ra khả năng resume trận sau mất kết nối."
+  },
+  {
+    "path": "report/chapters/09_THIET_KE_GIAO_TIEP_MANG.md",
+    "line": 124,
+    "heading": "### 9.2.3. Heartbeat và kết thúc kết nối",
+    "text": "| `0x0002` | CONNECT_ACK, S→C | `playerId:S`, `reconnectToken`, `serverVersion`, `protocolVersion:2`, `heartbeatIntervalMs:2000`, `heartbeatTimeoutMs:10000`, `reconnectGraceMs:15000` |"
+  },
+  {
+    "path": "report/chapters/09_THIET_KE_GIAO_TIEP_MANG.md",
+    "line": 127,
+    "heading": "### 9.2.3. Heartbeat và kết thúc kết nối",
+    "text": "| `0x0042` | DISCONNECT, C→S | `reason:\"USER_QUIT\"`; handler hỗ trợ đóng phiên chủ động |"
+  },
+  {
+    "path": "report/chapters/09_THIET_KE_GIAO_TIEP_MANG.md",
+    "line": 136,
+    "heading": "### 9.2.3. Heartbeat và kết thúc kết nối",
+    "text": "đóng cửa sổ đều phát DISCONNECT. Mất kết nối trong lượt chơi hiện kết thúc/hủy lượt và bỏ ghế;"
+  },
+  {
+    "path": "report/chapters/09_THIET_KE_GIAO_TIEP_MANG.md",
+    "line": 137,
+    "heading": "### 9.2.3. Heartbeat và kết thúc kết nối",
+    "text": "metadata phiên có thể còn chờ dọn tối đa theo grace, không còn world để resume."
+  },
+  {
+    "path": "report/chapters/09_THIET_KE_GIAO_TIEP_MANG.md",
+    "line": 141,
+    "heading": "### 9.2.4. Message có khai báo nhưng chưa thành luồng sản phẩm",
+    "text": "`RECONNECT=0x0043` và `NETWORK_LOST=0x0044` có trong PacketType/tài liệu, nhưng router sản phẩm chưa đăng ký handler."
+  },
+  {
+    "path": "report/chapters/09_THIET_KE_GIAO_TIEP_MANG.md",
+    "line": 142,
+    "heading": "### 9.2.4. Message có khai báo nhưng chưa thành luồng sản phẩm",
+    "text": "Enum reason `RECONNECT` trong request resync cũng không chứng minh đã có reconnect end-to-end."
+  },
+  {
+    "path": "report/chapters/09_THIET_KE_GIAO_TIEP_MANG.md",
+    "line": 143,
+    "heading": "### 9.2.4. Message có khai báo nhưng chưa thành luồng sản phẩm",
+    "text": "`PLAYER_DISCONNECTED=0x0032` còn dùng trong các API/nhánh hạ tầng; đường lobby hiện tại chủ yếu cập nhật bằng GAME_OVER"
+  },
+  {
+    "path": "report/chapters/09_THIET_KE_GIAO_TIEP_MANG.md",
+    "line": 144,
+    "heading": "### 9.2.4. Message có khai báo nhưng chưa thành luồng sản phẩm",
+    "text": "và ROOM_STATE, không có luồng thông báo player-disconnected trong trận giữ ghế để tiếp tục chơi."
+  },
+  {
+    "path": "report/chapters/09_THIET_KE_GIAO_TIEP_MANG.md",
+    "line": 146,
+    "heading": "### 9.2.4. Message có khai báo nhưng chưa thành luồng sản phẩm",
+    "text": "Không đưa các schema reconnect dự kiến thành sequence đã triển khai. Sau handshake, type chưa có handler có thể trả"
+  },
+  {
+    "path": "report/chapters/09_THIET_KE_GIAO_TIEP_MANG.md",
+    "line": 151,
+    "heading": "### 9.2.4. Message có khai báo nhưng chưa thành luồng sản phẩm",
+    "text": "và [đánh giá reconnect](../../docs/RECONNECT_ASSESSMENT.md)."
+  },
+  {
+    "path": "report/chapters/09_THIET_KE_GIAO_TIEP_MANG.md",
+    "line": 190,
+    "heading": "### 9.4.1. Message movement và phục hồi",
+    "text": "### 9.4.1. Message movement và phục hồi"
+  },
+  {
+    "path": "report/chapters/09_THIET_KE_GIAO_TIEP_MANG.md",
+    "line": 199,
+    "heading": "### 9.4.1. Message movement và phục hồi",
+    "text": "| `0x0034` | REQUEST_FULL_STATE, C→S | `lastAppliedTick>=-1,reason:COLD_START/BASELINE_MISMATCH/RECONNECT` |"
+  },
+  {
+    "path": "report/chapters/09_THIET_KE_GIAO_TIEP_MANG.md",
+    "line": 298,
+    "heading": "### 9.4.4. Request full và phục hồi baseline",
+    "text": "### 9.4.4. Request full và phục hồi baseline"
+  },
+  {
+    "path": "report/chapters/09_THIET_KE_GIAO_TIEP_MANG.md",
+    "line": 310,
+    "heading": "### 9.4.4. Request full và phục hồi baseline",
+    "text": "Baseline chung theo runtime/room nên full phục hồi được phát cho cả roster, dù một client yêu cầu."
+  },
+  {
+    "path": "report/chapters/09_THIET_KE_GIAO_TIEP_MANG.md",
+    "line": 313,
+    "heading": "### 9.4.4. Request full và phục hồi baseline",
+    "text": "Không diễn giải resync như giao thức reconnect hoặc bảo đảm sửa được mọi payload hỏng."
+  },
+  {
+    "path": "report/chapters/09_THIET_KE_GIAO_TIEP_MANG.md",
+    "line": 370,
+    "heading": "### 9.5.3. GAME_OVER và chính sách kết thúc",
+    "text": "Reason là LAST_ALIVE, ALL_DEAD, TIMEOUT hoặc ABORTED. Chỉ LAST_ALIVE có winnerPlayerId;"
+  },
+  {
+    "path": "report/chapters/09_THIET_KE_GIAO_TIEP_MANG.md",
+    "line": 371,
+    "heading": "### 9.5.3. GAME_OVER và chính sách kết thúc",
+    "text": "ABORTED không có người thắng và rankings rỗng. Lượt kết thúc bình thường có full FINISHED/result,"
+  },
+  {
+    "path": "report/chapters/09_THIET_KE_GIAO_TIEP_MANG.md",
+    "line": 427,
+    "heading": "### 9.6.2. Di chuyển, ACK và resync",
+    "text": "**Hình 9.2. Input sequence và nhánh phục hồi baseline. Nhóm tự vẽ từ code project.**"
+  },
+  {
+    "path": "report/chapters/09_THIET_KE_GIAO_TIEP_MANG.md",
+    "line": 520,
+    "heading": "### 9.6.4. Kết thúc và chơi lại",
+    "text": "Nhánh host End/leave/disconnect bỏ phần full FINISHED nếu chưa có kết quả gameplay;"
+  },
+  {
+    "path": "report/chapters/09_THIET_KE_GIAO_TIEP_MANG.md",
+    "line": 521,
+    "heading": "### 9.6.4. Kết thúc và chơi lại",
+    "text": "nó dừng runtime và gửi ABORTED. Socket đã mất không được bảo đảm nhận thông báo cuối;"
+  },
+  {
+    "path": "report/chapters/09_THIET_KE_GIAO_TIEP_MANG.md",
+    "line": 562,
+    "heading": "### 9.7.2. Phân loại lỗi và hành động",
+    "text": "| EOF, frame thiếu byte hoặc timeout I/O | Dọn captured connection; phiên đã handshake đi qua chính sách disconnect | Nếu đang chơi, lobby có thể hủy lượt |"
+  },
+  {
+    "path": "report/chapters/09_THIET_KE_GIAO_TIEP_MANG.md",
+    "line": 568,
+    "heading": "### 9.7.2. Phân loại lỗi và hành động",
+    "text": "| Writer đầy/ghi quá hạn | Đóng client đó và cleanup | Theo chính sách lobby, một disconnect có thể làm hủy cả lượt của phòng |"
+  },
+  {
+    "path": "report/chapters/09_THIET_KE_GIAO_TIEP_MANG.md",
+    "line": 594,
+    "heading": "### 9.7.3. Thứ tự, dữ liệu cũ và giới hạn kết luận",
+    "text": "Protocol hiện không có receipt ACK riêng cho snapshot, không có ACK nghiệp vụ riêng cho mọi lệnh và chưa có reconnect resume."
+  },
+  {
+    "path": "report/chapters/10_TRIEN_KHAI_HE_THONG.md",
+    "line": 74,
+    "heading": "### 10.1.3. Entry point và composition",
+    "text": "inject map/extension factory vào runtime manager và cài observer cho disconnect/hard drop."
+  },
+  {
+    "path": "report/chapters/10_TRIEN_KHAI_HE_THONG.md",
+    "line": 124,
+    "heading": "### 10.2.1. Các API hạ tầng TV1",
+    "text": "| `SessionManager` | `register`, `find`, `handleUnexpectedDisconnect`, `hardDrop`, `broadcastToRoom` | Map phiên, trạng thái disconnect/expiry và callback vòng đời |"
+  },
+  {
+    "path": "report/chapters/10_TRIEN_KHAI_HE_THONG.md",
+    "line": 148,
+    "heading": "### 10.2.2. Accept, reader pool và cổng kiểm tra",
+    "text": "Đây là kiểm tra ownership của kết nối, chưa chứng minh đã có generation/reconnect resume hoàn chỉnh."
+  },
+  {
+    "path": "report/chapters/10_TRIEN_KHAI_HE_THONG.md",
+    "line": 185,
+    "heading": "### 10.2.4. Session và trạng thái ứng dụng",
+    "text": "| DISCONNECTED | Socket mất, metadata có thể chờ expiry | `handleUnexpectedDisconnect` |"
+  },
+  {
+    "path": "report/chapters/10_TRIEN_KHAI_HE_THONG.md",
+    "line": 189,
+    "heading": "### 10.2.4. Session và trạng thái ứng dụng",
+    "text": "map timer disconnect và ScheduledThreadPoolExecutor cho expiry."
+  },
+  {
+    "path": "report/chapters/10_TRIEN_KHAI_HE_THONG.md",
+    "line": 190,
+    "heading": "### 10.2.4. Session và trạng thái ứng dụng",
+    "text": "`handleUnexpectedDisconnect` đánh dấu DISCONNECTED, đóng socket, gọi observer rồi lên lịch hard drop theo grace."
+  },
+  {
+    "path": "report/chapters/10_TRIEN_KHAI_HE_THONG.md",
+    "line": 194,
+    "heading": "### 10.2.4. Session và trạng thái ứng dụng",
+    "text": "Lobby kết thúc lượt/bỏ ghế ngay khi disconnect, nên session metadata còn 15 giây không có nghĩa phòng/world vẫn được giữ."
+  },
+  {
+    "path": "report/chapters/10_TRIEN_KHAI_HE_THONG.md",
+    "line": 195,
+    "heading": "### 10.2.4. Session và trạng thái ứng dụng",
+    "text": "`SessionManager.reconnect` là API legacy có token/attachSocket/restoreState;"
+  },
+  {
+    "path": "report/chapters/10_TRIEN_KHAI_HE_THONG.md",
+    "line": 196,
+    "heading": "### 10.2.4. Session và trạng thái ứng dụng",
+    "text": "router sản phẩm chưa đăng ký RECONNECT và chương này không nhận API đó là tính năng resume đã hoàn thành."
+  },
+  {
+    "path": "report/chapters/10_TRIEN_KHAI_HE_THONG.md",
+    "line": 216,
+    "heading": "### 10.2.5. Room, lobby và start/end thật",
+    "text": "Khi nhận kết quả bình thường hoặc End/leave/disconnect, `endMatch` dừng runtime, reset session/room,"
+  },
+  {
+    "path": "report/chapters/10_TRIEN_KHAI_HE_THONG.md",
+    "line": 227,
+    "heading": "### 10.2.6. Chat theo phòng",
+    "text": "không DISCONNECTED/CLOSED. Sau đó tạo CHAT JSON qua LobbyPacketCodec và gửi cho các session nhận hợp lệ."
+  },
+  {
+    "path": "report/chapters/10_TRIEN_KHAI_HE_THONG.md",
+    "line": 239,
+    "heading": "### 10.2.7. Heartbeat và shutdown",
+    "text": "Phiên chưa handshake hết hạn bị hard drop; phiên đã handshake đi qua unexpected disconnect và callback lifecycle."
+  },
+  {
+    "path": "report/chapters/10_TRIEN_KHAI_HE_THONG.md",
+    "line": 303,
+    "heading": "### 10.3.3. Command có kiểu và queue có giới hạn",
+    "text": "`PlayerDisconnectedCommand`, `PlayerReconnectedCommand`."
+  },
+  {
+    "path": "report/chapters/10_TRIEN_KHAI_HE_THONG.md",
+    "line": 318,
+    "heading": "### 10.3.3. Command có kiểu và queue có giới hạn",
+    "text": "Command disconnect đóng băng movement và có thể xóa player theo cờ; reconnect mở đóng băng và yêu cầu full state."
+  },
+  {
+    "path": "report/chapters/10_TRIEN_KHAI_HE_THONG.md",
+    "line": 319,
+    "heading": "### 10.3.3. Command có kiểu và queue có giới hạn",
+    "text": "Đây là API core, không phải bằng chứng luồng reconnect lobby đã khôi phục được trận đang chơi."
+  },
+  {
+    "path": "report/chapters/10_TRIEN_KHAI_HE_THONG.md",
+    "line": 470,
+    "heading": "### 10.5.1. Phân lớp controller phía client",
+    "text": "| `ReconciliationController` | Cập nhật world, phục hồi authoritative và replay | Không thực hiện visual smoothing |"
+  },
+  {
+    "path": "report/chapters/10_TRIEN_KHAI_HE_THONG.md",
+    "line": 518,
+    "heading": "### 10.5.4. Prediction, ACK và replay",
+    "text": "phục hồi vị trí/hướng/tốc độ/trạng thái sống authoritative rồi mô phỏng lại input còn chờ theo thứ tự sequence."
+  },
+  {
+    "path": "report/chapters/10_TRIEN_KHAI_HE_THONG.md",
+    "line": 591,
+    "heading": "### 10.6.2. Đặt bom và quản lý thời gian",
+    "text": "Thất bại trả BombError cụ thể. BombGameplayExtension kiểm tra thêm trạng thái trận và player disconnected"
+  },
+  {
+    "path": "report/chapters/10_TRIEN_KHAI_HE_THONG.md",
+    "line": 685,
+    "heading": "### 10.6.5. Luật trận, thống kê và kết quả",
+    "text": "Lobby dừng runtime và phát GAME_OVER; trường hợp rời phòng/đóng trận khi chưa có outcome có thể tạo ABORTED."
+  },
+  {
+    "path": "report/chapters/10_TRIEN_KHAI_HE_THONG.md",
+    "line": 700,
+    "heading": "### 10.6.6. Event nội bộ, notice mạng và snapshot",
+    "text": "Đây không phải event log lưu trên đĩa hoặc cam kết replay sau reconnect."
+  },
+  {
+    "path": "report/chapters/10_TRIEN_KHAI_HE_THONG.md",
+    "line": 805,
+    "heading": "### 10.8.1. Hạ tầng protocol và API tích hợp",
+    "text": "| `ClientNetwork` | Connect/send/listener/receive/disconnect/close | TCP client dùng chung, không tự điều khiển world/UI |"
+  },
+  {
+    "path": "report/chapters/10_TRIEN_KHAI_HE_THONG.md",
+    "line": 837,
+    "heading": "### 10.8.3. Router và phân loại lỗi",
+    "text": "[SessionHandlers](../../src/main/java/com/bombit/server/dispatch/SessionHandlers.java) đăng ký CONNECT/PING/DISCONNECT."
+  },
+  {
+    "path": "report/chapters/10_TRIEN_KHAI_HE_THONG.md",
+    "line": 839,
+    "heading": "### 10.8.3. Router và phân loại lỗi",
+    "text": "`LobbyGameServer` đăng ký các type lobby/gameplay; RECONNECT/NETWORK_LOST không được đăng ký trong đường sản phẩm."
+  },
+  {
+    "path": "report/chapters/10_TRIEN_KHAI_HE_THONG.md",
+    "line": 863,
+    "heading": "### 10.8.4. ClientNetwork: I/O, listener và pull queue",
+    "text": "`disconnect()` dừng trạng thái, đóng socket để đánh thức reader, dừng watchdog, interrupt/join reader có thời hạn rồi clear queue."
+  },
+  {
+    "path": "report/chapters/10_TRIEN_KHAI_HE_THONG.md",
+    "line": 864,
+    "heading": "### 10.8.4. ClientNetwork: I/O, listener và pull queue",
+    "text": "`close()` còn xóa listener và callback disconnect. Kiểm tra captured socket giúp reader cũ không tự đóng một socket khác;"
+  },
+  {
+    "path": "report/chapters/10_TRIEN_KHAI_HE_THONG.md",
+    "line": 865,
+    "heading": "### 10.8.4. ClientNetwork: I/O, listener và pull queue",
+    "text": "khả năng bảo vệ đó không được giới thiệu thành reconnect resume trận đã hoàn thiện."
+  },
+  {
+    "path": "report/chapters/11_THIET_LAP_THUC_NGHIEM.md",
+    "line": 23,
+    "heading": "### 11.1.1. Môi trường đã được ghi nhận",
+    "text": "| Revision khảo sát | `e333050997c5dbf78ec4b9b42a9bc9a73ce6a0d5` | Mốc source, không thay hash artifact và trạng thái working tree |"
+  },
+  {
+    "path": "report/chapters/11_THIET_LAP_THUC_NGHIEM.md",
+    "line": 126,
+    "heading": "## 11.4. Kịch bản chức năng và lỗi",
+    "text": "| F04 | Full/delta, thêm/xóa player/entity, bỏ một update ở replica | Snapshot không bị sửa; baseline lệch được phát hiện; full phục hồi world | TV2/TV4; codec/replica assertions |"
+  },
+  {
+    "path": "report/chapters/11_THIET_LAP_THUC_NGHIEM.md",
+    "line": 130,
+    "heading": "## 11.4. Kịch bản chức năng và lỗi",
+    "text": "| F08 | Frame sai/cắt dở, timeout, client chậm và disconnect | Bị từ chối/cleanup theo contract; không treo vô hạn hoặc làm hỏng phòng khác | TV1/TV4; transport/writer/lifecycle test |"
+  },
+  {
+    "path": "report/chapters/11_THIET_LAP_THUC_NGHIEM.md",
+    "line": 138,
+    "heading": "## 11.4. Kịch bản chức năng và lỗi",
+    "text": "Reconnect resume trận không nằm trong tiêu chí nghiệm thu vì đường sản phẩm chưa bật tính năng đó;"
+  },
+  {
+    "path": "report/chapters/11_THIET_LAP_THUC_NGHIEM.md",
+    "line": 139,
+    "heading": "## 11.4. Kịch bản chức năng và lỗi",
+    "text": "disconnect/leave có thể kết thúc lượt ABORTED như contract hiện tại."
+  },
+  {
+    "path": "report/chapters/11_THIET_LAP_THUC_NGHIEM.md",
+    "line": 173,
+    "heading": "### 11.5.2. Fixture hiện có và mở rộng được thiết kế",
+    "text": "đồng thời kiểm tra codec, baseline, xóa entity/player và full phục hồi trước vòng đo D0."
+  },
+  {
+    "path": "report/chapters/11_THIET_LAP_THUC_NGHIEM.md",
+    "line": 333,
+    "heading": "### 11.6.4. Hồ sơ bằng chứng và điều kiện chấp nhận",
+    "text": "Một run hiệu năng chỉ hợp lệ khi setup đúng roster/topology, có mẫu phù hợp, không mất baseline chưa phục hồi,"
+  },
+  {
+    "path": "report/chapters/11_THIET_LAP_THUC_NGHIEM.md",
+    "line": 340,
+    "heading": "### 11.6.4. Hồ sơ bằng chứng và điều kiện chấp nhận",
+    "text": "Hồ sơ nhiệm vụ 1 ghi nhận 133 JUnit test với 132 pass, 1 process smoke failure,"
+  },
+  {
+    "path": "report/chapters/12_KET_QUA.md",
+    "line": 6,
+    "heading": "# 12. Kết quả — Results",
+    "text": "`e333050997c5dbf78ec4b9b42a9bc9a73ce6a0d5`, không thay production code, test, luật game hoặc timeout."
+  },
+  {
+    "path": "report/chapters/12_KET_QUA.md",
+    "line": 17,
+    "heading": "# 12. Kết quả — Results",
+    "text": "| Maven offline, gọi trực tiếp sau khi được phép truy cập môi trường | 38 class, 133 test; 133 pass, 0 failure/error/skipped; BUILD SUCCESS; Maven báo 39,743 s | Tổng suite, có cả test công cụ/protocol, không phải 133 kịch bản GUI |"
+  },
+  {
+    "path": "report/chapters/12_KET_QUA.md",
+    "line": 18,
+    "heading": "# 12. Kết quả — Results",
+    "text": "| Check TV2 độc lập | Exit 0; bốn nhóm check API, movement, runtime và delta đều PASS | Không cộng bốn dòng PASS vào số 133 JUnit |"
+  },
+  {
+    "path": "report/chapters/12_KET_QUA.md",
+    "line": 20,
+    "heading": "# 12. Kết quả — Results",
+    "text": "| Khảo sát nhiệm vụ 1, cùng revision | 133 test, 132 pass, 1 failure; smoke đa tiến trình thất bại cả lần chạy riêng | Dữ liệu lịch sử được giữ; một lần PASS mới không chứng minh đã sửa nguyên nhân |"
+  },
+  {
+    "path": "report/chapters/12_KET_QUA.md",
+    "line": 43,
+    "heading": "## 12.1. Chức năng phòng/kết nối",
+    "text": "| SessionManagerTest | Các fixture quản lý phiên trong lớp | Quản lý session theo assertion đã khai báo | 3/3 đạt; không suy tính năng resume trận |"
+  },
+  {
+    "path": "report/chapters/12_KET_QUA.md",
+    "line": 45,
+    "heading": "## 12.1. Chức năng phòng/kết nối",
+    "text": "| LobbyLifecycleTest | Phòng bốn người, người thứ năm; quyền/ready/start; hai phòng; chat/resync; concurrent start; leave/disconnect; chơi lượt mới cùng TCP | Roster/quyền authoritative, room tách biệt, match epoch mới, quay lại phòng và cleanup | 7/7 đạt qua TCP loopback |"
+  },
+  {
+    "path": "report/chapters/12_KET_QUA.md",
+    "line": 59,
+    "heading": "## 12.1. Chức năng phòng/kết nối",
+    "text": "Chúng chưa chứng minh bốn người ở bốn máy thao tác giao diện thành công, hoặc reconnect khôi phục trận đang chơi."
+  },
+  {
+    "path": "report/chapters/12_KET_QUA.md",
+    "line": 96,
+    "heading": "### 12.2.2. Snapshot và khôi phục replica",
+    "text": "| DeltaCompressionTest → DeltaCompressionCheck | Full đầu, delta tile/entity, xóa entity/player, build chưa commit, bỏ update, full phục hồi và full cũ | 1/1 JUnit đạt; check riêng PASS |"
+  },
+  {
+    "path": "report/chapters/12_KET_QUA.md",
+    "line": 105,
+    "heading": "### 12.2.2. Snapshot và khôi phục replica",
+    "text": "sau đó full state phục hồi được replica. Vòng trace còn đối chiếu map, số entity và vị trí x của player với nhánh full"
+  },
+  {
+    "path": "report/chapters/12_KET_QUA.md",
+    "line": 125,
+    "heading": "## 12.3. Gameplay bomb/item/lives/result",
+    "text": "| MatchLifecycleIntegrationTest | Kết quả cuối, replay/disconnect và trạng thái mở rộng | Final snapshot, GAME_OVER và state client theo assertion | 5/5 đạt; trùng lớp đã dẫn ở 12.2 |"
+  },
+  {
+    "path": "report/chapters/12_KET_QUA.md",
+    "line": 161,
+    "heading": "### 12.4.1. Kết quả lifecycle chức năng đã có",
+    "text": "| LobbyLifecycleTest | Concurrent start, replay match epoch, disconnect/host transfer và start failure | 7/7 đạt | Luồng TCP loopback đã kiểm tra, chưa phải LAN |"
+  },
+  {
+    "path": "report/chapters/12_KET_QUA.md",
+    "line": 194,
+    "heading": "### 12.4.2. Ba lượt concurrency/fault/lifecycle độc lập",
+    "text": "| LobbyLifecycleTest | 7 | 3 | 21/21 | Capacity/quyền, concurrent start, replay, disconnect và lỗi start |"
+  },
+  {
+    "path": "report/chapters/12_KET_QUA.md",
+    "line": 195,
+    "heading": "### 12.4.2. Ba lượt concurrency/fault/lifecycle độc lập",
+    "text": "| Tổng | 28 | 3 | 84/84 | Không cộng các lần lặp này vào 133 test của suite nhiệm vụ 12 |"
+  },
+  {
+    "path": "report/chapters/12_KET_QUA.md",
+    "line": 250,
+    "heading": "### 12.5.1. Phép đo thực hiện và đối chứng",
+    "text": "Không có full do mất baseline, queue đầy hoặc disconnect trong phép đo này."
+  },
+  {
+    "path": "report/chapters/12_KET_QUA.md",
+    "line": 283,
+    "heading": "### 12.5.2. Trace D1 và kiểm tra tính đúng",
+    "text": "không được gộp thành kiểm tra mọi field v5. Đây là kiểm tra harness, không làm tăng số 133 JUnit ở 12.1."
+  },
+  {
+    "path": "report/chapters/12_KET_QUA.md",
+    "line": 479,
+    "heading": "### 12.6.4. Lỗi, cleanup và request cuối cửa sổ",
+    "text": "khả năng phục hồi baseline được kiểm tra bằng fixture riêng, không phải do benchmark đã gây mất delta."
+  },
+  {
+    "path": "report/chapters/13_THAO_LUAN.md",
+    "line": 16,
+    "heading": "## 13.1. Mức đáp ứng mục tiêu và điều kiện thực nghiệm",
+    "text": "| Phòng, quyền, movement và gameplay authoritative — FR01–FR09 | Suite 133/133 JUnit đạt ở lượt mới; test lobby/TCP, collision, bom/item/lives | Các fixture đã chạy đạt assertion; chưa nghiệm thu mọi thao tác GUI/LAN |"
+  },
+  {
+    "path": "report/chapters/13_THAO_LUAN.md",
+    "line": 89,
+    "heading": "### 13.2.3. Chi phí còn lại và trường hợp có thể kém lợi",
+    "text": "Việc chọn chu kỳ full khác có thể thay đổi byte/phục hồi, nhưng chưa có sweep tham số để gọi 100 tick là tối ưu."
+  },
+  {
+    "path": "report/chapters/13_THAO_LUAN.md",
+    "line": 113,
+    "heading": "### 13.3.2. Backpressure bảo vệ state nhưng có chi phí trải nghiệm",
+    "text": "Cách xử lý này bảo vệ một số invariant về tài nguyên và thứ tự, nhưng có thể kết thúc lượt theo ABORTED."
+  },
+  {
+    "path": "report/chapters/13_THAO_LUAN.md",
+    "line": 114,
+    "heading": "### 13.3.2. Backpressure bảo vệ state nhưng có chi phí trải nghiệm",
+    "text": "Không nên gọi đây là phục hồi trong suốt cho người chơi hoặc exactly-once toàn hệ thống."
+  },
+  {
+    "path": "report/chapters/14_DIEM_MOI_VA_DONG_GOP.md",
+    "line": 21,
+    "heading": "### 14.1.1. Baseline đo lường",
+    "text": "So sánh B0/B1 đã kiểm soát chuỗi state, số tick, codec, envelope và yêu cầu phục hồi replica của harness."
+  },
+  {
+    "path": "report/chapters/14_DIEM_MOI_VA_DONG_GOP.md",
+    "line": 98,
+    "heading": "### 14.3.2. Contract client và xử lý gián đoạn",
+    "text": "“không lag”, “không mất kết nối” hoặc reconnect resume vào danh sách đóng góp đã chứng minh."
+  },
+  {
+    "path": "report/chapters/14_DIEM_MOI_VA_DONG_GOP.md",
+    "line": 103,
+    "heading": "### 14.3.3. Đánh giá có đối chứng và dữ liệu truy vết",
+    "text": "XML/log của suite 133 test và 84 lần thực thi test reliability bổ sung."
+  },
+  {
+    "path": "report/chapters/14_DIEM_MOI_VA_DONG_GOP.md",
+    "line": 119,
+    "heading": "## 14.4. Bảng Contribution — Description — Evidence",
+    "text": "| C3 — Contract đồng bộ client và xử lý gián đoạn | ACK/replay, full-resync, match scope, respawn reset; giới hạn queue/deadline và cleanup khi lỗi | Controller/replica; MatchLifecycle/LobbyLifecycle, Client/TransportStability; ba lượt reliability 84/84 đạt | TV1–TV4 theo module; không tuyên bố exactly-once, reconnect resume hoặc UX đã nghiệm thu |"
+  },
+  {
+    "path": "report/chapters/15_HAN_CHE.md",
+    "line": 3,
+    "heading": "# 15. Hạn chế — Limitations",
+    "text": "> **Phân công: TV1 xác nhận session/room và chính sách disconnect; TV2 xác nhận đồng bộ/movement/client; TV3 xác nhận gameplay; TV4 tổng hợp phạm vi bằng chứng và công cụ đo.**"
+  },
+  {
+    "path": "report/chapters/15_HAN_CHE.md",
+    "line": 10,
+    "heading": "## 15.1. Hạn chế chức năng và reconnect",
+    "text": "## 15.1. Hạn chế chức năng và reconnect"
+  },
+  {
+    "path": "report/chapters/15_HAN_CHE.md",
+    "line": 12,
+    "heading": "### 15.1.1. Mất kết nối kết thúc lượt, chưa khôi phục trận",
+    "text": "### 15.1.1. Mất kết nối kết thúc lượt, chưa khôi phục trận"
+  },
+  {
+    "path": "report/chapters/15_HAN_CHE.md",
+    "line": 14,
+    "heading": "### 15.1.1. Mất kết nối kết thúc lượt, chưa khôi phục trận",
+    "text": "Ứng dụng hiện kết thúc lượt theo ABORTED khi người chơi disconnect/leave theo flow lobby."
+  },
+  {
+    "path": "report/chapters/15_HAN_CHE.md",
+    "line": 15,
+    "heading": "### 15.1.1. Mất kết nối kết thúc lượt, chưa khôi phục trận",
+    "text": "Route RECONNECT chưa được đăng ký trong ứng dụng; connect lại từ UI là một phiên mới,"
+  },
+  {
+    "path": "report/chapters/15_HAN_CHE.md",
+    "line": 16,
+    "heading": "### 15.1.1. Mất kết nối kết thúc lượt, chưa khôi phục trận",
+    "text": "không đưa player trở lại world đang chơi. Đây là chính sách hiện hành, không phải một flow resume đã nghiệm thu."
+  },
+  {
+    "path": "report/chapters/15_HAN_CHE.md",
+    "line": 18,
+    "heading": "### 15.1.1. Mất kết nối kết thúc lượt, chưa khôi phục trận",
+    "text": "SessionManager có token, thời gian giữ metadata và API reconnect legacy;"
+  },
+  {
+    "path": "report/chapters/15_HAN_CHE.md",
+    "line": 19,
+    "heading": "### 15.1.1. Mất kết nối kết thúc lượt, chưa khôi phục trận",
+    "text": "runtime cũng có command đóng băng/mở đóng băng player. Các thành phần này chưa tạo thành reconnect end-to-end."
+  },
+  {
+    "path": "report/chapters/15_HAN_CHE.md",
+    "line": 20,
+    "heading": "### 15.1.1. Mất kết nối kết thúc lượt, chưa khôi phục trận",
+    "text": "Khi trận đã bị dọn, chỉ gắn socket mới hoặc gửi lại full không thể phục hồi world cũ."
+  },
+  {
+    "path": "report/chapters/15_HAN_CHE.md",
+    "line": 22,
+    "heading": "### 15.1.1. Mất kết nối kết thúc lượt, chưa khôi phục trận",
+    "text": "[đánh giá reconnect](../../docs/RECONNECT_ASSESSMENT.md) và test transport/lifecycle được dẫn ở mục 12.4."
+  },
+  {
+    "path": "report/chapters/15_HAN_CHE.md",
+    "line": 45,
+    "heading": "### 15.1.3. Giới hạn thiết kế đồng bộ và xử lý quá tải",
+    "text": "| L01 | Chưa có resume trận; disconnect có thể ABORTED | Người chơi không tiếp tục cùng match sau mất kết nối | Lobby flow và RECONNECT_ASSESSMENT |"
+  },
+  {
+    "path": "report/chapters/15_HAN_CHE.md",
+    "line": 55,
+    "heading": "### 15.1.3. Giới hạn thiết kế đồng bộ và xử lý quá tải",
+    "text": "Các invariant được bảo vệ trong test không đồng nghĩa delivery exactly-once hoặc phục hồi trong suốt cho mọi lỗi."
+  },
+  {
+    "path": "report/chapters/16_HUONG_PHAT_TRIEN.md",
+    "line": 34,
+    "heading": "### 16.1.2. Thứ tự ưu tiên và điều kiện kiểm chứng",
+    "text": "| P2 | L01 | Thiết kế resume có xác thực và generation | Qua ma trận race/resume/full-baseline và luật hết hạn đã thống nhất | TV1/TV2/TV4, TV3 xác nhận gameplay |"
+  },
+  {
+    "path": "report/chapters/16_HUONG_PHAT_TRIEN.md",
+    "line": 63,
+    "heading": "### 16.2.2. Bảo toàn input và baseline",
+    "text": "và kiểm tra lại MOVE/plant/disconnect cùng tick, tránh đổi ý nghĩa gameplay ngoài dự kiến."
+  },
+  {
+    "path": "report/chapters/16_HUONG_PHAT_TRIEN.md",
+    "line": 78,
+    "heading": "## 16.3. Reconnect có xác thực/generation an toàn",
+    "text": "## 16.3. Reconnect có xác thực/generation an toàn"
+  },
+  {
+    "path": "report/chapters/16_HUONG_PHAT_TRIEN.md",
+    "line": 80,
+    "heading": "## 16.3. Reconnect có xác thực/generation an toàn",
+    "text": "Resume là thay đổi nhiều lớp, không chỉ thêm handler RECONNECT."
+  },
+  {
+    "path": "report/chapters/16_HUONG_PHAT_TRIEN.md",
+    "line": 82,
+    "heading": "## 16.3. Reconnect có xác thực/generation an toàn",
+    "text": "player bị đứng yên hay vẫn chịu damage, khi nào hết hạn và xử lý kết quả nếu trận kết thúc trong lúc mất kết nối."
+  },
+  {
+    "path": "report/chapters/16_HUONG_PHAT_TRIEN.md",
+    "line": 83,
+    "heading": "## 16.3. Reconnect có xác thực/generation an toàn",
+    "text": "Chính sách này sẽ thay một phần hành vi ABORTED hiện tại nên phải được đặc tả và test cùng gameplay."
+  },
+  {
+    "path": "report/chapters/16_HUONG_PHAT_TRIEN.md",
+    "line": 85,
+    "heading": "## 16.3. Reconnect có xác thực/generation an toàn",
+    "text": "Thiết kế phiên cần xác thực quyền nhận lại player, quy định hạn/đổi token, request lặp và reconnect đồng thời."
+  },
+  {
+    "path": "report/chapters/16_HUONG_PHAT_TRIEN.md",
+    "line": 95,
+    "heading": "## 16.3. Reconnect có xác thực/generation an toàn",
+    "text": "**Bảng 16.2. Ma trận kiểm tra tối thiểu đề xuất cho resume.**"
+  },
+  {
+    "path": "report/chapters/16_HUONG_PHAT_TRIEN.md",
+    "line": 99,
+    "heading": "## 16.3. Reconnect có xác thực/generation an toàn",
+    "text": "| Quyền/đồng thời | Token sai/hết hạn/dùng lại; hai reconnect cùng lúc | Không chiếm ghế; chỉ owner được nhận theo policy |"
+  },
+  {
+    "path": "report/chapters/16_HUONG_PHAT_TRIEN.md",
+    "line": 101,
+    "heading": "## 16.3. Reconnect có xác thực/generation an toàn",
+    "text": "| Deadline | Trước/sau grace; reconnect khi GAME_OVER đã chốt | State/ghế/kết quả tuân theo chính sách, không hồi sinh trận đã kết thúc |"
+  },
+  {
+    "path": "report/chapters/16_HUONG_PHAT_TRIEN.md",
+    "line": 104,
+    "heading": "## 16.3. Reconnect có xác thực/generation an toàn",
+    "text": "| Cleanup | Resume lỗi giữa handshake/attach/full | Không để hai writer active, ghost player hoặc tài nguyên không có owner |"
+  },
+  {
+    "path": "report/chapters/16_HUONG_PHAT_TRIEN.md",
+    "line": 106,
+    "heading": "## 16.3. Reconnect có xác thực/generation an toàn",
+    "text": "Căn cứ phạm vi: [RECONNECT_ASSESSMENT](../../docs/RECONNECT_ASSESSMENT.md)."
+  },
+  {
+    "path": "report/chapters/17_KET_LUAN.md",
+    "line": 22,
+    "heading": "# 17. Kết luận — Conclusion",
+    "text": "Kiểm thử mới ghi nhận suite 133/133 JUnit đạt và 84/84 lần thực thi test reliability bổ sung đạt."
+  },
+  {
+    "path": "report/chapters/17_KET_LUAN.md",
+    "line": 31,
+    "heading": "# 17. Kết luận — Conclusion",
+    "text": "GUI nhiều máy và profiling chưa được nghiệm thu/đo đầy đủ; resume trận chưa được triển khai trong ứng dụng;"
+  },
+  {
+    "path": "report/chapters/17_KET_LUAN.md",
+    "line": 37,
+    "heading": "# 17. Kết luận — Conclusion",
+    "text": "đánh giá tối ưu đồng bộ/correction trên trace thực, rồi mở rộng resume và tải nhiều room theo tiêu chí ở mục 16."
+  },
+  {
+    "path": "report/chapters/19_PHU_LUC.md",
+    "line": 38,
+    "heading": "### A.2. Tra cứu message quan trọng",
+    "text": "RECONNECT có mã 0043 nhưng chưa có flow resume trong lobby."
+  },
+  {
+    "path": "report/chapters/19_PHU_LUC.md",
+    "line": 144,
+    "heading": "### C.1. Bản đồ bằng chứng",
+    "text": "| [task12](../evidence/task12-2026-10-26/README.md) | 133/133 JUnit mới, check/main, XML và smoke log | Một lượt suite đầy đủ; không xóa lịch sử fail |"
+  },
+  {
+    "path": "report/chapters/19_PHU_LUC.md",
+    "line": 146,
+    "heading": "### C.1. Bản đồ bằng chứng",
+    "text": "| [task14](../evidence/task14-2026-10-26/README.md) | Raw CSV/log network, reliability XML, manifest/checksum và lỗi môi trường | 45 network run và 84 thực thi test bổ sung; không cộng vào 133 test |"
+  },
+  {
+    "path": "report/chapters/19_PHU_LUC.md",
+    "line": 217,
+    "heading": "### D.2. Nhận state và replay local",
+    "text": "Đây là tóm tắt control flow, không mô tả correction smoothing hoặc resume đã triển khai."
+  }
+]

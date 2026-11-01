@@ -1,0 +1,7 @@
+﻿{
+    "selection":  "RuntimeContractTest,StabilityLifecycleTest,SessionWriterTest,TransportStabilityTest,ClientStabilityTest,MovementDemoProcessTest,LobbyLifecycleTest",
+    "suites":  [
+
+               ],
+    "exit_code":  1
+}

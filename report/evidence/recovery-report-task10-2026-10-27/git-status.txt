@@ -1,0 +1,28 @@
+ M src/main/java/com/bombit/client/app/DemoClientConnection.java
+ M src/main/java/com/bombit/client/game/movement/ClientWorldState.java
+ M src/main/java/com/bombit/client/game/movement/InputController.java
+ M src/main/java/com/bombit/client/game/movement/InterpolationController.java
+ M src/main/java/com/bombit/client/game/movement/MovementClientController.java
+ M src/main/java/com/bombit/client/game/movement/MovementGameWindow.java
+ M src/main/java/com/bombit/client/game/movement/PredictionController.java
+ M src/main/java/com/bombit/client/lobby/LobbyWindow.java
+ M src/main/java/com/bombit/client/network/ClientNetwork.java
+ M src/main/java/com/bombit/server/app/LobbyGameServer.java
+ M src/main/java/com/bombit/server/heartbeat/HeartbeatManager.java
+ M src/main/java/com/bombit/server/network/ClientHandler.java
+ M src/main/java/com/bombit/server/network/ConnectionManager.java
+ M src/main/java/com/bombit/server/network/Server.java
+ M src/main/java/com/bombit/server/session/Session.java
+ M src/main/java/com/bombit/server/session/SessionManager.java
+ M src/test/java/com/bombit/integration/BombClientIntegrationTest.java
+ M src/test/java/com/bombit/integration/LobbyLifecycleTest.java
+?? docs/SESSION_RECOVERY_CLIENT.md
+?? docs/SESSION_RECOVERY_SERVER.md
+?? docs/SESSION_RECOVERY_VALIDATION.md
+?? src/main/java/com/bombit/server/session/SessionRecoveryRejectedException.java
+?? src/test/java/com/bombit/client/app/
+?? src/test/java/com/bombit/client/game/movement/RecoveryInputTest.java
+?? src/test/java/com/bombit/client/network/ConnectCancellationTest.java
+?? src/test/java/com/bombit/integration/RecoveryGameplayIntegrationTest.java
+?? src/test/java/com/bombit/server/network/RecoveryWriterTest.java
+?? src/test/java/com/bombit/server/session/SessionRecoveryTest.java

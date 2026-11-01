@@ -1,0 +1,233 @@
+{
+  "status": "recovery_report_exported_pending_group_confirmation_and_editorial_reexport",
+  "task": "recovery-report-10",
+  "chapter_order": [
+    {
+      "number": 1,
+      "path": "report/chapters/01_TEN_DE_TAI.md",
+      "title": "1. Tên đề tài — Title",
+      "sha256": "2add49a99ba33f34705c4a8ab97a169ab54d6d9cc1b1783f145b37410e96eb5f"
+    },
+    {
+      "number": 2,
+      "path": "report/chapters/02_TOM_TAT.md",
+      "title": "2. Tóm tắt — Abstract",
+      "sha256": "041a92b7849e9665da9b58bd8aa004e59fddbe4a06bc3d128bfdab0bf718d755"
+    },
+    {
+      "number": 3,
+      "path": "report/chapters/03_TU_KHOA.md",
+      "title": "3. Từ khóa — Keywords",
+      "sha256": "d79e076187c02436a0e512ac0cd058b9414fd17dd06f9a572178b06467a2c1db"
+    },
+    {
+      "number": 4,
+      "path": "report/chapters/04_GIOI_THIEU.md",
+      "title": "4. Giới thiệu — Introduction",
+      "sha256": "0daca97d9ff2a980078f97ce6296c9b6042b4448a44b3096a1d7adfba7534762"
+    },
+    {
+      "number": 5,
+      "path": "report/chapters/05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "title": "5. Cơ sở lý thuyết và công trình liên quan",
+      "sha256": "d9da0bc060a5121fe29195f211e6c7ae6c2e6d5cd1f7c0cf0066e207ac4a88b7"
+    },
+    {
+      "number": 6,
+      "path": "report/chapters/06_DINH_NGHIA_BAI_TOAN.md",
+      "title": "6. Định nghĩa bài toán",
+      "sha256": "a4f9503ae5b400bbe53113da02e0458b104a38415dce2ff4924f7872c8b06a63"
+    },
+    {
+      "number": 7,
+      "path": "report/chapters/07_GIAI_PHAP_DE_XUAT.md",
+      "title": "7. Giải pháp đề xuất",
+      "sha256": "c7c580699c5c9d7677a8e6b901e19ecdb99937a491e1a960749ededdbdbaacf0"
+    },
+    {
+      "number": 8,
+      "path": "report/chapters/08_KIEN_TRUC_HE_THONG.md",
+      "title": "8. Kiến trúc hệ thống",
+      "sha256": "181f00e375f2ddbaaf672991bca6d66b2b774c39f0e7740f1bc0503a0b68dab9"
+    },
+    {
+      "number": 9,
+      "path": "report/chapters/09_THIET_KE_GIAO_TIEP_MANG.md",
+      "title": "9. Thiết kế giao tiếp mạng",
+      "sha256": "64f29ea531b8663923bb9c82e9603ae5b288c61ecfaab2e9ec8b2d419fd2f21c"
+    },
+    {
+      "number": 10,
+      "path": "report/chapters/10_TRIEN_KHAI_HE_THONG.md",
+      "title": "10. Triển khai hệ thống",
+      "sha256": "28c229839b0888f1f06b8d23084f9d36e93f7f951c15a0de6eaa7b694231b951"
+    },
+    {
+      "number": 11,
+      "path": "report/chapters/11_THIET_LAP_THUC_NGHIEM.md",
+      "title": "11. Thiết lập thực nghiệm — Experimental Setup",
+      "sha256": "e51966e45bea76c6eb0b3f7e2ca5eb93d73056f493e41696a6f37c0253714765"
+    },
+    {
+      "number": 12,
+      "path": "report/chapters/12_KET_QUA.md",
+      "title": "12. Kết quả — Results",
+      "sha256": "d06acd97f6eb32a06121b842756810919777ea132306679823ae308ed01c28fd"
+    },
+    {
+      "number": 13,
+      "path": "report/chapters/13_THAO_LUAN.md",
+      "title": "13. Thảo luận — Discussion",
+      "sha256": "551980f9daf393250afbae280feaa0c26b16fd1cb67818443a5d6c4421194f8f"
+    },
+    {
+      "number": 14,
+      "path": "report/chapters/14_DIEM_MOI_VA_DONG_GOP.md",
+      "title": "14. Điểm mới và đóng góp — Novelty and Contributions",
+      "sha256": "a3d7834ff5c99dfdd02d0b3c0f17703533481c843b76bf0ffcab5fb1f482293e"
+    },
+    {
+      "number": 15,
+      "path": "report/chapters/15_HAN_CHE.md",
+      "title": "15. Hạn chế — Limitations",
+      "sha256": "91ca6460fda30c0c5a09ba78615d1375f59d9836ef491b8a358b5bb8a51188bc"
+    },
+    {
+      "number": 16,
+      "path": "report/chapters/16_HUONG_PHAT_TRIEN.md",
+      "title": "16. Hướng phát triển — Future Work",
+      "sha256": "d51d8c8e5b65b702dde008c705f8c529bd2decb873ce791edf1f7132e3990540"
+    },
+    {
+      "number": 17,
+      "path": "report/chapters/17_KET_LUAN.md",
+      "title": "17. Kết luận — Conclusion",
+      "sha256": "1a1d638e0524ba93168850e1452a10f44807f0ab3defef888eed1a0e237aa838"
+    },
+    {
+      "number": 18,
+      "path": "report/chapters/18_TAI_LIEU_THAM_KHAO.md",
+      "title": "18. Tài liệu tham khảo — References",
+      "sha256": "1060839caf2063b08bf85e6b6b14f49f820c15e2492059a76bd3186753b93a22"
+    },
+    {
+      "number": 19,
+      "path": "report/chapters/19_PHU_LUC.md",
+      "title": "19. Phụ lục — Appendix",
+      "sha256": "0a24a6098509f06dc8e687e5f8af19e193a8ea3c1f9c16aad38d423bfd2cc9ad"
+    }
+  ],
+  "references": {
+    "catalogue": "report/references/sources.json",
+    "chapter": "report/chapters/18_TAI_LIEU_THAM_KHAO.md",
+    "active_number_field": "final_number",
+    "sources": 19,
+    "citation_order": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19
+    ]
+  },
+  "figures": {
+    "mermaid_sources": [
+      "report/figures/approach/07_01_giai_phap_tong_the.mmd",
+      "report/figures/approach/07_02_delta_va_commit.mmd",
+      "report/figures/architecture/08_01_tong_the.mmd",
+      "report/figures/architecture/08_02_thread_va_queue.mmd",
+      "report/figures/architecture/08_03_luong_movement.mmd",
+      "report/figures/architecture/08_04_trang_thai_recovery.mmd",
+      "report/figures/network/09_01_ket_noi_va_start.mmd",
+      "report/figures/network/09_02_move_va_resync.mmd",
+      "report/figures/network/09_03_bom_va_event.mmd",
+      "report/figures/network/09_04_ket_thuc_va_choi_lai.mmd",
+      "report/figures/network/09_05_reconnect_full_delta.mmd",
+      "report/figures/network/09_06_reconnect_tu_choi_va_het_han.mmd"
+    ],
+    "count": 15,
+    "note": "Twelve current Mermaid diagrams and three benchmark figures embedded; two long recovery sequences each use three landscape panels. Original figures preserved."
+  },
+  "needs_group_confirmation": [
+    "school/faculty",
+    "course/code/class",
+    "lecturer",
+    "group number",
+    "semester/academic year",
+    "full legal names and student IDs",
+    "individual contribution evidence/confirmation"
+  ],
+  "not_claimed": [
+    "GUI/LAN acceptance",
+    "CPU/RAM complete metadata",
+    "Compilatio result",
+    "submission completed"
+  ],
+  "next_task": null,
+  "final_export": {
+    "docx": "report/final/NhomXX_BombItMultiplayer_Report.docx",
+    "pdf_preview": "report/final/NhomXX_BombItMultiplayer_Report.pdf",
+    "merged_markdown": "report/final/BAO_CAO_DA_GHEP.md",
+    "confirmation_checklist": "report/final/CAN_XAC_NHAN_TRUOC_KHI_NOP.md",
+    "evidence": "report/evidence/recovery-report-task10-2026-10-27",
+    "pages": 167,
+    "chapters": 19,
+    "figures": 15,
+    "numbered_table_captions": 86,
+    "actual_tables_including_cover": 88,
+    "references": 19,
+    "embedded_image_panels": 19,
+    "landscape_panel_pages": [
+      74,
+      75,
+      76,
+      78,
+      79,
+      80
+    ],
+    "toc_fields_updated": 3,
+    "docx_sha256": "ee6ed474e06992133737a21609300a91e845f65a52effdf783855e7bdce0c182",
+    "pdf_sha256": "429af6b30f8a1e5c587a48dced87cde31b3f85deb96c63e0065db669a069dc73",
+    "group_confirmation_pending": true,
+    "compilatio_performed": false,
+    "submitted": false
+  },
+  "recovery_update_task": 10,
+  "previous_export": {
+    "evidence": "report/evidence/task18-2026-10-26",
+    "archived_at": "report/evidence/recovery-report-task10-2026-10-27/before/report/final"
+  },
+  "original_report_task": 18,
+  "report_updated_on": "2026-10-27",
+  "novelty_covered": [
+    "State Delta Compression",
+    "Seamless Session Recovery"
+  ],
+  "pending_source_edits": [
+    {
+      "path": "report/chapters/05_CO_SO_LY_THUYET_VA_CONG_TRINH_LIEN_QUAN.md",
+      "sections": [
+        "5.2",
+        "5.3"
+      ],
+      "before_sha256": "d9da0bc060a5121fe29195f211e6c7ae6c2e6d5cd1f7c0cf0066e207ac4a88b7",
+      "after_sha256": "e4c314151802bdac0ff10a7606c49081188d71017122f4def00f6820cb909c9f",
+      "edited_on": "2026-10-28"
+    }
+  ],
+  "requires_reexport": true
+}

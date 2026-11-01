@@ -1,0 +1,214 @@
+﻿[
+    {
+        "sha256":  "db5bca15beb07f826fa2bc9325420fe3c080b11e3c2da63f9ab7995ecd3f2cf0",
+        "path":  "full-tests.log"
+    },
+    {
+        "sha256":  "f1b2f662800122bed0ff255693df89c4487fbdcf453d3524a42d4ec20c3d9c04",
+        "path":  "full-tests-exit-code.txt"
+    },
+    {
+        "sha256":  "97a41d37a7baf615bc9f11c3f5f14eaf26fd42a457d0981e6c88d8e191ffbb27",
+        "path":  "junit-summary.json"
+    },
+    {
+        "sha256":  "f7c20d2523d9950a890f1f583b9ef4edb64df218ac9f7cd2271a06758b23d118",
+        "path":  "m1-client-a-process.log"
+    },
+    {
+        "sha256":  "0aee35bee118aa572355d2256ee3339678164238606d7eb5c85c23d4e152c5bc",
+        "path":  "m1-client-b-process.log"
+    },
+    {
+        "sha256":  "cc36ad994e8af24a60a038a6ff8e7dcfc1977b8d75e0551d58dda47e1b62002f",
+        "path":  "m1-server-process.log"
+    },
+    {
+        "sha256":  "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+        "path":  "maven-exit-code.txt"
+    },
+    {
+        "sha256":  "24d5e9b2e3a8599ede18cca9fffcac197e3fa78e056d7346f6315401e575efde",
+        "path":  "maven-started-at.txt"
+    },
+    {
+        "sha256":  "3f87d1de149e1049fc1c52ebc580014ce6e22c66871b212e79a4b5295ceb9831",
+        "path":  "maven-tests.log"
+    },
+    {
+        "sha256":  "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+        "path":  "network-exit-code.txt"
+    },
+    {
+        "sha256":  "204a3f6f1af4a7d5d4ceb0c87f3f719cee67e00d229a8820f155721af70015c5",
+        "path":  "network-main.log"
+    },
+    {
+        "sha256":  "313189ff90b29503359e2db8b697d5907a5bb594bfbe03b6c8cc540314098a14",
+        "path":  "run-manifest.json"
+    },
+    {
+        "sha256":  "2cd641a98a8979129c4cdb8259335e3556d209be85de24f1fa0e45c224da3b30",
+        "path":  "started-at.txt"
+    },
+    {
+        "sha256":  "1edbb91fbe3b0a3bf7ce0d3b912668356816cd6fedea39ef016d157378c343df",
+        "path":  "surefire/TEST-com.bombit.client.game.bomb.BombPresentationStateTest.xml"
+    },
+    {
+        "sha256":  "8aadd00e73b8e84edb3318c9ab44e8bc6791187199d047dca54186a586116050",
+        "path":  "surefire/TEST-com.bombit.client.game.bomb.BombSceneTest.xml"
+    },
+    {
+        "sha256":  "fcd6c36f26008985054399847b8a310b7ca2e75d2e36feb7aac13965b9ac14ff",
+        "path":  "surefire/TEST-com.bombit.client.game.bomb.Java2DRendererTest.xml"
+    },
+    {
+        "sha256":  "fe7050db43281c2b7505d8b2d4467c25ebafc92acd0d75a79699983b226b0bf1",
+        "path":  "surefire/TEST-com.bombit.client.game.item.ItemClientStateTest.xml"
+    },
+    {
+        "sha256":  "6d2b896db1b045cc30adaecc40a67ec3e27ec0f02deedf078821e2fde5c0bf9a",
+        "path":  "surefire/TEST-com.bombit.client.game.movement.RespawnPredictionTest.xml"
+    },
+    {
+        "sha256":  "ebc7b0ed56948ce69d12b449a30702c29f78fdbc98494456d8a745eede6a2928",
+        "path":  "surefire/TEST-com.bombit.client.game.movement.TileGridRendererTest.xml"
+    },
+    {
+        "sha256":  "9c85a4cffa95fb07b510344b3877b7d08575a5fc5a0b54ffaef1af5ef7103205",
+        "path":  "surefire/TEST-com.bombit.client.lobby.MatchResultsPanelTest.xml"
+    },
+    {
+        "sha256":  "515235e24bfed515521ec4ff8acc9e5234eb8efd498693905a9e0241fe67bc0b",
+        "path":  "surefire/TEST-com.bombit.client.network.ClientStabilityTest.xml"
+    },
+    {
+        "sha256":  "b19392ba2459e2f8e81940ad28259e8ea5d94ebbc8b83a6b0f5c65adf7052b48",
+        "path":  "surefire/TEST-com.bombit.common.protocol.BombProtocolTest.xml"
+    },
+    {
+        "sha256":  "a6e981a333660b6b31de312be7506d06d8a9f7cb988133538700d92964c63357",
+        "path":  "surefire/TEST-com.bombit.common.protocol.GameplayProtocolTest.xml"
+    },
+    {
+        "sha256":  "0a82baba8fecb1fac9beb8e2a01c659ae133f9e08c695859a31f8310873f45d3",
+        "path":  "surefire/TEST-com.bombit.common.protocol.IntegrationContractTest.xml"
+    },
+    {
+        "sha256":  "929d1487ab867d8105cd8855a8a7736672fc7e3919d2f50a4ccbac262ef8997f",
+        "path":  "surefire/TEST-com.bombit.common.protocol.LobbyContractTest.xml"
+    },
+    {
+        "sha256":  "7408c2b9feecf1bd43abb8cde04b0caaf5ec2ea564d193d4731d283d9b53a035",
+        "path":  "surefire/TEST-com.bombit.integration.BombClientIntegrationTest.xml"
+    },
+    {
+        "sha256":  "3e01ac738fd8902a31ddcd057b976466f50a321777b8bdcbe6609730338b9af9",
+        "path":  "surefire/TEST-com.bombit.integration.LobbyLifecycleTest.xml"
+    },
+    {
+        "sha256":  "f0f4bebf324498ad98c7492ef184bcd886ec77263f605d5e6b5c41bb4144a7b2",
+        "path":  "surefire/TEST-com.bombit.integration.MatchLifecycleIntegrationTest.xml"
+    },
+    {
+        "sha256":  "d5ea683ba26a1fa7d6a24562eb970a0a720add8e916f33571bce9a15ea49bdbf",
+        "path":  "surefire/TEST-com.bombit.integration.MovementDemoProcessTest.xml"
+    },
+    {
+        "sha256":  "d4ac84138f05b5f0fbd1dce4f0a08eca0d181dbb1460cf0ff823abdcec973ab5",
+        "path":  "surefire/TEST-com.bombit.integration.MovementDemoTest.xml"
+    },
+    {
+        "sha256":  "51a940d9c690f3334909c91bb514b945f7eb301ab601f45207849dd32f918d8f",
+        "path":  "surefire/TEST-com.bombit.integration.StabilityLifecycleTest.xml"
+    },
+    {
+        "sha256":  "4083f0292fbd7fb5b11980742826f9b46baba73da090369413a6f413969c2877",
+        "path":  "surefire/TEST-com.bombit.server.chat.ChatFaultTest.xml"
+    },
+    {
+        "sha256":  "790a447e97a728b1594a3a353a442bbeecce976411d46352c994f129ede3cf91",
+        "path":  "surefire/TEST-com.bombit.server.game.bomb.BombGameplayTest.xml"
+    },
+    {
+        "sha256":  "459b488e9c4583ecbb60411a80d5c92d3b5fe35022e5cd6645e1f85719c0df5e",
+        "path":  "surefire/TEST-com.bombit.server.game.bomb.BombSchedulerTest.xml"
+    },
+    {
+        "sha256":  "fe413868f66fba0021f6a5915b8b99ae7a6d70c1a430f28fa1464e43a3ef460a",
+        "path":  "surefire/TEST-com.bombit.server.game.bomb.BombSystemTest.xml"
+    },
+    {
+        "sha256":  "ea8044748be08a2c246a71458b09d2fc2388236e496af4892d9262b5c827960c",
+        "path":  "surefire/TEST-com.bombit.server.game.item.ItemSystemTest.xml"
+    },
+    {
+        "sha256":  "2782e869c462298d3f3451d66b7bfd2fb74c88cc546d7cb9743295eeed5e4147",
+        "path":  "surefire/TEST-com.bombit.server.game.map.DefaultArenaMapTest.xml"
+    },
+    {
+        "sha256":  "e5cfdee6e3906765431051db8463930c2ec29acc756b0e731ed6176b318f1a84",
+        "path":  "surefire/TEST-com.bombit.server.game.movement.DeltaCompressionTest.xml"
+    },
+    {
+        "sha256":  "628e47ca3c72ee0954daf9138c54f442e200077acbb1f9e032e72d89edbd7ead",
+        "path":  "surefire/TEST-com.bombit.server.game.movement.MovementFeatureTest.xml"
+    },
+    {
+        "sha256":  "64031ff361ee648e717b1855e8fa76b50bf679c48689c4be4ce998bb15c90abb",
+        "path":  "surefire/TEST-com.bombit.server.game.runtime.BombRuntimeIntegrationTest.xml"
+    },
+    {
+        "sha256":  "771bacc6b2a18161a0988d4eb8ca22eeb65e5b16fa1300a357a3930c3272d8e3",
+        "path":  "surefire/TEST-com.bombit.server.game.runtime.ExtendedItemsTest.xml"
+    },
+    {
+        "sha256":  "dbc1b49044c878d371c49f7b0312efa3893885999cf7c16c1b039f34ab47892a",
+        "path":  "surefire/TEST-com.bombit.server.game.runtime.MatchGameplayTest.xml"
+    },
+    {
+        "sha256":  "0da5413c96c5a735060081af1fde0cfe76a761bca244a8242c9a070c559ddfab",
+        "path":  "surefire/TEST-com.bombit.server.game.runtime.MovementBalanceTest.xml"
+    },
+    {
+        "sha256":  "d946b7aaf16191a12fe8e4f76442bc8802ffe52823a48e9ad486d88d0cd1ad49",
+        "path":  "surefire/TEST-com.bombit.server.game.runtime.RuntimeContractTest.xml"
+    },
+    {
+        "sha256":  "811d0377e8d80dc3dabce5ecc93385ce3c05d89091a1c683e443752d0476f076",
+        "path":  "surefire/TEST-com.bombit.server.network.ServerTransportTest.xml"
+    },
+    {
+        "sha256":  "f3195f1b49b9d5c419a70e984e081c55d437298ba881a6170e5a887f652d17b1",
+        "path":  "surefire/TEST-com.bombit.server.network.SessionWriterTest.xml"
+    },
+    {
+        "sha256":  "87d211b7376f14810df2908f6c54af9dacd3ca6e3d54ebad32e3f656365b4fb2",
+        "path":  "surefire/TEST-com.bombit.server.network.TransportStabilityTest.xml"
+    },
+    {
+        "sha256":  "a609b260066b43ff1b6d1882443bac0ae016ad2cf614f872f97889180100a722",
+        "path":  "surefire/TEST-com.bombit.server.room.RoomManagerTest.xml"
+    },
+    {
+        "sha256":  "1d094af5376ee5f860e9340643ff16179bdcc8b72d9c248437da48ad68dd71e2",
+        "path":  "surefire/TEST-com.bombit.server.session.SessionFaultTest.xml"
+    },
+    {
+        "sha256":  "53610474d35801788f56d9b5ab579bd26c9f359ca28c2a81a849135da6c21438",
+        "path":  "surefire/TEST-com.bombit.server.session.SessionManagerTest.xml"
+    },
+    {
+        "sha256":  "daec1705e1fb64f273f3c2827342ec0695851c0c9aa394dce8a619100b3b3efa",
+        "path":  "surefire/TEST-com.bombit.tools.NetworkBenchmarkTest.xml"
+    },
+    {
+        "sha256":  "19fbb75aa1517c3d39e98a8952b982b64a390ca0cf7e001ed2028242a4960f12",
+        "path":  "tv2-checks.log"
+    },
+    {
+        "sha256":  "13bf7b3039c63bf5a50491fa3cfd8eb4e699d1ba1436315aef9cbe5711530354",
+        "path":  "tv2-exit-code.txt"
+    }
+]

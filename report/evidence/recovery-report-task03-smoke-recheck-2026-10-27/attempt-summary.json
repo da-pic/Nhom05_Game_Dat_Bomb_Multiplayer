@@ -1,0 +1,10 @@
+{
+  "context": "sandbox smoke-only",
+  "totals": {
+    "tests": 1,
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0
+  },
+  "root_cause": "Not established; three-process smoke passed outside sandbox without source changes."
+}

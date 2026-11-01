@@ -1,0 +1,29 @@
+{
+  "applied_without_missing_or_duplicate_anchors": true,
+  "canonical_chapters_written": false,
+  "chapter_after_sha256": {
+    "1": "2add49a99ba33f34705c4a8ab97a169ab54d6d9cc1b1783f145b37410e96eb5f",
+    "2": "041a92b7849e9665da9b58bd8aa004e59fddbe4a06bc3d128bfdab0bf718d755",
+    "3": "d79e076187c02436a0e512ac0cd058b9414fd17dd06f9a572178b06467a2c1db",
+    "4": "6e51d6f98c00a5bbf9ff4618455eea1d9268507fa0b1943e2281d4f2065dcf8e",
+    "5": "9be1f592f4b3a93071fbf630464499eb46ea7f2566359fe9009ff6ba296a6ee9",
+    "6": "98c7fd49781ae7b00bf2dfcee805b22828d6b1430494144cb5d336e0584e53cf",
+    "7": "0cc2d7a75dc31a98f52475931f10c022fec5edba6c12dd57235334ac1de93d43",
+    "8": "058e7b9761feeeefa14940bdcbcefc5f2fe2600274c8ad38b4677961f3e30857",
+    "9": "64f29ea531b8663923bb9c82e9603ae5b288c61ecfaab2e9ec8b2d419fd2f21c",
+    "10": "211deadfd7adf2e513c1727f584c2ed69fdd55f47a02baaf175115663af0c876",
+    "11": "5cf49e00868ea1bfc46e1e2ceed2509a93da8dfc65dbfd72e16f0eac9f74f0da",
+    "12": "32c38799c42758382b36ee7f8203e68e5ea812fae06332919d74c13f4276eb68",
+    "13": "1027baac156748cb32612af96721ef86ab38ef5d70583af9ebfab7cdcac52ab4",
+    "14": "1f27a02d5b2575f521c70aca72f80a019e2d1fa4185b33d3cf283bbb473056c0",
+    "15": "b08e47ed0443ebf8d67ea44515ec2f5ede34edcc58b12f6eff2c010358ed8396",
+    "16": "156f517fead822ed4f06eb74c4193ce5c17985089685953f62a6cf4d1e6a781e",
+    "17": "1a1d638e0524ba93168850e1452a10f44807f0ab3defef888eed1a0e237aa838",
+    "18": "857f2d60e3b84955337f8a31a4848ee81a0c97141ffb231c00ae29ea9f25f935",
+    "19": "0a24a6098509f06dc8e687e5f8af19e193a8ea3c1f9c16aad38d423bfd2cc9ad"
+  },
+  "shared_8_6_children_2_to_5_preserved": true,
+  "table_15_1_L01_L02_preserved": true,
+  "review_only_9_4_and_14_2_preserved": true,
+  "result_tables_and_charts_12_5_preserved": true
+}

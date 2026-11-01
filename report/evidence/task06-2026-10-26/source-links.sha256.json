@@ -1,0 +1,119 @@
+﻿{
+    "inspected_on":  "2026-10-26",
+    "code_revision":  "e333050997c5dbf78ec4b9b42a9bc9a73ce6a0d5",
+    "scope":  "Java source files directly linked by chapter 9; not a complete dependency inventory",
+    "files":  [
+                  {
+                      "path":  "src/main/java/com/bombit/client/app/DemoClientConnection.java",
+                      "sha256":  "e4bfcf13c99ee7d314502e33adbdd6c7e6c32928c6cbc6bc815d03f0350dff1a"
+                  },
+                  {
+                      "path":  "src/main/java/com/bombit/client/game/bomb/BombScene.java",
+                      "sha256":  "8c1b411685514fdf1d5807d02bb2575d89bfaf6b2958fbc6f021c0e646a43e6b"
+                  },
+                  {
+                      "path":  "src/main/java/com/bombit/client/game/movement/ClientWorldState.java",
+                      "sha256":  "3fec58ab7870000c79785e6954d4f017e82d035c8bf1edfb1ff5490a9d724991"
+                  },
+                  {
+                      "path":  "src/main/java/com/bombit/client/game/movement/MovementClientController.java",
+                      "sha256":  "75d4dcf19dd69e815c805c3f62c99e1be0000e98782fb71e6fc224fd6d147aa8"
+                  },
+                  {
+                      "path":  "src/main/java/com/bombit/client/game/movement/PredictionController.java",
+                      "sha256":  "50f7d8e38cb16b962f49e6bc916e3062bff1f1b188c2f864a75757a1e0e3fcf9"
+                  },
+                  {
+                      "path":  "src/main/java/com/bombit/client/network/ClientNetwork.java",
+                      "sha256":  "ef0beedd148012694375b6a517870155bd5279bb3e76b8f5523e4b0d13312447"
+                  },
+                  {
+                      "path":  "src/main/java/com/bombit/common/dto/BombFrame.java",
+                      "sha256":  "f080fa302f5e4cb614b1cd91f527035e08448d978d5f9cbcf623f09b3749d50f"
+                  },
+                  {
+                      "path":  "src/main/java/com/bombit/common/dto/MatchFrame.java",
+                      "sha256":  "5fcba690b6fd30db5c00c1b9c750d7659629d3d5bf08dcda85e26dd4cc1548f2"
+                  },
+                  {
+                      "path":  "src/main/java/com/bombit/common/protocol/BombPacketCodec.java",
+                      "sha256":  "df4b851a814aeb4e74507eedcb78d4727829558b795d2f5d97bb45890770cb67"
+                  },
+                  {
+                      "path":  "src/main/java/com/bombit/common/protocol/DemoPacketCodec.java",
+                      "sha256":  "6f2824f1fa01ebf0cd8e00a9b91929c411e88434276c97fd9f45fd54627f1f9a"
+                  },
+                  {
+                      "path":  "src/main/java/com/bombit/common/protocol/GameplayPacketCodec.java",
+                      "sha256":  "cfe8977c011ee35486b8fd2e4826d41abb4edf10ad0cdcd5831ef6cb9fffaa0d"
+                  },
+                  {
+                      "path":  "src/main/java/com/bombit/common/protocol/LobbyPacketCodec.java",
+                      "sha256":  "fca39a7cfbe7a030bab40abf8bdbbac7faf4d55928c4593b6952c7d99c518d61"
+                  },
+                  {
+                      "path":  "src/main/java/com/bombit/common/protocol/MatchEnvelopeCodec.java",
+                      "sha256":  "05d7584a785fa4d2a3795e1e0203776435799ea7a7f3eb470660523f23257181"
+                  },
+                  {
+                      "path":  "src/main/java/com/bombit/common/protocol/PacketDecoder.java",
+                      "sha256":  "1e696c57ccbf63b830e6924be9ebcbfe8a85e47b78d92419317eaf47a71370dd"
+                  },
+                  {
+                      "path":  "src/main/java/com/bombit/common/protocol/PacketEncoder.java",
+                      "sha256":  "f7ccfdc07239a43f1b78c3c5f7bdbbc5699643b4269c4f1d23c828738f44675d"
+                  },
+                  {
+                      "path":  "src/main/java/com/bombit/common/protocol/PacketType.java",
+                      "sha256":  "f8aeb981f76a0db8020d8242a6a1fe81439e368ab48fbc2f486f59ba88fe7543"
+                  },
+                  {
+                      "path":  "src/main/java/com/bombit/common/protocol/ResyncPacketCodec.java",
+                      "sha256":  "8f6e2595d711db67c6d9f3919381839bd05d101af64d62efd5176eceb32b3912"
+                  },
+                  {
+                      "path":  "src/main/java/com/bombit/common/protocol/SessionPacketCodec.java",
+                      "sha256":  "e54b14b8a55621640c91fc30cc8e1608a86eaaeea499234c71fdc405d7f83aad"
+                  },
+                  {
+                      "path":  "src/main/java/com/bombit/server/app/LobbyGameServer.java",
+                      "sha256":  "a571d1513ec5f3c1788bb4e7e3c1f1244666cc5f9bdea3e82e825ec7db71658e"
+                  },
+                  {
+                      "path":  "src/main/java/com/bombit/server/dispatch/SessionHandlers.java",
+                      "sha256":  "f59fbe1b6d4bd99e7e2f184ae4e28ef3dd59aabd9bfca9b0eba07e2f9a9b26f1"
+                  },
+                  {
+                      "path":  "src/main/java/com/bombit/server/game/core/GameLoop.java",
+                      "sha256":  "d39f72f069425209ec03d31818469659b3f5cf1350f4f9b57765a6a008e480bf"
+                  },
+                  {
+                      "path":  "src/main/java/com/bombit/server/game/movement/MovementSystem.java",
+                      "sha256":  "3a9db6fe5d7749282468339e8185e0af9a1b69c6d07a1199b77c3a78a2f741db"
+                  },
+                  {
+                      "path":  "src/main/java/com/bombit/server/game/movement/MovePacketCodec.java",
+                      "sha256":  "384541b68aa74fafb671364686d391edd070769ddde4c15c58f0dc4c22458160"
+                  },
+                  {
+                      "path":  "src/main/java/com/bombit/server/game/movement/SnapshotPacketCodec.java",
+                      "sha256":  "c6b2fc17a7a06ff12c58bffae69304edb93fd46d9d5032ae50ae53dcb0fc7fb1"
+                  },
+                  {
+                      "path":  "src/main/java/com/bombit/server/game/movement/StateDeltaBuilder.java",
+                      "sha256":  "c1c7fcaa3e4cf818afc0a0ec06aff9e1d1078d3c61d327f09371d496f56bee82"
+                  },
+                  {
+                      "path":  "src/main/java/com/bombit/server/network/ClientHandler.java",
+                      "sha256":  "12b1b0b5cfa370cec7d6e2de96cec8d4e1967bf9f6c0f3e512cad5f3b0b47c02"
+                  },
+                  {
+                      "path":  "src/main/java/com/bombit/server/network/InboundRateLimiter.java",
+                      "sha256":  "a6c95d7fd902582957cc518d84de572a27d2058d11b216e058ee7d558b61e4dd"
+                  },
+                  {
+                      "path":  "src/main/java/com/bombit/server/network/SessionWriter.java",
+                      "sha256":  "eb523f1fd977117712f8e9abda8f46584b3ff6df584caf9933a7521efd128c3a"
+                  }
+              ]
+}

@@ -1,0 +1,82 @@
+{
+  "date": "2026-10-27T18:13:51.321458+07:00",
+  "base_commit": "492c03127f15a25f4fc685fd004eafe424d53f9f",
+  "branch": "integration/session-recovery",
+  "working_tree_status": "M src/main/java/com/bombit/client/app/DemoClientConnection.java\n M src/main/java/com/bombit/client/game/movement/ClientWorldState.java\n M src/main/java/com/bombit/client/game/movement/InputController.java\n M src/main/java/com/bombit/client/game/movement/InterpolationController.java\n M src/main/java/com/bombit/client/game/movement/MovementClientController.java\n M src/main/java/com/bombit/client/game/movement/MovementGameWindow.java\n M src/main/java/com/bombit/client/game/movement/PredictionController.java\n M src/main/java/com/bombit/client/lobby/LobbyWindow.java\n M src/main/java/com/bombit/client/network/ClientNetwork.java\n M src/main/java/com/bombit/server/app/LobbyGameServer.java\n M src/main/java/com/bombit/server/heartbeat/HeartbeatManager.java\n M src/main/java/com/bombit/server/network/ClientHandler.java\n M src/main/java/com/bombit/server/network/ConnectionManager.java\n M src/main/java/com/bombit/server/network/Server.java\n M src/main/java/com/bombit/server/session/Session.java\n M src/main/java/com/bombit/server/session/SessionManager.java\n M src/test/java/com/bombit/integration/BombClientIntegrationTest.java\n M src/test/java/com/bombit/integration/LobbyLifecycleTest.java\n?? docs/SESSION_RECOVERY_CLIENT.md\n?? docs/SESSION_RECOVERY_SERVER.md\n?? docs/SESSION_RECOVERY_VALIDATION.md\n?? src/main/java/com/bombit/server/session/SessionRecoveryRejectedException.java\n?? src/test/java/com/bombit/client/app/\n?? src/test/java/com/bombit/client/game/movement/RecoveryInputTest.java\n?? src/test/java/com/bombit/client/network/ConnectCancellationTest.java\n?? src/test/java/com/bombit/integration/RecoveryGameplayIntegrationTest.java\n?? src/test/java/com/bombit/server/network/RecoveryWriterTest.java\n?? src/test/java/com/bombit/server/session/SessionRecoveryTest.java",
+  "task_files": [
+    {
+      "path": "src/main/java/com/bombit/server/session/SessionRecoveryRejectedException.java",
+      "sha256": "c34229cb573c292cffe6c90ed4094a2b3eeb20043474bb08be2802b3dbfefd19"
+    },
+    {
+      "path": "src/main/java/com/bombit/server/session/SessionManager.java",
+      "sha256": "16a12f94865ca6690216cef5c7c82063b3284f8a2fb9195017eb33c96c04f85b"
+    },
+    {
+      "path": "src/main/java/com/bombit/server/app/LobbyGameServer.java",
+      "sha256": "0943ac784e17307c9f1463dc786a818805caf2d536e180ad183814e0c7b4db21"
+    },
+    {
+      "path": "src/test/java/com/bombit/integration/RecoveryGameplayIntegrationTest.java",
+      "sha256": "d88f086535a632a231009013a2bbb217bb3f2502d7c2b4e3ec134aa19252ce0f"
+    },
+    {
+      "path": "src/test/java/com/bombit/server/session/SessionRecoveryTest.java",
+      "sha256": "7d68b3380e8107611210679369eaf1a5a85c38792ca2d0dc8dce49f2cc98b3a3"
+    },
+    {
+      "path": "docs/SESSION_RECOVERY_VALIDATION.md",
+      "sha256": "47fdedf7430fcbc9e9dfe8307d9a24769deb4e4ccc4535744a103374438f3c07"
+    }
+  ],
+  "full_suite": {
+    "tests": 171,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "classes": 44,
+  "new_test_executions": 11,
+  "new_integration_cases": 8,
+  "new_boundary_cases": 3,
+  "controlled_gameplay_clock": true,
+  "tcp_grace_seconds": 15,
+  "lan_wifi_or_interactive_gui_executed": false,
+  "source_inventory_count": 219,
+  "prior_client_files_preserved": 14,
+  "report_chapters_preserved": 19,
+  "final_report_files_preserved": 4,
+  "tv2_exit_code": 0,
+  "network_main_exit_code": 0,
+  "logs": [
+    {
+      "path": "recovery-complete-focused-2.log",
+      "sha256": "38068f41ed551b04bb989928c97b7263c5d36b74cddb632597e05fa9330f42da"
+    },
+    {
+      "path": "recovery-complete-focused-3.log",
+      "sha256": "fc724cf788cbc97c95cf7c0ac16163ca65c88218dc967fc91d0b5ee7a8221cec"
+    },
+    {
+      "path": "recovery-complete-focused.log",
+      "sha256": "198f0799ac1bc84545a5c4fd3f5888db7dab348e95b4bc4fc4cd202977e852c0"
+    },
+    {
+      "path": "recovery-complete-full-tests.log",
+      "sha256": "6807f54c94635564d91c5b592b1481b20f1c85ec84d9919785611a7e4bebfa0d"
+    },
+    {
+      "path": "recovery-complete-javac.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "recovery-complete-network.log",
+      "sha256": "204a3f6f1af4a7d5d4ceb0c87f3f719cee67e00d229a8820f155721af70015c5"
+    },
+    {
+      "path": "recovery-complete-tv2.log",
+      "sha256": "19fbb75aa1517c3d39e98a8952b982b64a390ca0cf7e001ed2028242a4960f12"
+    }
+  ],
+  "commit_created": false
+}

@@ -1,0 +1,99 @@
+{
+  "task": 8,
+  "date": "2026-10-27",
+  "timezone": "Asia/Saigon",
+  "chapters": [
+    {
+      "path": "report/chapters/13_THAO_LUAN.md",
+      "before_sha256": "79a4bde4fbd83e77b5929889ce9d66f7ba89d189c324df745311f56d43ca501c",
+      "after_sha256": "551980f9daf393250afbae280feaa0c26b16fd1cb67818443a5d6c4421194f8f",
+      "before_lines": 182,
+      "after_lines": 244,
+      "tables": [
+        "13.1",
+        "13.2",
+        "13.3"
+      ]
+    },
+    {
+      "path": "report/chapters/14_DIEM_MOI_VA_DONG_GOP.md",
+      "before_sha256": "4f02c0deec0380d6e2170308d6fce1473f0770fb2ad307ad65239295fab6510b",
+      "after_sha256": "a3d7834ff5c99dfdd02d0b3c0f17703533481c843b76bf0ffcab5fb1f482293e",
+      "before_lines": 133,
+      "after_lines": 166,
+      "tables": [
+        "14.1",
+        "14.2"
+      ]
+    },
+    {
+      "path": "report/chapters/15_HAN_CHE.md",
+      "before_sha256": "a036a9ee81857739fa8f7537b92d18b7cab399cfee236916b36d962239c93449",
+      "after_sha256": "91ca6460fda30c0c5a09ba78615d1375f59d9836ef491b8a358b5bb8a51188bc",
+      "before_lines": 116,
+      "after_lines": 145,
+      "tables": [
+        "15.1",
+        "15.2",
+        "15.3"
+      ]
+    },
+    {
+      "path": "report/chapters/16_HUONG_PHAT_TRIEN.md",
+      "before_sha256": "c187aeac028233d49f0f286fe17d817594b83bb6a9553305f7249b6ac00e3250",
+      "after_sha256": "d51d8c8e5b65b702dde008c705f8c529bd2decb873ce791edf1f7132e3990540",
+      "before_lines": 125,
+      "after_lines": 139,
+      "tables": [
+        "16.1",
+        "16.2"
+      ]
+    },
+    {
+      "path": "report/chapters/17_KET_LUAN.md",
+      "before_sha256": "65d510a5e0a16e004e8e166a37eb8a2152cdd208e8a7b62633c02f20b850ac77",
+      "after_sha256": "1a1d638e0524ba93168850e1452a10f44807f0ab3defef888eed1a0e237aa838",
+      "before_lines": 38,
+      "after_lines": 51,
+      "tables": []
+    }
+  ],
+  "contributions": [
+    "C1",
+    "C2",
+    "C3",
+    "C4",
+    "C5"
+  ],
+  "limitations": [
+    "L01",
+    "L02",
+    "L03",
+    "L04",
+    "L05",
+    "L06",
+    "L07",
+    "L08",
+    "L09",
+    "L10",
+    "L11",
+    "L12",
+    "L13"
+  ],
+  "new_tables": 1,
+  "local_links_checked": 70,
+  "java_sources_preserved": 219,
+  "other_chapters_preserved": 14,
+  "chapters_6_to_12_preserved": true,
+  "figures_canonical_references_old_exports_and_manifest_preserved": true,
+  "baseline_analysis_sections_preserved": [
+    "13.2",
+    "14.2",
+    "15.3.1-15.3.2"
+  ],
+  "raw_evidence_files_verified": 280,
+  "tests_rerun": false,
+  "new_measurements": false,
+  "recovery_evidence": "report/evidence/recovery-report-task03-20261027-200413",
+  "validation": "PASS: hashes, citations, headings, captions, C/L codes, links, baseline analysis and actual recovery summary"
+}

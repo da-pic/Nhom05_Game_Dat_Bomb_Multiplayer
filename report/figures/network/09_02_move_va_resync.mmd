@@ -1,0 +1,24 @@
+sequenceDiagram
+    participant C as Client hiện tại
+    participant S as Server / lobby / pump
+    participant R as GameRuntime
+    participant O as Client khác cùng trận
+    C->>C: Prediction local, lưu input sequence q
+    C->>S: MOVE matchId, sequence q, direction, moving
+    S->>R: Kiểm tra scope và submit command
+    R->>R: Tick áp dụng input và movement
+    R-->>S: Update có lastProcessedInput
+    S-->>C: GAME_SNAPSHOT full hoặc delta
+    S-->>O: GAME_SNAPSHOT qua writer riêng
+    alt Baseline hợp lệ
+        C->>C: Apply replica, bỏ pending đã ACK, replay phần còn lại
+    else Không thể ghép baseline
+        C->>C: Giữ world cũ, đánh dấu cần full
+        C->>S: REQUEST_FULL_STATE sau giới hạn tần suất
+        S->>S: Ghi barrier từ update gần nhất
+        S->>R: requestFullState
+        R-->>S: Full update có tick mới hơn barrier
+        S-->>C: FULL_STATE_SYNC
+        S-->>O: FULL_STATE_SYNC cùng room baseline
+        C->>C: Apply full và tiếp tục đồng bộ
+    end

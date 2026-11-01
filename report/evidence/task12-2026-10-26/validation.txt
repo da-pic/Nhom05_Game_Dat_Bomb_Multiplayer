@@ -1,0 +1,8 @@
+﻿Fresh Surefire XML archived: 38 suites; 133 test cases; failures/errors/skipped 0.
+Maven, TV2 checks and NetworkTest main exits: 0; initial wrapper repository error retained separately.
+Checked 12.1-12.7 headings, 7 sequential tables and Markdown column counts.
+Local chapter/index/evidence links checked; 26 directly linked Java files hashed.
+Compiled Maven class inventory hashed: 297 files.
+Production/test/script/POM Git status clean; no source/assertion/timeout changes.
+One new full-suite run, no GUI/LAN run, historical failure retained without claiming a fix.
+Errors: 0

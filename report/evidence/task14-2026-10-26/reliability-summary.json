@@ -1,0 +1,120 @@
+{
+  "total_skipped": 0,
+  "total_test_executions": 84,
+  "total_failures": 0,
+  "preparation_invocations": [
+    {
+      "attempt": "r01",
+      "suites": 0,
+      "reason": "invalid JAVA_HOME; Maven stopped before tests",
+      "exit_code": 1
+    },
+    {
+      "attempt": "r02",
+      "suites": 0,
+      "reason": "invalid JAVA_HOME; Maven stopped before tests",
+      "exit_code": 1
+    },
+    {
+      "attempt": "r03",
+      "suites": 0,
+      "reason": "invalid JAVA_HOME; Maven stopped before tests",
+      "exit_code": 1
+    }
+  ],
+  "classes": [
+    {
+      "failures": 0,
+      "errors": 0,
+      "tests_per_attempt": 7,
+      "skipped": 0,
+      "tests": 21,
+      "class": "com.bombit.client.network.ClientStabilityTest",
+      "attempts": 3
+    },
+    {
+      "failures": 0,
+      "errors": 0,
+      "tests_per_attempt": 7,
+      "skipped": 0,
+      "tests": 21,
+      "class": "com.bombit.integration.LobbyLifecycleTest",
+      "attempts": 3
+    },
+    {
+      "failures": 0,
+      "errors": 0,
+      "tests_per_attempt": 1,
+      "skipped": 0,
+      "tests": 3,
+      "class": "com.bombit.integration.MovementDemoProcessTest",
+      "attempts": 3
+    },
+    {
+      "failures": 0,
+      "errors": 0,
+      "tests_per_attempt": 3,
+      "skipped": 0,
+      "tests": 9,
+      "class": "com.bombit.integration.StabilityLifecycleTest",
+      "attempts": 3
+    },
+    {
+      "failures": 0,
+      "errors": 0,
+      "tests_per_attempt": 1,
+      "skipped": 0,
+      "tests": 3,
+      "class": "com.bombit.server.game.runtime.RuntimeContractTest",
+      "attempts": 3
+    },
+    {
+      "failures": 0,
+      "errors": 0,
+      "tests_per_attempt": 3,
+      "skipped": 0,
+      "tests": 9,
+      "class": "com.bombit.server.network.SessionWriterTest",
+      "attempts": 3
+    },
+    {
+      "failures": 0,
+      "errors": 0,
+      "tests_per_attempt": 6,
+      "skipped": 0,
+      "tests": 18,
+      "class": "com.bombit.server.network.TransportStabilityTest",
+      "attempts": 3
+    }
+  ],
+  "total_errors": 0,
+  "attempts": [
+    {
+      "exit_code": 0,
+      "attempt": "r01",
+      "test_classes": 7,
+      "errors": 0,
+      "tests": 28,
+      "failures": 0,
+      "skipped": 0
+    },
+    {
+      "exit_code": 0,
+      "attempt": "r02",
+      "test_classes": 7,
+      "errors": 0,
+      "tests": 28,
+      "failures": 0,
+      "skipped": 0
+    },
+    {
+      "exit_code": 0,
+      "attempt": "r03",
+      "test_classes": 7,
+      "errors": 0,
+      "tests": 28,
+      "failures": 0,
+      "skipped": 0
+    }
+  ]
+}

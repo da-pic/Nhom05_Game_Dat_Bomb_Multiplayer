@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 public final class Server implements AutoCloseable {
     public static final int DEFAULT_PORT = 8888;
     public static final int HEARTBEAT_TIMEOUT_SECONDS = 10;
-    public static final int RECONNECT_GRACE_SECONDS = 15;
+    public static final int RECONNECT_GRACE_SECONDS = 30;
     public static final int MAX_PLAYERS_PER_ROOM = 4;
     private static final int CLIENT_POOL_SIZE = 32;
     private static final int OUTBOUND_QUEUE_CAPACITY = 256;
@@ -51,11 +51,15 @@ public final class Server implements AutoCloseable {
     private final AtomicBoolean closed = new AtomicBoolean();
     private final AtomicBoolean started = new AtomicBoolean();
     private final int frameTimeoutMillis;
+    private final boolean currentProtocol;
     private volatile java.util.function.Consumer<Session> connected = session -> { };
     private volatile GameEventSink gameObserver = new com.bombit.server.integration.NoOpGameEventSink();
 
     public Server(int port) throws IOException {
         this(port, IntegrationContract.HEARTBEAT_TIMEOUT_MILLIS);
+    }
+    public Server(int port,boolean currentProtocol)throws IOException{
+        this(port,IntegrationContract.HEARTBEAT_TIMEOUT_MILLIS,TimeUnit.SECONDS.toMillis(HEARTBEAT_TIMEOUT_SECONDS),2000,5000,currentProtocol);
     }
 
     /** Shorter frame deadline is useful for deterministic transport tests. */
@@ -64,6 +68,10 @@ public final class Server implements AutoCloseable {
     }
     /** Injectable time bounds keep fault tests short without changing application defaults. */
     public Server(int port,int frameTimeoutMillis,long heartbeatMillis,long sweepMillis,long writeMillis)throws IOException{
+        this(port,frameTimeoutMillis,heartbeatMillis,sweepMillis,writeMillis,false);
+    }
+    private Server(int port,int frameTimeoutMillis,long heartbeatMillis,long sweepMillis,long writeMillis,boolean currentProtocol)throws IOException{
+        this.currentProtocol=currentProtocol;
         if (port < 0 || port > 65535) {
             throw new IllegalArgumentException("Invalid port");
         }
@@ -88,11 +96,13 @@ public final class Server implements AutoCloseable {
         this.sessionManager = new SessionManager(gameEventSink, RECONNECT_GRACE_SECONDS);
         connectionManager.setFailureHandler((session, socket) -> {
             if (session.getSocket() == socket) {
-                if (session.getState() == SessionState.CONNECTED) sessionManager.hardDrop(session.getPlayerId());
-                else sessionManager.handleUnexpectedDisconnect(session.getPlayerId());
+                // Kiểm tra ownership lần nữa trong SessionManager; if bên ngoài có thể đã cũ.
+                if (session.getState() == SessionState.CONNECTED) sessionManager.hardDrop(session.getPlayerId(), socket);
+                else sessionManager.handleUnexpectedDisconnect(session.getPlayerId(), socket);
             }
         });
         SessionHandlers.register(router, sessionManager, broadcastSender, session -> connected.accept(session));
+        if(currentProtocol)SessionHandlers.registerCurrent(router,sessionManager,broadcastSender,session->connected.accept(session));
         this.roomManager.setBroadcaster(sessionManager::broadcastToRoom);
         this.chatHandler = new ChatHandler(roomManager, broadcastSender, OUTBOUND_QUEUE_CAPACITY);
         this.heartbeatManager = new HeartbeatManager(
@@ -124,7 +134,7 @@ public final class Server implements AutoCloseable {
                 SessionWriter writer = connectionManager.open(session);
                 try {
                     clientPool.execute(new ClientHandler(socket, session, sessionManager,
-                            connectionManager, router, writer, frameTimeoutMillis,e->connectionFailure.compareAndSet(null,e)));
+                            connectionManager, router, writer, frameTimeoutMillis,e->connectionFailure.compareAndSet(null,e),currentProtocol));
                 } catch (RejectedExecutionException rejected) {
                     sessionManager.hardDrop(session.getPlayerId());
                 }

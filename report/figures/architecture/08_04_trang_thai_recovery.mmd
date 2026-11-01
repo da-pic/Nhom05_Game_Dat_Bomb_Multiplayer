@@ -1,0 +1,16 @@
+stateDiagram-v2
+    [*] --> CONNECTING
+    CONNECTING --> CONNECTED: ACK ban đầu hợp lệ
+    CONNECTED --> RECONNECTING: Mất transport và có context/token/auto recovery
+    RECONNECTING --> WAITING_ACK: Attempt mới, epoch mới và RECONNECT
+    WAITING_ACK --> WAITING_FULL: ACK đúng identity
+    WAITING_FULL --> CONNECTED: Metadata cùng match và full hợp lệ đã áp
+    WAITING_ACK --> RECONNECTING: Timeout pha hoặc transport ngắt
+    WAITING_FULL --> RECONNECTING: Timeout pha hoặc transport ngắt
+    CONNECTING --> CLOSED: Lỗi kết nối hoặc đóng
+    CONNECTED --> CLOSED: Đóng hoặc lỗi không có recovery
+    RECONNECTING --> CLOSED: Hết budget hoặc đóng
+    WAITING_ACK --> CLOSED: Hết budget, bị từ chối hoặc đóng
+    WAITING_FULL --> CLOSED: Hết budget, payload lỗi hoặc đóng
+    WAITING_FULL --> CONNECTED: GAME_OVER đúng match, bỏ context và không mở gameplay
+    CLOSED --> [*]

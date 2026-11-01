@@ -1,0 +1,34 @@
+{
+  "surveyed_revision": "492c03127f15a25f4fc685fd004eafe424d53f9f",
+  "source_inventory": 32,
+  "changed_files": 10,
+  "report_candidate_lines": 147,
+  "chapter_hashes_preserved": 19,
+  "final_artifacts_preserved": 4,
+  "historical_evidence": [
+    {
+      "task": 12,
+      "files": 53,
+      "mismatches": []
+    },
+    {
+      "task": 13,
+      "files": 92,
+      "mismatches": []
+    },
+    {
+      "task": 14,
+      "files": 102,
+      "mismatches": []
+    }
+  ],
+  "inherited_test_totals": {
+    "tests": 135,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "new_tests_run": false,
+  "broken_local_links": [],
+  "tracked_working_tree_status_unchanged": true
+}
