@@ -1,0 +1,3 @@
+timestamp_utc,scenario,clients,rooms,target_commands_per_client_per_second,actual_commands_per_client_per_second,commands_sent,commands_acked,move_ack_loss_percent,move_ack_p95_ms,rtt_p95_ms,window_seconds,tick_rate_hz_min,tick_rate_hz_avg,pending_moves_end,status,error,scope,cleanup_ok,java_version,os,processors
+2026-11-01T05:50:10.014277700Z,multi-room-command-rate,122,31,20,19.989,24400,24400,0.000,72.905,5.908,10.005,19.989,20.143,0,PASS,,single_jvm_loopback,true,25.0.4.1,Windows 11 10.0 amd64,18
+2026-11-01T05:50:21.054068100Z,multi-room-command-rate,122,31,30,29.993,36600,26832,26.689,3505.975,5.920,10.002,19.996,20.089,9768,ANOMALY,MOVE ACK loss exceeded threshold,single_jvm_loopback,true,25.0.4.1,Windows 11 10.0 amd64,18

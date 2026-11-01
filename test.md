@@ -12,9 +12,25 @@ mvn test
 
 Mô phỏng 2 và 4 người chơi liên tục gửi lệnh di chuyển/đặt bom để đo độ trễ (RTT) và thông lượng (Throughput) của Server.
 
+Biên dịch cả mã chính và công cụ benchmark trong test source trước khi chạy:
+
 ```powershell
-java -cp target\classes com.bombit.tools.NetworkBenchmark --local --mode suite --seconds 10 --warmup 2 --label "single_jvm_loopback" --csv target\network-benchmark.csv
+mvn -DskipTests test-compile
 ```
+
+```powershell
+java -cp "target\classes;target\test-classes" com.bombit.tools.NetworkBenchmark --local --mode suite --seconds 10 --warmup 2 --label "single_jvm_loopback" --csv target\network-benchmark.csv
+```
+
+### Gameplay Stress Test
+
+Kịch bản tăng dần số client theo các mốc 112, 120, 122 và 124. Mỗi client vào trận, gửi lệnh di chuyển và đặt bom. Mức tải đạt khi RTT P95 không vượt 150 ms, MOVE ACK loss không quá 1%, MOVE ACK P95 không quá 200 ms và tick rate nằm trong khoảng 18–22 Hz.
+
+```powershell
+java -Xss512k -cp "target\classes;target\test-classes" com.bombit.tools.NetworkBenchmark --local --mode stresstest --stress-levels 120,122,124,126,128 --move-rate 20 --warmup 5 --seconds 180 --max-rtt-p95-ms 150 --max-cpu-percent 95 --csv target\network-stresstest-full-120-128-180s.csv
+```
+
+Mỗi dòng trong `target\network-stresstest-full-120-128-180s.csv` là một mốc tải. `PASS` nghĩa là đạt các ngưỡng trên; khi gặp `FAIL`, mức client cao nhất trước đó có trạng thái `PASS` là mức tối đa đạt trong lượt đo. Server và các client mô phỏng cùng chạy trong một JVM trên loopback.
 
 ### 3. Nén Trạng Thái (State Delta Compression)
 
@@ -36,7 +52,17 @@ Trong danh sách bên trái, chọn cấu hình **DeltaCompressionCheck** thuộ
 
 **Bước 5: Lưu cấu hình và chạy**
 
-Nhấn **Apply**, rồi **OK**. Chạy cấu hình **DeltaCompressionCheck** bằng **Shift + F10**.
+Nhấn **Apply**, rồi **OK**. Chạy cấu hình **DeltaCompressionCheck** bằng nút Run.
+
+### 4. Kiểm thử tốc độ lệnh ở nhiều phòng (Multi-room Command Rate Stress Test)
+
+Chạy một dòng lệnh trong PowerShell để kiểm tra lần lượt 10, 50 và 100 client. Benchmark phân bố client thành khoảng 3, 13 và 25 phòng; mỗi lượt tăng tốc độ MOVE từ 20 lệnh/giây/người. Mỗi mức client được ghi vào một CSV riêng trong `target`.
+
+```powershell
+foreach($n in 10,50,100){$csv="target\network-command-rate-$n.csv";java -Xss512k -cp "target\classes;target\test-classes" com.bombit.tools.NetworkBenchmark --local --mode commandrate --clients $n --command-rates 20,30,40,50,60,80,100 --warmup 2 --seconds 10 --max-rtt-p95-ms 150 --max-ack-p95-ms 200 --max-ack-loss-percent 1 --min-tick-hz 18 --csv $csv}
+```
+
+Mỗi lượt dừng ở mức đầu tiên có `ANOMALY`; các mức client tiếp theo trong vòng lặp vẫn tiếp tục chạy. `ANOMALY` là kết quả đo theo ngưỡng, không phải lỗi biên dịch. Benchmark chạy server và client mô phỏng cùng JVM trên loopback.
 
 ## Experimental Results
 
@@ -123,17 +149,19 @@ Nhấn **Apply**, rồi **OK**. Chạy cấu hình **DeltaCompressionCheck** b�
 
 2.Benchmark Hiệu năng Mạng
 
-| Kịch bản Test | Số Client | Ping TB (ms) | Ping P95 (ms) | Ping Tối đa (ms) | Băng thông Gửi (B/s) | Băng thông Nhận (B/s) | Trễ ĐB TB (ms) | Trễ ĐB P95 (ms) | Trễ Đặt Bom (ms) | Delta Snap |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Transport (Mạng thô) | 1 | 2.70 | 4.13 | 5.21 | 94.99 | 94.99 | - | - | - | 0 |
-| Transport (Mạng thô) | 2 | 3.42 | 8.32 | 12.23 | 95.00 | 95.00 | - | - | - | 0 |
-| Transport (Mạng thô) | 4 | 3.01 | 4.36 | 17.17 | 94.99 | 94.99 | - | - | - | 0 |
-| Idle (Đứng yên ở sảnh) | 2 | 2.60 | 3.79 | 6.82 | 95.00 | 486.99 | - | - | - | 10 |
-| Idle (Đứng yên ở sảnh) | 4 | 2.42 | 3.55 | 5.36 | 94.98 | 583.70 | - | - | - | 10 |
-| Movement (Chạy liên tục) | 2 | 14.62 | 18.08 | 41.35 | 1,728.91 | 6,430.74 | 43.17 | 64.11 | - | 160 |
-| Movement (Chạy liên tục) | 4 | 15.07 | 17.12 | 19.28 | 1,749.57 | 9,868.00 | 42.99 | 76.55 | - | 164 |
-| Bombs (Vừa chạy vừa bom) | 2 | 15.98 | 21.75 | 46.48 | 1,781.31 | 6,765.94 | 43.67 | 70.96 | 66.05 | 162 |
-| Bombs (Vừa chạy vừa bom) | 4 | 14.94 | 17.69 | 21.13 | 1,789.33 | 10,288.42 | 41.42 | 77.53 | 49.16 | 160 |
+| **Kịch bản Test**          | **Số Client** | **Độ trễ mạng (Ping P95 - ms)** | **Độ trễ di chuyển (Move ACK P95 - ms)** | **Độ trễ đặt bom (Plant ACK - ms)** | **Thời gian xử lý di chuyển (ms)** | **Thời gian xử lý đặt bom (ms)** | **Tốc độ truyền (Băng thông Gửi - B/s)** | **Tốc độ nhận (Băng thông Nhận - B/s)** |
+| -------------------------- | ------------- | ------------------------------- | ---------------------------------------- | ----------------------------------- | ---------------------------------- | -------------------------------- | ---------------------------------------- | --------------------------------------- |
+| **Transport (Truyền tải)** | 1             | 4.129                           | -                                        | -                                   | -                                  | -                                | 94.99                                    | 94.99                                   |
+| **Transport (Truyền tải)** | 2             | 8.315                           | -                                        | -                                   | -                                  | -                                | 95.00                                    | 95.00                                   |
+| **Transport (Truyền tải)** | 4             | 4.357                           | -                                        | -                                   | -                                  | -                                | 94.99                                    | 94.99                                   |
+| **Idle (Trạng thái rảnh)** | 2             | 3.787                           | -                                        | -                                   | -                                  | -                                | 95.00                                    | 486.99                                  |
+| **Idle (Trạng thái rảnh)** | 4             | 3.547                           | -                                        | -                                   | -                                  | -                                | 94.98                                    | 583.70                                  |
+| **Movement (Di chuyển)**   | 2             | 18.084                          | 64.114                                   | -                                   | **49.493**                         | -                                | 1,728.91                                 | 6,430.74                                |
+| **Movement (Di chuyển)**   | 4             | 17.120                          | 76.549                                   | -                                   | **61.477**                         | -                                | 1,749.57                                 | 9,868.00                                |
+| **Bombs (Đặt bom)**        | 2             | 21.753                          | 70.958                                   | 66.054                              | **54.976**                         | **50.072**                       | 1,781.31                                 | 6,765.95                                |
+| **Bombs (Đặt bom)**        | 4             | 17.685                          | 77.531                                   | 49.161                              | **62.589**                         | **34.219**                       | 1,789.33                                 | 10,288.42                               |
+
+Hai cột “Thời gian xử lý” là **ước tính phần trễ còn lại sau khi trừ Ping TB (`rtt_mean_ms`)**: thời gian xử lý di chuyển = Move ACK P95 trung bình trừ Ping TB trung bình; thời gian xử lý đặt bom = Plant ACK trung bình trừ Ping TB trung bình. CSV không đo trực tiếp thời gian xử lý nội bộ server; các giá trị này chỉ là phép ước tính, không nên diễn giải như thời gian CPU/server thuần túy. Plant ACK là thời gian từ khi client gửi lệnh đặt bom đến khi client thấy bom trong snapshot.
 
 3.Nén Trạng Thái (State Delta Compression) 
 | Chỉ số Đo lường (Metrics) | Không tối ưu (Full State) | Đã tối ưu (Delta Compression) | Tỉ lệ Cải thiện |
@@ -144,6 +172,21 @@ Nhấn **Apply**, rồi **OK**. Chạy cấu hình **DeltaCompressionCheck** b�
 | Mức tiêu hao khi Đứng yên (Idle) | 525 - 561 Bytes | 0 Bytes | Tiết kiệm tuyệt đối (100%) |
 | Mức tiêu hao khi có sự kiện (Mode) | 525 - 561 Bytes | 185 Bytes (Phổ biến nhất) | Giảm ~66% |
 | Số lần rảnh rỗi (0 Bytes) | 0 / 200 ticks (0%) | 117 / 200 ticks (58.5%) | Tối ưu tài nguyên cực tốt |
+
+4. Kiểm thử tốc độ lệnh ở nhiều phòng (Multi-room Command Rate Stress Test)
+
+| Client | Phòng | Tốc độ thực tế (lệnh/người/giây) | Lệnh gửi | Đã ACK | Chưa ACK khi kết thúc | MOVE ACK P95 (ms) | RTT P95 (ms) | Tick TB (Hz) | Kết quả | CSV thô |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | :--- | :--- |
+| 10 | 3 | 19.986 | 2,000 | 2,000 | 0 | 32.405 | 6.519 | 19.986 | PASS | [network-command-rate-10.csv](statics/results/network-command-rate-10.csv) |
+| 10 | 3 | 29.987 | 3,000 | 2,200 | 800 | 3,511.083 | 6.276 | 20.091 | ANOMALY | [network-command-rate-10.csv](statics/results/network-command-rate-10.csv) |
+| 50 | 13 | 19.993 | 10,000 | 10,000 | 0 | 71.152 | 5.934 | 20.025 | PASS | [network-command-rate-50.csv](statics/results/network-command-rate-50.csv) |
+| 50 | 13 | 29.996 | 15,000 | 10,992 | 4,008 | 3,500.687 | 6.203 | 20.057 | ANOMALY | [network-command-rate-50.csv](statics/results/network-command-rate-50.csv) |
+| 100 | 25 | 19.991 | 20,000 | 20,000 | 0 | 70.709 | 6.122 | 20.114 | PASS | [network-command-rate-100.csv](statics/results/network-command-rate-100.csv) |
+| 100 | 25 | 29.990 | 30,000 | 21,992 | 8,008 | 3,504.116 | 6.149 | 20.090 | ANOMALY | [network-command-rate-100.csv](statics/results/network-command-rate-100.csv) |
+| 122 | 31 | 19.989 | 24,400 | 24,400 | 0 | 72.905 | 5.908 | 20.143 | PASS | [network-command-rate-multiplayer.csv](statics/results/network-command-rate-multiplayer.csv) |
+| 122 | 31 | 29.993 | 36,600 | 26,832 | 9,768 | 3,505.975 | 5.920 | 20.089 | ANOMALY | [network-command-rate-multiplayer.csv](statics/results/network-command-rate-multiplayer.csv) |
+
+Ở các lượt đo này, 20 lệnh/người/giây đạt ngưỡng với 10, 50, 100 và 122 client. Mức 30 lệnh/người/giây vượt ngưỡng MOVE ACK P95 200 ms; số “chưa ACK” là lệnh chưa được xác nhận sau cửa sổ đo và một giây chờ, không khẳng định chúng mất vĩnh viễn. CPU/RAM không được đo riêng cho server vì server và load generator cùng JVM.
 
 
 ## Novelty and Contributions

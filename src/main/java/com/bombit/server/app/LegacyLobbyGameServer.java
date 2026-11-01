@@ -25,7 +25,6 @@ import java.util.concurrent.atomic.AtomicReference;
 
 /** Serializes room transitions; each match has its own runtime and snapshot consumer. */
 final class LegacyLobbyGameServer implements AutoCloseable, GameEventSink {
-    private static final int MAX_ROOMS = Integer.getInteger("bombit.server.maxRooms", 64);
     private final Server server;
     private final RoomManager rooms;
     private final GameRuntimeManager games;
@@ -100,7 +99,7 @@ final class LegacyLobbyGameServer implements AutoCloseable, GameEventSink {
                 var b=LobbyPacketCodec.request(packet,Set.of("roomName","maxPlayers"),Set.of("mode"));
                 if(b.containsKey("mode")&&!LobbyPacketCodec.text(b,"mode",32).equals("STANDARD")) throw reject("MODE_NOT_SUPPORTED");
                 if(session.getRoomId()!=null) throw reject("ALREADY_IN_ROOM");
-                if(rooms.snapshot().size()>=MAX_ROOMS) throw reject("ROOM_LIMIT");
+                if(rooms.snapshot().size()>=32) throw reject("ROOM_LIMIT");
                 rooms.createRoom(LobbyPacketCodec.text(b,"roomName",64),session,LobbyPacketCodec.integer(b,"maxPlayers",2,4));
                 publishLists();
             }
