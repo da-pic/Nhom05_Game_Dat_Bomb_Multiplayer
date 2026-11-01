@@ -43,7 +43,6 @@ public final class Session {
     public long getLastHeartbeatNanos() { return lastHeartbeatNanos; }
     public OutboundSender getOutboundSender() { return outboundSender; }
 
-    /** A provisional connection becomes a lobby session exactly once after validated CONNECT. */
     public synchronized void completeHandshake(String name) {
         if (state.get() != SessionState.CONNECTED) throw new IllegalStateException("Already connected");
         username = requireText(name, "username");
@@ -54,7 +53,6 @@ public final class Session {
     public void setRoomId(String roomId) { this.roomId = roomId; }
     public void setOutboundSender(OutboundSender sender) { this.outboundSender = sender; }
 
-    // Cùng monitor với attach/expiry: ghi stateBeforeDisconnect trước khi giao quyền reconnect.
     public synchronized boolean transition(SessionState expected, SessionState next) {
         if (!state.compareAndSet(expected, next)) {
             return false;
@@ -100,12 +98,10 @@ public final class Session {
             try {
                 current.close();
             } catch (java.io.IOException ignored) {
-                // Cleanup is best effort; the session is still removed by its owner.
             }
         }
     }
 
-    /** Releases ownership without closing: used when a RECONNECT frame moves this socket to another session. */
     public synchronized Socket detachSocket() {
         Socket current = socket;
         socket = null;
