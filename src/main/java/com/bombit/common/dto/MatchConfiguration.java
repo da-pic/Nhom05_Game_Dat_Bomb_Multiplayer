@@ -3,15 +3,10 @@ package com.bombit.common.dto;
 import java.util.Objects;
 import java.util.UUID;
 
-/**
- * Ảnh cấu hình gameplay đã resolve, độc lập theme, room revision và state trận.
- * Construct được DTO không có nghĩa được phép start: server còn phải kiểm ModeRegistry.
- * Toàn bộ đồ thị giá trị đều bất biến, hai phòng có thể chia sẻ giá trị nhưng không chia sẻ mutable state.
- */
+
 public record MatchConfiguration(UUID configurationId, GameMode gameMode, String rulesVersion,
                                  MatchPreset presetId, MatchProfile profile, String layoutId,
                                  EffectiveRules effectiveRules, MatchFormat matchFormat) {
-    /** Giữ constructor cũ cho fixture/bootstrap: Classic/Paradox cá nhân, Shadow đội 2–2. */
     public MatchConfiguration(UUID id,GameMode mode,String version,MatchPreset preset,MatchProfile profile,
             String layout,EffectiveRules rules) {
         this(id,mode,version,preset,profile,layout,rules,MatchFormat.defaultFor(mode));
