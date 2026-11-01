@@ -1,10 +1,6 @@
 package com.bombit.common.dto;
 
-/**
- * Liên kết preset với mode/luật/layout để không ghép các chuỗi không tương thích.
- * Tên enum là tên contract; codec tương lai phải dùng name(), không truyền ordinal.
- * Circuit chưa triển khai nên không có preset khả dụng.
- */
+
 public enum MatchPreset {
     CLASSIC_SERVER_DEFAULT(GameMode.CLASSIC, "classic-v1", "classic-generator-v1", MatchProfile.PUBLIC),
     SHADOW_RELAY_V1(GameMode.SHADOW_RELAY, "shadow-relay-v1", "shadow-relay-arena-v1", MatchProfile.PUBLIC),
