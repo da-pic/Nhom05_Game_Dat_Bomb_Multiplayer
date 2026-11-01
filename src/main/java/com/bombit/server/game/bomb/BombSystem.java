@@ -21,7 +21,6 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/** Luật đặt và kích nổ bom phía server. Được gọi từ Game Loop. */
 public final class BombSystem {
     private final java.util.function.IntSupplier nextBombId;
     private final long fuseMillis;
@@ -34,7 +33,6 @@ public final class BombSystem {
     BombSystem(long fuseMillis, GameEventSink eventSink, int firstBombId) {
         this(fuseMillis, eventSink, new AtomicInteger(firstBombId)::getAndIncrement);
     }
-    /** Shadow chia sẻ allocator giữa bom thường và scan; Classic giữ bộ đếm riêng như trước. */
     public BombSystem(long fuseMillis, GameEventSink eventSink, java.util.function.IntSupplier ids) {
         if (fuseMillis <= 0) {
             throw new IllegalArgumentException("Fuse must be positive");
@@ -89,7 +87,6 @@ public final class BombSystem {
         return explodeBombs(List.of(bombId), nowMillis, world);
     }
 
-    /** One tick's roots share block barriers, including all recursively chained bombs. */
     public ExplosionResult explodeBombs(Collection<Integer> bombIds, long nowMillis, BombWorld world) {
         Objects.requireNonNull(world);
         Queue<Bomb> pending = new ArrayDeque<>();
@@ -126,7 +123,6 @@ public final class BombSystem {
             eventSink.publish(new BombExplodedEvent(nowMillis, bomb.id(), bomb.position(), Set.copyOf(bombCells)));
         }
 
-        // Resolve once after all rays: a respawn cannot be hit again by this same explosion batch.
         hits.forEach((playerId,killer)->{
             world.damagePlayer(playerId,killer);
             if(!world.isPlayerAlive(playerId)){
@@ -154,7 +150,6 @@ public final class BombSystem {
         for (Direction direction : Direction.values()) {
             for (int distance = 1; distance <= bomb.range(); distance++) {
                 TilePosition position = bomb.position().move(direction, distance);
-                // A block destroyed earlier in this batch still stops every ray in the same batch.
                 TileType tileType = destroyedBlocks.contains(position) ? TileType.BREAKABLE_BLOCK : world.tileType(position);
                 if (tileType == TileType.HARD_WALL || tileType == TileType.OUT_OF_BOUNDS) {
                     break;
