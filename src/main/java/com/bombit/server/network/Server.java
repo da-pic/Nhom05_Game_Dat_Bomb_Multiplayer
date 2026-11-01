@@ -145,7 +145,6 @@ public final class Server implements AutoCloseable {
     public ChatHandler getChatHandler() { return chatHandler; }
     public HeartbeatManager getHeartbeatManager() { return heartbeatManager; }
     public MessageRouter getRouter() { return router; }
-    /** Composition hooks: install before start; transport-only Server remains usable unchanged. */
     public void setConnectedHandler(java.util.function.Consumer<Session> callback) { connected = java.util.Objects.requireNonNull(callback); }
     public void setGameObserver(GameEventSink observer) { gameObserver = java.util.Objects.requireNonNull(observer); }
     public java.util.Optional<Throwable> getConnectionFailure() { return java.util.Optional.ofNullable(connectionFailure.get()); }
