@@ -11,12 +11,9 @@ import java.util.concurrent.atomic.*;
 import java.util.function.Consumer;
 import java.util.function.LongSupplier;
 
-/** Socket và cửa sổ grace được thay đổi nguyên tử dưới khóa session.
- * Callback sang lobby luôn chạy ngoài khóa để tránh khóa chéo session -> lobby.
- */
+
 public final class SessionManager implements AutoCloseable {
     private final Map<String, Session> sessions = new ConcurrentHashMap<>();
-    // Mỗi lần mất mạng có ticket riêng; timer lần trước không được xoá phiên của lần sau.
     private static final class DisconnectWindow {
         final long started;
         volatile ScheduledFuture<?> timer;
@@ -36,7 +33,6 @@ public final class SessionManager implements AutoCloseable {
         this(sink, graceSeconds, System::nanoTime,
                 new ScheduledThreadPoolExecutor(2, r -> new Thread(r, "session-expiry")));
     }
-    // Tiêm clock/scheduler để kiểm thử deadline/race mà không sleep 15 giây.
     SessionManager(GameEventSink sink, long graceSeconds, LongSupplier clock, ScheduledThreadPoolExecutor scheduler) {
         if (graceSeconds <= 0) throw new IllegalArgumentException("reconnectGraceSeconds must be positive");
         gameEventSink = Objects.requireNonNull(sink);
@@ -54,9 +50,7 @@ public final class SessionManager implements AutoCloseable {
     public Map<String, Session> snapshot() { return Map.copyOf(sessions); }
 
     public void handleUnexpectedDisconnect(String id) { disconnect(id, null, false, 0); }
-    /** Reader/writer cũ chỉ được ngắt socket mà nó sở hữu, không ngắt kết nối mới. */
     public void handleUnexpectedDisconnect(String id, Socket expectedSocket) { disconnect(id, expectedSocket, true, 0); }
-    /** Kiểm tra lại heartbeat trong khóa: PING vừa tới không bị sweep dựa trên dữ liệu cũ đóng phiên. */
     public void handleHeartbeatTimeout(String id, Socket expectedSocket, long timeoutNanos) {
         if(timeoutNanos<=0)throw new IllegalArgumentException("Invalid heartbeat timeout");
         disconnect(id,expectedSocket,true,timeoutNanos);
@@ -83,14 +77,13 @@ public final class SessionManager implements AutoCloseable {
         if(window==null){notifySafely(()->gameEventSink.onPlayerHardDropped(session));return;}
         notifySafely(() -> gameEventSink.onPlayerDisconnected(session));
         synchronized (session) {
-            // Callback có thể shutdown/reconnect; chỉ lên lịch nếu ticket còn hiệu lực.
             if (sessions.get(id) != session || disconnectTimers.get(id) != window) return;
             if (!closed.get()) {
                 try {
                     long remaining = Math.max(0, graceNanos - (nanoClock.getAsLong() - window.started));
                     window.timer = scheduler.schedule(() -> expire(id, session, window), remaining, TimeUnit.NANOSECONDS);
                     return;
-                } catch (RejectedExecutionException shuttingDown) { /* dọn ngoài khóa */ }
+                } catch (RejectedExecutionException shuttingDown) { }
             }
         }
         hardDrop(id);
@@ -112,9 +105,6 @@ public final class SessionManager implements AutoCloseable {
     private boolean expired(DisconnectWindow window) { return nanoClock.getAsLong() - window.started >= graceNanos; }
     public boolean reconnect(String id, String token, Socket socket) { return reconnect(id, token, socket, s -> { }); }
 
-    /** Giữ một quyền phục hồi trong suốt attach/writer/ACK/callback; từ chối request chồng nhau.
-     * Token hợp lệ vẫn cho phép takeover TCP half-open mà chưa cần heartbeat phát hiện trước.
-     */
     public boolean reconnect(String id, String token, Socket socket, Consumer<Session> beforeResume) {
         Objects.requireNonNull(socket);
         Session session = id == null ? null : sessions.get(id);
@@ -131,7 +121,6 @@ public final class SessionManager implements AutoCloseable {
                         || window == null || expired(window)) { closeQuietly(socket); return false; }
                 cancelDisconnectTimer(id);
                 session.attachSocket(socket);
-                // Giữ DISCONNECTED khi dựng writer: pump/heartbeat chưa dùng socket mới.
             }
             try {
                 beforeResume.accept(session);
@@ -143,8 +132,6 @@ public final class SessionManager implements AutoCloseable {
                 }
                 gameEventSink.onPlayerReconnected(session);
             } catch (SessionRecoveryRejectedException rejected) {
-                // Match có thể đã kết thúc trong grace. Đây là kết quả từ chối hợp lệ;
-                // vẫn dọn socket/writer/timer, không ghi như crash/hỏng callback.
                 hardDrop(id, socket);
                 return false;
             } catch (RuntimeException failed) {
@@ -155,7 +142,6 @@ public final class SessionManager implements AutoCloseable {
             return sessions.get(id) == session && session.getSocket() == socket && !socket.isClosed();
         } finally { recovering.remove(session); }
     }
-    /** Bỏ session tạm sau xác thực; giữ socket sống để chuyển cho identity cũ. */
     public boolean discardProvisional(String id) {
         Session session = sessions.get(id);
         if (session == null) return false;
@@ -177,7 +163,6 @@ public final class SessionManager implements AutoCloseable {
     }
     private void expire(String id, Session session, DisconnectWindow window) {
         synchronized (session) {
-            // Kiểm tra ticket và xoá TRONG CÙNG khóa: loại khe hở check-then-hardDrop.
             if (sessions.get(id) != session || disconnectTimers.get(id) != window
                     || session.getState() != SessionState.DISCONNECTED || !expired(window)) return;
             if (!sessions.remove(id, session)) return;
