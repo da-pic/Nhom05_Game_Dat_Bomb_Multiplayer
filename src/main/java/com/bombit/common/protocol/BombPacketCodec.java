@@ -5,7 +5,6 @@ import com.bombit.common.dto.MatchContext;
 import com.bombit.server.game.event.*;
 import java.util.*;
 
-/** Protocol-2 match-scoped commands and informational events; snapshots own all world changes. */
 public final class BombPacketCodec {
     private BombPacketCodec() { }
     public static Packet plant(long requestId) {
