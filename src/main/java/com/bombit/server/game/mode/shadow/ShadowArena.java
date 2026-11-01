@@ -5,11 +5,9 @@ import com.bombit.server.game.model.TilePosition;
 import com.bombit.server.game.model.TileType;
 import java.util.List;
 
-/** Layout Shadow v1 đối xứng; spawn/trạm là nền trống, không thêm loại tile vật cản giả. */
 public final class ShadowArena {
     public static final String LAYOUT_ID = "shadow-relay-arena-v1";
     public static final int WIDTH = 17, HEIGHT = 15, TILE_PIXELS = 32;
-    // Thứ tự slot: A trái trên, B phải trên, A trái dưới, B phải dưới.
     public static final List<TilePosition> SPAWNS = List.of(
             new TilePosition(1, 1), new TilePosition(15, 1),
             new TilePosition(1, 13), new TilePosition(15, 13));
@@ -35,7 +33,6 @@ public final class ShadowArena {
 
     private ShadowArena() { }
 
-    /** Mỗi trận nhận map mutable riêng; tuyệt đối không cache một GameMap dùng chung giữa các phòng. */
     public static GameMap create() {
         GameMap map = new GameMap(WIDTH, HEIGHT, TILE_PIXELS);
         for (int y = 0; y < HEIGHT; y++) {
