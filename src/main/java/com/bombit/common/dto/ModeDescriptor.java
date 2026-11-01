@@ -2,11 +2,7 @@ package com.bombit.common.dto;
 
 import java.util.Objects;
 
-/**
- * Metadata công khai cho lobby tương lai, không có factory/state/secret của server.
- * Null chỉ dành cho luật/số người/feature của mode tương lai chưa được định nghĩa.
- * Một mode chưa triển khai không được quảng bá capability hoặc tạo cấu hình chơi giả.
- */
+
 public record ModeDescriptor(GameMode gameMode, String rulesVersion, boolean available,
                              UnavailableReason unavailableReason, Integer minPlayers, Integer maxPlayers,
                              Integer teamSize, String requiredFeature, ModeCapabilities capabilities) {
