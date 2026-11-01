@@ -3,12 +3,10 @@ package com.bombit.common.dto;
 import java.util.List;
 import java.util.Objects;
 
-/** Ảnh bất biến của gameplay Shadow; codec/replica sẽ truyền riêng, không đổi schema Classic. */
 public record ShadowFrame(long tick, int remainingSeconds, int scoreA, int scoreB,
                           List<Station> stations, Result result) {
     public enum Reason { BOTH_TEAMS_ELIMINATED, TEAM_ELIMINATED, TARGET_SCORE, TIMEOUT, ABORTED }
 
-    /** Null winningTeam nghĩa là hòa/hủy, không phải một player ID đặc biệt. */
     public record Result(long tick, TeamId winningTeam, Reason reason, int scoreA, int scoreB) {
         public Result {
             Objects.requireNonNull(reason);
