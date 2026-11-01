@@ -65,7 +65,7 @@ final class CurrentLobbyGameServer implements AutoCloseable,GameEventSink {
             case PacketType.LIST_ROOMS->{fields(m);send(s,list());}
             case PacketType.CREATE_ROOM->{
                 if(!m.keySet().containsAll(Set.of("roomName","maxPlayers"))||m.keySet().stream().anyMatch(k->!Set.of("roomName","maxPlayers","gameMode","matchFormat","mapSelection").contains(k)))throw new IllegalArgumentException("Create fields");
-                if(s.getRoomId()!=null)throw reject("ALREADY_IN_ROOM");if(rooms.snapshot().size()>=32)throw reject("ROOM_LIMIT");
+                if(s.getRoomId()!=null)throw reject("ALREADY_IN_ROOM");if(rooms.snapshot().size()>=64)throw reject("ROOM_LIMIT");
                 GameMode mode;try{mode=GameMode.valueOf(m.containsKey("gameMode")?text(m,"gameMode",32):"CLASSIC");}catch(IllegalArgumentException e){throw reject("MODE_NOT_SUPPORTED");}
                 var config=registry.resolvePublic(mode,MetadataV3Codec.matchFormat(m,mode));registry.validateClientFeatures(config,s.features());int capacity=(int)integer(m,"maxPlayers",2,4);
                 if(config.isTeamMatch()&&capacity!=4)throw reject("INVALID_CONFIGURATION");
