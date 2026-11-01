@@ -6,7 +6,6 @@ import com.bombit.server.game.mode.shadow.ShadowRoster;
 import com.bombit.server.game.movement.*;
 import java.util.*;
 
-/** Baseline chỉ giữ view đã lọc của một recipient; commit sau enqueue, reset luôn bắt đầu bằng full. */
 public final class ShadowRecipientStream implements RecipientStream {
     private MatchStartMetadata metadata;
     private final ShadowRoster roster;
