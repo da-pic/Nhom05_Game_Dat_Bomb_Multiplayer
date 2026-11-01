@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/** Trạng thái client không phụ thuộc khung giao diện, dành cho bộ kết xuất sau này sử dụng. */
 public final class ItemPresentationState {
     private final Map<Integer, ItemView> items = new ConcurrentHashMap<>();
 
