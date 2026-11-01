@@ -7,7 +7,6 @@ import java.util.*;
 import java.util.function.Consumer;
 import javax.swing.*;
 
-/** Selector theo availability server; mode chưa làm không thể chọn rồi chạy Classic giả. */
 public final class ModeSelectionPanel extends JPanel {
     private final JComboBox<GameMode> choice=new JComboBox<>();
     private final JComboBox<MatchFormat> formatChoice=new JComboBox<>(MatchFormat.values());
@@ -42,7 +41,6 @@ public final class ModeSelectionPanel extends JPanel {
     public void setModes(java.util.List<ModeDescriptor> next){modes=java.util.List.copyOf(next);updating=true;try{choice.setModel(new DefaultComboBoxModel<>(modes.stream().map(ModeDescriptor::gameMode).toArray(GameMode[]::new)));choice.setSelectedItem(selected);}finally{updating=false;}choice.setEnabled(allowed&&!modes.isEmpty());showDescription();}
     public void select(GameMode mode){updating=true;try{if(selected!=mode)selectedFormat=MatchFormat.defaultFor(mode);selected=mode;choice.setSelectedItem(mode);}finally{updating=false;}syncFormat();showDescription();}
     public void setChangeAllowed(boolean allowed){this.allowed=allowed;choice.setEnabled(allowed&&!modes.isEmpty());syncFormat();}
-    /** Đồng bộ từ server phải im lặng, không gửi ngược SET_MATCH_CONFIGURATION. */
     private void syncFormat(){updating=true;try{if(selected==GameMode.SHADOW_RELAY)selectedFormat=MatchFormat.TEAM_2V2;formatChoice.setSelectedItem(selectedFormat);}finally{updating=false;}
         formatChoice.setEnabled(allowed&&available(selected)&&selected!=GameMode.SHADOW_RELAY);}
     public static String formatLabel(MatchFormat format){return format==MatchFormat.TEAM_2V2?"Đội 2–2 (đủ 4 người)":"Cá nhân (2–4 người)";}
