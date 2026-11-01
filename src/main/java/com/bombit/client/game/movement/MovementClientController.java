@@ -7,10 +7,7 @@ import com.bombit.server.game.movement.*;
 import java.util.concurrent.*;
 import java.util.function.Consumer;
 
-/** Nối ClientNetwork với replica/prediction/interpolation, không tự tạo socket.
- * uiExecutor phải tuần tự (ví dụ SwingUtilities::invokeLater). Gọi các getter từ UI thread.
- * Worker gửi có queue hữu hạn; khi lỗi thì dừng gửi và báo caller để dừng input/đóng phiên.
- */
+
 public final class MovementClientController implements AutoCloseable {
     private final ClientNetwork network;
     private final int localId;
@@ -65,7 +62,7 @@ public final class MovementClientController implements AutoCloseable {
     private String plantFeedback="";
     public String plantFeedback(){return plantFeedback;}
     public long estimatedMatchMillis(){return shadowReplica==null?0:Math.max(0,shadowReplica.matchTimeMillis())+Math.min(1000,Math.max(0,(System.nanoTime()-receivedNanos)/1_000_000));}
-    /** Kết quả đã được application codec kiểm tra; UI chỉ thông báo, không tự tạo scan/bom dự đoán. */
+
     public void acceptPlantResult(Packet packet){
         var m=JsonV3.object(packet.getJsonPayload(),16384);String kind="SCAN".equals(m.get("bombType"))?"Scan":"Bom";
         plantFeedback="ACCEPTED".equals(m.get("status"))?kind+" đã đặt":switch(String.valueOf(m.get("errorCode"))){
@@ -73,7 +70,7 @@ public final class MovementClientController implements AutoCloseable {
             case "CELL_OCCUPIED","INVALID_CELL"->"Ô này không thể đặt bom/scan";case "RATE_LIMITED"->"Thao tác quá nhanh";
             default->kind+" bị từ chối";};
     }
-    /** UI owner: epoch mới bỏ prediction/interpolation cũ, chỉ full đúng context mới mở input. */
+
     public void bindCurrentMetadata(com.bombit.common.dto.MatchStartMetadata metadata){
         if(!metadata.identity().matchId().equals(matchId)||metadata.stream().recipientPlayerId()!=localId)throw new IllegalArgumentException("Wrong controller context");
         if(currentMetadata!=null){
@@ -115,13 +112,13 @@ public final class MovementClientController implements AutoCloseable {
     }
     private Packet scope(Packet packet,com.bombit.common.dto.MatchStartMetadata metadata)throws java.io.IOException{return metadata!=null?MatchEnvelopeV3Codec.command(matchId,metadata.stream().timelineEpoch(),packet):matchId==null?packet:MatchEnvelopeCodec.wrap(matchId,packet);}
 
-    /** Chỉ lỗi gửi mạng dùng recovery; lỗi payload/world vẫn fail và đóng controller. */
+
     public void setTransportErrorHandler(Consumer<Throwable> handler) { transportErrors=handler; }
-    /** Reader được gọi hàm này: khóa input ngay và bỏ task chưa gửi của connection cũ. */
+
     public void suspendForRecovery() {
         recoverySuspended=true;inputGeneration.incrementAndGet();sender.getQueue().clear();
     }
-    /** Chỉ gọi trên UI: giữ world để vẽ, bỏ prediction pending và đệm nội suy cũ. */
+
     public void prepareRecoveryOnUi() {
         resetAfterRecovery=true;world.requireFullState();interpolation.clear();
         var local=world.getPlayers().get(localId);
@@ -152,11 +149,11 @@ public final class MovementClientController implements AutoCloseable {
             for(short type:new short[]{PacketType.ITEM_SPAWN,PacketType.ITEM_PICKED_UP,PacketType.PLAYER_DIE})network.addPacketListener(type,listener);
         }
     }
-    /** Entry point for a permanent application listener installed before CONNECT. */
+
     public void acceptPacket(Packet packet) {
         receive(packet,false);
     }
-    /** Permanent application listener is already on the UI owner: apply before a following GAME_OVER. */
+
     public void acceptOnUiThread(Packet packet){receive(packet,true);}
     private void receive(Packet packet,boolean onUi) {
         if(closed) return;
@@ -213,7 +210,7 @@ public final class MovementClientController implements AutoCloseable {
             if(update.isFullState())lastAppliedFullTick=update.getTick();
         } catch (RuntimeException e) { fail(e); }
     }
-    /** InputController gọi sau prediction; chỉ enqueue, không chặn UI bằng socket write. */
+
     public void send(MovePacketCodec.Input input) {
         if(closed) throw new IllegalStateException("Movement client closed");
         if(recoverySuspended)return;
@@ -228,7 +225,7 @@ public final class MovementClientController implements AutoCloseable {
         });
     }
     public com.bombit.client.ui.game.bomb.BombScene bombs() { return bombs; }
-    /** No predicted bomb or damage; wait for the authoritative snapshot. */
+
     public void plantBomb() {
         plant(com.bombit.common.dto.BombType.NORMAL);
     }
@@ -246,7 +243,7 @@ public final class MovementClientController implements AutoCloseable {
             catch(Exception e) { transportFailed(e,generation); }
         });
     }
-    /** API điều khiển Paradox; ACK/result không tự mở input, chỉ full mới quyết định. */
+
     public void rewind(){
         if(!isInputReady()||currentMetadata==null||currentMetadata.configuration().gameMode()!=com.bombit.common.dto.GameMode.PARADOX)return;
         var metadata=currentMetadata;long generation=inputGeneration.get();var command=ParadoxCodec.rewind(++rewindRequest);
@@ -278,7 +275,7 @@ public final class MovementClientController implements AutoCloseable {
             && world.getMatchState()==com.bombit.server.game.core.GameState.MatchState.RUNNING; }
     public boolean isClosed() { return closed; }
     public InterpolationController interpolation() { return interpolation; }
-    /** Timeline lùi 2 tick; clamp thêm tối đa 2 tick khi lâu không nhận dữ liệu. */
+
     public double renderTick() {
         return world.getTick()+Math.min(2,(System.nanoTime()-receivedNanos)/50_000_000.0)-2;
     }
