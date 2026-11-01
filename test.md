@@ -19,7 +19,7 @@ mvn -DskipTests test-compile
 ```
 
 ```powershell
-java -cp "target\classes;target\test-classes" com.bombit.tools.NetworkBenchmark --local --mode suite --seconds 10 --warmup 2 --label "single_jvm_loopback" --csv target\network-benchmark.csv
+java -cp "target\test-classes;target\classes" com.bombit.tools.NetworkBenchmarkHarness --local --mode suite --seconds 10 --warmup 2 --label "single_jvm_loopback" --csv target\network-benchmark.csv
 ```
 
 ### Gameplay Stress Test
@@ -27,7 +27,7 @@ java -cp "target\classes;target\test-classes" com.bombit.tools.NetworkBenchmark 
 Kịch bản tăng dần số client theo các mốc 112, 120, 122 và 124. Mỗi client vào trận, gửi lệnh di chuyển và đặt bom. Mức tải đạt khi RTT P95 không vượt 150 ms, MOVE ACK loss không quá 1%, MOVE ACK P95 không quá 200 ms và tick rate nằm trong khoảng 18–22 Hz.
 
 ```powershell
-java -Xss512k -cp "target\classes;target\test-classes" com.bombit.tools.NetworkBenchmark --local --mode stresstest --stress-levels 120,122,124,126,128 --move-rate 20 --warmup 5 --seconds 180 --max-rtt-p95-ms 150 --max-cpu-percent 95 --csv target\network-stresstest-full-120-128-180s.csv
+java -Xss512k -cp "target\test-classes;target\classes" com.bombit.tools.NetworkBenchmarkHarness --local --mode stresstest --stress-levels 120,122,124,126,128 --move-rate 20 --warmup 5 --seconds 180 --max-rtt-p95-ms 150 --max-cpu-percent 95 --csv target\network-stresstest-full-120-128-180s.csv
 ```
 
 Mỗi dòng trong `target\network-stresstest-full-120-128-180s.csv` là một mốc tải. `PASS` nghĩa là đạt các ngưỡng trên; khi gặp `FAIL`, mức client cao nhất trước đó có trạng thái `PASS` là mức tối đa đạt trong lượt đo. Server và các client mô phỏng cùng chạy trong một JVM trên loopback.
@@ -59,7 +59,7 @@ Nhấn **Apply**, rồi **OK**. Chạy cấu hình **DeltaCompressionCheck** b�
 Chạy một dòng lệnh trong PowerShell để kiểm tra lần lượt 10, 50 và 100 client. Benchmark phân bố client thành khoảng 3, 13 và 25 phòng; mỗi lượt tăng tốc độ MOVE từ 20 lệnh/giây/người. Mỗi mức client được ghi vào một CSV riêng trong `target`.
 
 ```powershell
-foreach($n in 10,50,100){$csv="target\network-command-rate-$n.csv";java -Xss512k -cp "target\classes;target\test-classes" com.bombit.tools.NetworkBenchmark --local --mode commandrate --clients $n --command-rates 20,30,40,50,60,80,100 --warmup 2 --seconds 10 --max-rtt-p95-ms 150 --max-ack-p95-ms 200 --max-ack-loss-percent 1 --min-tick-hz 18 --csv $csv}
+foreach($n in 10,50,100){$csv="target\network-command-rate-$n.csv";java -Xss512k -cp "target\test-classes;target\classes" com.bombit.tools.NetworkBenchmarkHarness --local --mode commandrate --clients $n --command-rates 20,30,40,50,60,80,100 --warmup 2 --seconds 10 --max-rtt-p95-ms 150 --max-ack-p95-ms 200 --max-ack-loss-percent 1 --min-tick-hz 18 --csv $csv}
 ```
 
 Mỗi lượt dừng ở mức đầu tiên có `ANOMALY`; các mức client tiếp theo trong vòng lặp vẫn tiếp tục chạy. `ANOMALY` là kết quả đo theo ngưỡng, không phải lỗi biên dịch. Benchmark chạy server và client mô phỏng cùng JVM trên loopback.

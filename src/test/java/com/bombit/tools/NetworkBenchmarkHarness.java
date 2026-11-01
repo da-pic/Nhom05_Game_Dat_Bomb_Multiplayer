@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BooleanSupplier;
 
 /** Headless protocol-2 workload runner; never changes authoritative world outside the normal packets. */
-public final class NetworkBenchmark {
+public final class NetworkBenchmarkHarness {
     private static final List<String> CAPACITY_COLUMNS=List.of("timestamp_utc","scenario","target_clients","connected_clients","in_match_clients","room_count",
             "window_seconds","rtt_samples","rtt_mean_ms","rtt_p95_ms","move_ack_samples","move_ack_p95_ms","moves_sent",
             "target_move_rate_per_client_hz","move_rate_per_client_hz","move_ack_loss_percent","bomb_commands_sent","bomb_placements_accepted","bomb_rate_per_client_hz","clients_with_accepted_bomb","bomb_notice_deliveries","explosion_notice_deliveries","tick_rate_hz_min","tick_rate_hz_avg",
@@ -54,7 +54,7 @@ public final class NetworkBenchmark {
             if(room!=null&&!UUID.fromString(room).toString().equals(room))throw new IllegalArgumentException("Invalid room ID");
         }
     }
-    private NetworkBenchmark(){}
+    private NetworkBenchmarkHarness(){}
     private record StressConfig(boolean local,String host,int port,List<Integer> levels,int seconds,int warmup,int moveRateHz,Path csv,double maxRttP95,double maxCpu){}
     private record CommandRateConfig(boolean local,String host,int port,int clients,List<Integer> rates,int seconds,int warmup,
                                      Path csv,double maxRttP95,double maxAckP95,double maxAckLoss,double minTickRate){}
@@ -127,7 +127,7 @@ public final class NetworkBenchmark {
         boolean stressMode="stresstest".equals(selectedMode);
         if(stressMode){boolean ok=runStress(parseStress(args));if(!ok)throw new IllegalStateException("Stress test failed; inspect CSV status/error");return;}
         if(Arrays.asList(args).contains("--help")){
-            System.out.println("NetworkBenchmark --local --mode suite --seconds 5 --warmup 1 --csv results.csv\n"
+            System.out.println("NetworkBenchmarkHarness --local --mode suite --seconds 5 --warmup 1 --csv results.csv\n"
                     +"Remote: --host IP --port 8888 --clients 1|2|4 --mode transport|idle|movement|bombs\n"
                     +"Gameplay stress: --local --mode stresstest --stress-levels 128,160,192,224,256 --move-rate 30 --warmup 3 --seconds 15 --csv target/network-stresstest-gameplay-max.csv\n"
                     +"Multi-room command rate: --local --mode commandrate --clients 122 --command-rates 20,30,40,50,60,80,100 --warmup 2 --seconds 10 --csv target/network-command-rate-multiplayer.csv\n"
@@ -382,7 +382,7 @@ public final class NetworkBenchmark {
             if(server!=null){server.close();if(accept!=null)accept.join(5000);cleanup&=server.transport().isTerminated()&&server.activeMatchCount()==0
                     &&server.snapshotWorkerCount()==0&&accept!=null&&!accept.isAlive();}
         }
-        for(var row:rows)row.put("cleanup_ok",Boolean.toString(cleanup));BenchmarkCsv.write(c.csv(),COMMAND_RATE_COLUMNS,rows);
+        for(var row:rows)row.put("cleanup_ok",Boolean.toString(cleanup));BenchmarkCsvSupport.write(c.csv(),COMMAND_RATE_COLUMNS,rows);
         System.out.println("multi-room-command-rate clients="+c.clients()+" rooms="+groups.size()+" csv="+c.csv()+" cleanup_ok="+cleanup);
         return ok&&cleanup;
     }
@@ -508,7 +508,7 @@ public final class NetworkBenchmark {
             if(server!=null){server.close();if(accept!=null)accept.join(5000);cleanup&=server.transport().isTerminated()
                     &&server.activeMatchCount()==0&&server.snapshotWorkerCount()==0&&accept!=null&&!accept.isAlive();}
         }
-        for(var row:rows)row.put("cleanup_ok",Boolean.toString(cleanup));BenchmarkCsv.write(c.csv(),CAPACITY_COLUMNS,rows);
+        for(var row:rows)row.put("cleanup_ok",Boolean.toString(cleanup));BenchmarkCsvSupport.write(c.csv(),CAPACITY_COLUMNS,rows);
         System.out.println("gameplay-stresstest highest_cumulative_pass="+connectedThrough+" csv="+c.csv()+" cleanup_ok="+cleanup);return ok&&cleanup;
     }
     private static void keepPeersAlive(List<Peer> peers)throws Exception{for(var p:peers){p.poll();if(p.session!=null)p.ping();}}
@@ -591,7 +591,7 @@ public final class NetworkBenchmark {
             }
             rows.add(row);
         }
-        BenchmarkCsv.append(c.csv(),COLUMNS,rows);System.out.println((ok?"PASS ":"FAIL ")+c.mode()+" clients="+c.clients()+" expected="+c.expected()+" "+error);return ok;
+        BenchmarkCsvSupport.append(c.csv(),COLUMNS,rows);System.out.println((ok?"PASS ":"FAIL ")+c.mode()+" clients="+c.clients()+" expected="+c.expected()+" "+error);return ok;
     }
     private static String decimal(double v){return String.format(Locale.ROOT,"%.3f",v);}
     private static String stat(LatencyMonitor m,double value){return m.getSampleCount()==0?"":decimal(value);}

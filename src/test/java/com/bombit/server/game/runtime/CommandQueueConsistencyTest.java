@@ -7,7 +7,7 @@ import com.bombit.server.game.core.MoveCommand;
 import com.bombit.server.game.core.Player;
 import com.bombit.server.game.model.Direction;
 import com.bombit.server.game.movement.MovementSystem;
-import com.bombit.tools.BenchmarkCsv;
+import com.bombit.tools.BenchmarkCsvSupport;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -50,12 +50,12 @@ class CommandQueueConsistencyTest {
     @Test
     @Timeout(value = 90, unit = TimeUnit.SECONDS)
     void fourConcurrentPlayersAreProcessedByOneLoopInOrderAndWritesCsv() throws Exception {
-        BenchmarkCsv.write(CSV, COLUMNS, List.of());
+        BenchmarkCsvSupport.write(CSV, COLUMNS, List.of());
         var results = new ArrayList<Map<String, String>>();
         for (int run = 1; run <= 3; run++) {
             Map<String, String> result = measureRun(run);
             results.add(result);
-            BenchmarkCsv.append(CSV, COLUMNS, List.of(result));
+            BenchmarkCsvSupport.append(CSV, COLUMNS, List.of(result));
             System.out.printf(Locale.ROOT,
                     "%s command-queue-consistency run=%s submitted=%s accepted=%s processed=%s rejected=%s pending=%s queuePeakSampled=%s players=%s/%s csv=%s%n",
                     result.get("status"), result.get("run"), result.get("commands_submitted"),
@@ -71,7 +71,7 @@ class CommandQueueConsistencyTest {
         boolean queueFullObserved = false;
         for (int level = 0; level < BURST_LEVELS_PER_PLAYER.length; level++) {
             Map<String, String> result = measureBurstLevel(level + 1, BURST_LEVELS_PER_PLAYER[level]);
-            BenchmarkCsv.append(CSV, COLUMNS, List.of(result));
+            BenchmarkCsvSupport.append(CSV, COLUMNS, List.of(result));
             boolean rejected = Long.parseLong(result.get("commands_rejected_queue_full")) > 0;
             queueFullObserved |= rejected;
             System.out.printf(Locale.ROOT,
