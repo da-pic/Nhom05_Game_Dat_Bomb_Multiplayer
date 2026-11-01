@@ -4,12 +4,10 @@ import com.bombit.common.dto.*;
 import java.util.*;
 import static com.bombit.common.protocol.JsonV3.*;
 
-/** Schema v3 strict cho config/lobby/started; không đọc GameState hoặc tạo runtime. */
 public final class MetadataV3Codec {
     private MetadataV3Codec() { }
     private static final String[] COMMON={"width","height","tilePixels","tickTargetMillis","inputStepMillis","hitboxPixels","initialSpeed","speedIncrement","maxSpeed","initialLives","maxLives","normalFuseMillis","initialBombQuota","maxBombQuota","initialBombRange","maxBombRange","itemDropProbability","durationMillis","sessionGraceMillis","clientRecoveryBudgetMillis"};
     private static int n(Map<String,Object> m,String key){return (int)integer(m,key,0,Integer.MAX_VALUE);}
-    /** Payload cũ không có matchFormat nhận mặc định theo mode; null/giá trị lạ vẫn bị từ chối. */
     public static MatchFormat matchFormat(Map<String,Object> fields,GameMode mode){
         return fields.containsKey("matchFormat")?MatchFormat.valueOf(text(fields,"matchFormat",16)):MatchFormat.defaultFor(mode);
     }
