@@ -10,7 +10,6 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.TimeUnit;
 
-/** Decode complete frames, gate handshake, then route using the server-owned session ID. */
 public final class ClientHandler implements Runnable {
     private final Socket socket;
     private volatile Session session;
@@ -68,15 +67,13 @@ public final class ClientHandler implements Runnable {
                     } catch (RuntimeException invalid) {
                         error("INVALID_PACKET"); hardDrop=true; drain=true; break;
                     }
-                    // Preflight giữ socket tạm sống để trả ERROR cho token sai/hết hạn.
-                    // reconnect() vẫn kiểm tra nguyên tử lần nữa, không tin kết quả preflight.
+              
                     if (!sessions.canReconnect(req.playerId(), req.reconnectToken())) {
                         error(currentProtocol?"RECOVERY_REJECTED":"RECONNECT_REJECTED"); hardDrop=true; drain=true; break;
                     }
                     String provisionalId = session.getPlayerId();
                     boolean ok = sessions.reconnect(req.playerId(), req.reconnectToken(), socket, resumed -> {
-                        // Chỉ bỏ phiên tạm SAU khi SessionManager đã giữ quyền reconnect.
-                        // Nếu token/deadline sai, writer tạm vẫn gửi được ERROR cho client.
+                    
                         connections.releasePreservingSocket(provisionalId);
                         if (!sessions.discardProvisional(provisionalId))
                             throw new IllegalStateException("Provisional session no longer owned");
@@ -110,9 +107,9 @@ public final class ClientHandler implements Runnable {
                 }
             }
         } catch (ProtocolException invalidFrame) {
-            hardDrop = true; // Invalid length/UTF-8: do not attempt to recover frame boundaries.
+            hardDrop = true;
         } catch (IOException disconnected) {
-            // EOF, truncated frame and timeouts all end this captured connection.
+          
         } finally {
             if (drain) writer.finishAndAwait();
             if (session.getSocket() == socket) {
@@ -125,7 +122,7 @@ public final class ClientHandler implements Runnable {
     }
     private void error(String code) {
         try { writer.send(session, OutboundMessage.fromPacket(currentProtocol?SessionV3Codec.error(code):SessionPacketCodec.error(code))); }
-        catch (IllegalStateException closedWriter) { /* Writer failure already closes and cleans this connection. */ }
+        catch (IllegalStateException closedWriter) { }
     }
     private Packet readFrame() throws IOException {
         long deadline = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(frameTimeoutMillis);
