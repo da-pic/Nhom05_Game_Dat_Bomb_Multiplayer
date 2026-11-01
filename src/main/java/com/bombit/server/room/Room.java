@@ -21,7 +21,6 @@ public final class Room {
     private final List<Session> players = new ArrayList<>();
     private String hostPlayerId;
     private State state = State.WAITING;
-    // Slot của trận đang chạy không được dồn lại khi một session hết grace.
     private final java.util.Map<String,Integer> playingSlots=new java.util.HashMap<>();
     private MapSelection mapSelection = MapSelection.RANDOM;
 
@@ -54,7 +53,6 @@ public final class Room {
     }
 
     public synchronized boolean removePlayer(String playerId) {
-        // Roster preview chỉ đổi ở WAITING; trận đang chạy giữ roster riêng đã chốt.
         if (state == State.WAITING && isTeamMatch()
                 && players.stream().anyMatch(p -> p.getPlayerId().equals(playerId))) invalidateTeamRoster();
         boolean removed = players.removeIf(player -> player.getPlayerId().equals(playerId));
@@ -85,7 +83,6 @@ public final class Room {
     public synchronized void setState(State state) {
         Objects.requireNonNull(state);
         if(this.state!=state){
-            // Về phòng sau forfeit có roster mới: READY của roster trước không còn hợp lệ.
             if(this.state==State.PLAYING&&state==State.WAITING&&isTeamMatch()&&playingSlots.size()!=players.size())invalidateTeamRoster();
             playingSlots.clear();
             if(state==State.PLAYING)for(int i=0;i<players.size();i++)playingSlots.put(players.get(i).getPlayerId(),i+1);
@@ -107,14 +104,12 @@ public final class Room {
     private boolean isTeamMatch() {
         return configuration != null && configuration.isTeamMatch();
     }
-    /** Join/leave đấu đội có thể đổi đội preview: hủy READY để không xác nhận roster cũ. */
     private void invalidateTeamRoster() {
         if (configurationRevision == Long.MAX_VALUE) throw new IllegalStateException("Revision exhausted");
         configurationRevision++;
         readyRevisions.clear();
         for (var player : players) if (player.getState() == SessionState.READY) player.setState(SessionState.IN_ROOM);
     }
-    /** Validate trước khi gọi; commit config/capacity/revision/READY trong cùng monitor room. */
     public synchronized boolean changeConfiguration(MatchConfiguration next){
         Objects.requireNonNull(next);
         if(state!=State.WAITING)throw new IllegalStateException("Room playing");
