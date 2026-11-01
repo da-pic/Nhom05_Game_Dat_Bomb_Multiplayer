@@ -4,11 +4,7 @@ import com.bombit.server.game.core.*;
 import com.bombit.server.game.model.TileType;
 import java.util.*;
 
-/**
- * Phần checkpoint core: map và thuộc tính player, không thay thế checkpoint bomb/item.
- * Không lưu session, frozen, ACK, entity projection, event ID hoặc kết quả đã chốt.
- * Dùng list phẳng bất biến để không chia sẻ mảng map với lịch sử.
- */
+
 public record CoreWorldCheckpoint(int width, int height, int tileSize, List<TileType> tiles,
         List<Player.SimulationCheckpoint> players) {
     public CoreWorldCheckpoint {
@@ -46,7 +42,6 @@ public record CoreWorldCheckpoint(int width, int height, int tileSize, List<Tile
             for (int x = 0; x < width; x++) state.getMap().setTile(x, y, tiles.get(y * width + x));
         for (var checkpoint : players) {
             var player = state.getPlayer(checkpoint.playerId());
-            // Identity đã bị loại do hết grace không được tạo lại từ lịch sử.
             if (player != null) player.restoreSimulation(checkpoint);
         }
     }
