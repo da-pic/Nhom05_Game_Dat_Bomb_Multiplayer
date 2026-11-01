@@ -3,11 +3,7 @@ package com.bombit.server.game.core;
 import com.bombit.server.game.model.Direction;
 import java.util.Objects;
 
-/** Command gameplay bất biến. Constructor cũ chỉ giữ tương thích client/demo hiện có.
- * Code mới dùng MoveCommand, StopMovingCommand, PlantBombCommand và command lifecycle.
- * Chọn sealed class thay cho sealed interface để không buộc sửa client ngoài phạm vi TV2.
- * Mọi field/getter final; các lớp con final không thể thay đổi payload sau enqueue.
- */
+
 public sealed class GameCommand permits MoveCommand, StopMovingCommand, PlantBombCommand,
         PlayerDisconnectedCommand, PlayerReconnectedCommand, RewindCommand {
     private final int playerId;
