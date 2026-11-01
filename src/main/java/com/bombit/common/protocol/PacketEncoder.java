@@ -6,9 +6,7 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
-/** Mã hóa packet theo framing [length:int32][type:int16][payload], big-endian. */
 public final class PacketEncoder {
-    /** Length tính cả 2 byte type và payload, không tính chính 4 byte length. */
     public static final int MAX_PACKET_LENGTH = 1_048_576;
     private PacketEncoder() { }
 
@@ -25,7 +23,6 @@ public final class PacketEncoder {
         return frame;
     }
 
-    /** Ghi trọn một frame và flush để message sẵn sàng được gửi qua socket. */
     public static void encode(Packet packet, OutputStream output) throws IOException {
         Objects.requireNonNull(output, "output");
         byte[] frame = encode(packet);
@@ -33,7 +30,6 @@ public final class PacketEncoder {
         output.flush();
     }
 
-    /** Tiện ích cho caller đã dùng DataOutputStream. */
     public static void encode(Packet packet, DataOutputStream output) throws IOException {
         encode(packet, (OutputStream) output);
     }
