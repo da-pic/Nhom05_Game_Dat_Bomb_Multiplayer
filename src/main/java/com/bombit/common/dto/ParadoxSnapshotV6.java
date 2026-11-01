@@ -3,7 +3,7 @@ package com.bombit.common.dto;
 import com.bombit.server.game.movement.GameStateUpdate;
 import java.util.*;
 
-/** Tick snapshot vẫn tăng, chỉ tick mô phỏng bên trong mode được rewind. */
+
 public record ParadoxSnapshotV6(GameStateUpdate update,long simulationTick,long matchTimeMillis,
         List<ClassicSnapshotV6.PublicPlayer> publicPlayers,long lastProcessedInput,boolean inputEnabled,
         ParadoxFrame paradox) implements RecipientSnapshotV6 {
