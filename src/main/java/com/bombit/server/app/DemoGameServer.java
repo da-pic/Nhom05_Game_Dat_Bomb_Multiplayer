@@ -15,13 +15,11 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 
-/** M1 composition root: one fixed room, fixed roster of 2..4, no bomb/item extension. */
 public final class DemoGameServer implements AutoCloseable, GameEventSink {
     public static final String ROOM_ID = "00000000-0000-4000-8000-000000000001";
     private final Server server;
     private final int expectedPlayers;
-    // M1 là fixture movement-only: giữ factory legacy và speed 150, không tự thêm bom/item
-    // hoặc gắn preset PUBLIC Classic 80 px/s vào demo có luật khác.
+   
     private final GameRuntimeManager games = new GameRuntimeManager(id -> map(), (id, state) -> GameplayExtension.none());
     private final Map<String, Member> members = new ConcurrentHashMap<>();
     private final Set<Thread> workers = ConcurrentHashMap.newKeySet();
@@ -119,7 +117,7 @@ public final class DemoGameServer implements AutoCloseable, GameEventSink {
             Packet started = DemoPacketCodec.started(context, names);
             for (Member member : List.copyOf(members.values())) {
                 member.session.setState(SessionState.PLAYING);
-                send(member, started); // All metadata is queued before the only snapshot consumer starts.
+                send(member, started); 
             }
             Thread worker = new Thread(() -> broadcast(game), "Demo-Snapshot-" + game.matchId());
             workers.add(worker); worker.start();
@@ -183,7 +181,7 @@ public final class DemoGameServer implements AutoCloseable, GameEventSink {
     }
     @Override public void onPlayerDisconnected(Session session) { disconnected(session); }
     @Override public void onPlayerHardDropped(Session session) { disconnected(session); }
-    @Override public void onPlayerReconnected(Session session) { /* No reconnect admission in M1. */ }
+    @Override public void onPlayerReconnected(Session session) {}
 
     public void start() throws IOException { server.start(); }
     public int port() { return server.getPort(); }
@@ -201,7 +199,6 @@ public final class DemoGameServer implements AutoCloseable, GameEventSink {
             }
         }
     }
-    /** Legacy movement-only fixture. Lobby gameplay uses game.map.ArenaGenerator instead. */
     public static GameMap map() {
         var map = new GameMap(17, 15, 32);
         for (int y = 0; y < 15; y++) for (int x = 0; x < 17; x++) {
