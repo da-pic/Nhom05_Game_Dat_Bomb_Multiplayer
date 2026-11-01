@@ -6,7 +6,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.random.RandomGenerator;
 
-/** Chính sách rơi vật phẩm ngẫu nhiên có thể cấu hình; dùng bộ sinh có seed khi kiểm thử. */
 public final class RandomItemSpawnPolicy implements ItemSpawnPolicy {
     private final double dropChance;
     private final RandomGenerator random;
