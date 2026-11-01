@@ -7,7 +7,7 @@ import java.awt.*;
 import java.awt.geom.Path2D;
 import java.util.List;
 
-/** Draws the same gameplay tiles with different visual themes. */
+
 public final class TileGridRenderer {
     public void render(Graphics2D graphics,int width,int height,int size,List<TileType> tiles){render(graphics,width,height,size,tiles,MapTheme.CLASSIC);}
     public void render(Graphics2D graphics,int width,int height,int size,List<TileType> tiles,MapTheme theme){
