@@ -12,7 +12,6 @@ public final class BroadcastSender implements OutboundSender {
         try {
             target.send(session, message);
         } catch (IllegalStateException closedOrFull) {
-            // Session closed or queue full: skip so broadcast never blocks the caller.
         }
     }
 }
