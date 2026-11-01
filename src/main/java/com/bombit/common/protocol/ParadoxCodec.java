@@ -5,7 +5,6 @@ import com.bombit.server.game.mode.paradox.ParadoxGameplayExtension;
 import java.util.*;
 import static com.bombit.common.protocol.JsonV3.*;
 
-/** Schema strict, không chấp nhận enum tùy ý hoặc epoch khác envelope. */
 public final class ParadoxCodec {
     private ParadoxCodec(){}
     public static Packet rewind(long requestId){if(requestId<=0)throw new IllegalArgumentException("Invalid request");return packet(PacketType.REWIND,body("requestId",requestId));}
